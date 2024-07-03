@@ -1,0 +1,36 @@
+<!-- Model Header Start -->
+<div class="modal-header border-bottom-0 padding-32 pb-0">
+    <h4 class="modal-title font-weight-bold">{{'ACTIVITY.NOTES_DIALOG.TITLE' | translate}}</h4>
+    <button type="button" id="btn-close" class="close" aria-label="Close" (click)="onCloseForm()">
+        <span class="font-24 fonts-close" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i></span>
+    </button>
+</div>
+<!-- Model Header End -->
+
+<!-- Model Body Start -->
+<div *ngIf="note" class="modal-body padding-32 pt-3 pb-3">
+    <form [formGroup]="noteForm">    
+        <div class="form-group">
+            <textarea #description id="txt-description" class="form-control" placeholder="{{'ACTIVITY.NOTES_DIALOG.PLACEHOLDER' | translate}}" formControlName="description" rows="6"
+            [ngClass]="{ 'is-invalid': submitted && f.description.errors }" autofocus trimValue></textarea>
+            <div *ngIf='submitted && f.description.errors' class='invalid-feedback' id="errorNoteIsRequired">
+                    {{'ACTIVITY.NOTES_DIALOG.MESSAGE_ENTER_NOTE' | translate}}
+                </div>
+        </div>
+        <div class="col-md-12 form-group px-0 vertical-center">
+            <label class="mr-3">{{'ACTIVITY.NOTES_DIALOG.ISPRIVATE' | translate}}</label>
+            <label class="h-27px m-0">
+              <div class="switch switch-label switch-pill switch-primary">
+                <input type="checkbox" id="swt-active-inactive" class="switch-input" formControlName="isPrivate" >
+                <div class="switch-slider switch--status" data-checked="Private" data-unchecked="Public"></div>
+              </div>
+            </label>
+          </div>
+    </form>
+</div>
+<div class="modal-footer border-top-0 padding-32 pt-0">
+    <button type="button" id="btn-cancel" class='btn btn-outline-secondary me-2' (click)="onCloseForm()">{{'ACTIVITY.NOTES_DIALOG.BUTTON_CANCEL' | translate}}</button>
+    <button *ngIf="noteId == 0" type="button" id="btn-save" class='btn btn-primary' (click)="saveNotes(noteForm.value)">{{'ACTIVITY.NOTES_DIALOG.BUTTON_ADD' | translate}}</button>
+    <button *ngIf="noteId > 0"type="button" id="btn-save" class='btn btn-primary' (click)="saveNotes(noteForm.value)">{{'ACTIVITY.NOTES_DIALOG.BUTTON_EDIT' | translate}}</button>
+</div>
+<!-- Model Body End -->

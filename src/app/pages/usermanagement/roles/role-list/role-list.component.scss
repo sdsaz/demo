@@ -1,0 +1,38 @@
+@import "../../../../../scss/variables";
+
+::ng-deep .tbl-role-list {
+    @media (min-width: 641px){
+        th.name,
+        td.name {
+            width: 250px;
+            max-width: 250px;
+        }
+
+        th.name,
+        td.name {
+            word-break: break-word;
+        }
+
+        th.permissionSetName,
+        td.permissionSetName {
+            min-width: 345px;
+            word-break: break-word;
+        }
+
+        th.action,
+        td.action {
+            width: 0; min-width: 0; justify-content: flex-end; padding: 0 !important; 
+		    .dropdown { margin-right: 12px; }
+        }
+    }
+    .p-datatable-wrapper {
+        @media (min-width: 1140px) and (min-height: 576px) { min-height: calc(100vh - 190px); }
+    }
+}
+
+::ng-deep .tbl-role-list .p-datatable-wrapper .action .dropdown { float: right; }
+
+// prime ng input override - end
+.customInputText {
+    height: 34px;
+}

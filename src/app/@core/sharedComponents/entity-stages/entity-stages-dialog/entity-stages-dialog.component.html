@@ -1,0 +1,54 @@
+<!-- Model Header Start -->
+<div class="modal-header border-bottom-0 padding-32 pb-0">
+    <h4 class="modal-title font-weight-bold">
+        {{dialogTitle | translate}}
+    </h4>
+    <button type="button" id="btn-close" class="close" aria-label="Close" (click)="onCloseForm()">
+        <span class="font-24 fonts-close" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i></span>
+    </button>
+</div>
+<!-- Model Header End -->
+
+<!-- Body Start -->
+<div class="modal-body padding-32 pt-3">
+    <form [formGroup]="entityStageFormGroup">
+        <div class="row">
+            <div class='col-md-12 form-group'>
+                <label>{{entityStageSelectLabel | translate}}<span
+                    class="mandatory"></span></label>
+                <p-dropdown id="drp-entity-stages" *ngIf="entityStages" name="WorkTaskStageId" optionLabel="label"
+                    optionValue="value" class="form-control" [options]="entityStages" placeholder="{{entityStageSelectPlaceholder | translate}}"
+                    [filter]="true" [resetFilterOnHide]="false" formControlName="entityStageId" (onChange)="checkNoteIsRequired(entityStageFormGroup.value)"
+                    [showClear]="true">
+                </p-dropdown>
+            </div>
+            <div *ngIf="isNoteRequired && (stagereasons!=undefined && stagereasons.length>0)" class='col-md-12 form-group'>
+                <label>{{entityStageChangeSelectReasonLabel | translate}}<span
+                    class="mandatory"></span></label>
+                <p-dropdown id="drp-reason" *ngIf="entityStages" name="WorkTaskStageId" optionLabel="label"
+                    class="form-control" [options]="stagereasons" placeholder="{{'ACTIVITY.REASON_DIALOG.SELECT_PLACEHOLDER' | translate}}" 
+                    [filter]="true" [resetFilterOnHide]="false" formControlName="stageReason" (onChange)="showHideDescription(entityStageFormGroup.value)"
+                    [ngClass]="{ 'is-invalid': submitted && f.stageReason.errors }" [showClear]="true" autofocus>
+                </p-dropdown>
+                <div *ngIf="submitted && f.entityStageChangeReason.errors" class="invalid-feedback">
+                    {{'CRM.ACCOUNT.LIST.ENTITY_STAGE_DIALOG.MESSAGE_ENTER_REASON' | translate}}
+                </div>
+            </div>
+            <div *ngIf="isDescriptionShow" class='col-md-12 form-group'>
+                <label>{{entityStageChangeReasonLabel | translate}}<span class="mandatory"></span></label>
+                <textarea #entityStageChangeReason id="txt-entityStageChangeReason" class="form-control" minlength="5" maxlength="1000"
+                    placeholder="{{entityStageChangeReasonPlaceholder | translate}}" rows="6" formControlName="entityStageChangeReason" 
+                    [ngClass]="{ 'is-invalid': submitted && f.entityStageChangeReason.errors }" trim></textarea>
+                <div *ngIf="submitted && f.entityStageChangeReason.errors" class="invalid-feedback">
+                    {{'CRM.ACCOUNT.LIST.ENTITY_STAGE_DIALOG.MESSAGE_ENTER_REASON' | translate}}
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer border-top-0 px-0 pb-0">
+            <button type="button" id="btn-cancel" class='btn btn-outline-secondary me-2'
+                (click)="onCloseForm()">Cancel</button>
+            <button (click)="onChangeEntityStage()" type="button" id="btn-save" class='btn btn-primary'>Select</button>
+        </div>
+    </form>
+</div>
+<!-- Body End -->

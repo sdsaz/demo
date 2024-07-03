@@ -1,0 +1,86 @@
+<ng-container *ngIf="priceBookForm">
+    <!-- Model Header Start -->
+    <div class="modal-header border-bottom-0 padding-32 pb-0">
+        <h4 *ngIf="!copyPriceBookID || copyPriceBookID == 0" class="modal-title font-weight-bold" id="headingPopupEntity">{{ title | translate | configuredEntityName}}</h4>
+        <h6 *ngIf="copyPriceBookID && copyPriceBookID >= 0" class="modal-title font-weight-bold" id="headingPopupEntity">{{ title | translate | configuredEntityName}}</h6>
+        <button type="button" id="btn-close" class="close" (click)="onCloseForm(false)">
+            <span class="font-24 fonts-close"><i class="fas fa-times" aria-hidden="true"></i></span>
+        </button>
+    </div>
+    <!-- Model Header End -->
+
+    <!-- Add Product Start -->
+    <div class="modal-body padding-32 pt-3">
+        <form [formGroup]='priceBookForm'>
+            <div class=" form-group">
+                <label>{{'PRICEBOOKS.ADD_DIALOG.NAME' | translate}} <span class="mandatory"></span></label>
+                <input type="text" formControlName="name" id="txt-name" class="form-control ht--40" trimValue name="name" 
+                    [ngClass]="{ 'is-invalid': priceBookForm['controls'].name.errors && (priceBookForm['controls'].name.dirty || priceBookForm['controls'].name.touched)}">
+                <div *ngFor='let validation of validation_messages.name' class='invalid-feedback'>
+                    <div
+                        *ngIf="priceBookForm['controls'].name.hasError(validation.type) && priceBookForm['controls'].name.errors && (priceBookForm['controls'].name.dirty || priceBookForm['controls'].name.touched)">
+                        {{ validation.message | translate}}
+                    </div>
+                </div>
+            </div>
+            <div class=" form-group">
+                <label>{{'PRICEBOOKS.ADD_DIALOG.DESCRIPTION' | translate}}</label>
+                <textarea formControlName="description" id="txt-description" class="form-control ht--40"
+                    name="description" trimValue
+                    [ngClass]="{ 'is-invalid': priceBookForm['controls'].description.errors && (priceBookForm['controls'].description.dirty || priceBookForm['controls'].description.touched)}">
+                </textarea>
+                <div *ngFor='let validation of validation_messages.description' class='invalid-feedback'>
+                    <div
+                        *ngIf="priceBookForm['controls'].description.hasError(validation.type) && priceBookForm['controls'].description.errors && (priceBookForm['controls'].description.dirty || priceBookForm['controls'].description.touched)">
+                        {{ validation.message | translate}}
+                    </div>
+                </div>
+            </div>
+            <ng-container>
+                <div class=" form-group">
+                    <label>{{'PRICEBOOKS.ADD_DIALOG.START_DATE' | translate}}<span class="mandatory"></span></label>
+                    <p-calendar *ngIf="!isReadOnly" id="dp-product-start-date"
+                        [dateFormat]="_commonHelper.globalDatePickerFormate" [dateMask]="_commonHelper.globalDateMask"
+                        [readonlyInput]="false" icon="fas fa-calendar-alt dark-grey" [showIcon]="true"
+                        [monthNavigator]="true"  [yearNavigator]="true" [yearRange]="currentYearRange"
+                        formControlName="startDate" selectOtherMonths="true" [showTime]="false" 
+                        [minDate]="_commonHelper.globalMinDate" [maxDate]="_commonHelper.globalMaxDate"
+                        [placeholder]="_commonHelper.globalDatePlaceholder" class="time-calendar"
+                        [ngClass]="{ 'is-invalid': priceBookForm['controls'].startDate.errors && (priceBookForm['controls'].startDate.dirty || priceBookForm['controls'].startDate.touched)}"></p-calendar>
+                    <div *ngFor='let validation of validation_messages.startDate' class='invalid-feedback'>
+                        <div
+                            *ngIf="priceBookForm['controls'].startDate.hasError(validation.type) && priceBookForm['controls'].startDate.errors && (priceBookForm['controls'].startDate.dirty || priceBookForm['controls'].startDate.touched)">
+                            {{ validation.message | translate}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class=" form-group">
+                    <label>{{'PRICEBOOKS.ADD_DIALOG.END_DATE' | translate}}</label>
+                    <p-calendar *ngIf="!isReadOnly" id="dp-product-end-date"
+                        [dateFormat]="_commonHelper.globalDatePickerFormate" [dateMask]="_commonHelper.globalDateMask"
+                        [readonlyInput]="false" icon="fas fa-calendar-alt dark-grey" [showIcon]="true"
+                        [monthNavigator]="true"  [yearNavigator]="true" [yearRange]="currentYearRange"
+                        formControlName="endDate" selectOtherMonths="true" [showTime]="false" 
+                        [minDate]="_commonHelper.globalMinDate" [maxDate]="_commonHelper.globalMaxDate"
+                        [placeholder]="_commonHelper.globalDatePlaceholder" class="time-calendar"
+                        [ngClass]="{ 'is-invalid': priceBookForm['controls'].endDate.errors && (priceBookForm['controls'].endDate.dirty || priceBookForm['controls'].endDate.touched)}"></p-calendar>
+                    <div *ngFor='let validation of validation_messages.endDate' class='invalid-feedback'>
+                        <div
+                            *ngIf="priceBookForm['controls'].endDate.hasError(validation.type) && priceBookForm['controls'].endDate.errors && (priceBookForm['controls'].endDate.dirty || priceBookForm['controls'].endDate.touched)">
+                            {{ validation.message | translate}}
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+
+            <div class="modal-footer border-top-0 px-0 pb-0">
+                <button type="button" class='btn btn-outline-secondary me-2' id="btn-cancel"
+                    (click)="onCloseForm(false)">{{'PRICEBOOKS.ADD_DIALOG.BUTTON_CANCEL' | translate}}</button>
+                <button type="button" (click)="savePriceBook(priceBookForm.value)" id="btn-save"
+                    class='btn btn-primary'>{{'PRICEBOOKS.ADD_DIALOG.BUTTON_ADD' | translate}}</button>
+            </div>
+        </form>
+    </div>
+    <!-- Add Product End -->
+</ng-container>

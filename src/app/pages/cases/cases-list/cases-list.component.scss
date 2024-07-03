@@ -1,0 +1,113 @@
+@import "../../../../scss/variables";
+@import '../../../../scss/entity_kanban.scss';
+
+//Table
+.tbl-case-listing{
+    @media (min-width: 641px){
+        .checkbox-col{ width: 50px; max-width: 50px; }
+        th.user-img, td.user-img { width:50px; text-align: center; }
+        th.caseNumber, td.caseNumber { width: 210px; min-width: 210px; }
+        th.name, td.name {width: 200px; min-width: 200px; word-break: break-word; }
+        th.created, td.created {width: 160px; min-width: 160px; }
+        th.entityName, td.entityName{ width: 180px; min-width: 180px; }
+        th.stageName, td.stageName{ width: 160px; min-width: 160px; }
+        th.assignedToName, td.assignedToName, th.verifiedByName, td.verifiedByName, th.createdByName, td.createdByName{ width: 60px; min-width: 60px; }
+        th.entityWorkFlowName, td.entityWorkFlowName{ width: 160px; min-width: 160px; }
+        th.priority, td.priority{ width: 60px; min-width: 60px; max-width: 60px; }
+        th.severity, td.severity{ width: 60px; min-width: 60px; max-width: 60px;}
+        th.icon-dropdown, td.icon-dropdown { width:60px; min-width: 60px; max-width: 60px; }
+        th.id.action, td.action{ justify-content: flex-end; }
+        th.id.action.action-null{ width: 0; max-width: 0; padding: 0; }
+    }
+    @media (max-width: 640px){
+        &.tbl-entity tr { display: flex; flex-wrap: wrap; 
+            td { min-width: 100%; }
+            td.checkbox-col, td.bookmark, td.isPaused, td.action { float: left; clear: none; min-width: auto; }
+            td.checkbox-col, td.bookmark { width: auto !important; max-width: none !important; align-items: flex-end;}
+            td.bookmark { padding-left: 0;}
+        }
+    }
+}
+
+
+
+.btn-mg{ margin: 0;
+}
+
+.btn-reset-filter.btn-mg{ margin: 0 20px 0 0; 
+}
+
+.form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width), .form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width) + .form-group:not(.filter-width) { margin-top: 21px; padding-top: 0;
+    @media (max-width: 575px) { margin-top: 0px; padding-top: 0; }
+}
+
+.form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width), .form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width) + .form-group:not(.filter-width) { margin-top: 0; 
+    @media (max-width: 991px) { margin-top: 0; padding-top: 0; }
+}
+
+.form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width).col-sm-4, .form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width) + .form-group:not(.filter-width).col-sm-2 {
+    @media (max-width: 767px) and (min-width: 576px) { flex: 0 0 50%; max-width: 50%; }
+}
+
+.form-group:not(.filter-width) + .filter-width + .filter-width + .form-group:not(.filter-width), .form-group:not(.filter-width) + .filter-width + .filter-width + .form-group:not(.filter-width) + .form-group:not(.filter-width) { margin-top: 0; 
+    @media (max-width: 1024px) and (min-width: 992px) { margin-top: 0; padding-top: 0; }
+    @media (max-width: 575px) { margin-top: 0; padding-top: 0; }
+}
+
+.height-full{
+    @media (max-width: 1279px) and (min-width: 1200px) { height: calc(100vh - 135px); }
+}
+
+td .link--drag{ margin-right: 6px; display: flex; padding: 0; }
+
+.list-card-description{ white-space: normal; }
+
+::ng-deep .p-datatable .p-datatable-thead > tr > th{ white-space: nowrap; }
+
+.custom-control.custom-checkbox { font-size: 18px; }
+
+.avatar {
+    position: relative;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+}
+
+.customInputText{
+    height: 34px;
+}
+
+// prime ng input override - start
+:host ::ng-deep{
+    .dropDownOverride.p-dropdown {
+        width: 100%;
+    }
+    .p-inputswitch .p-inputswitch-slider{
+        background-color: red;
+    }
+    .p-inputswitch-checked .p-inputswitch-slider{
+        background-color: #2196F3;
+    }
+}
+
+.btn-assign-bulk-workflow { padding: 5px 10px 2px;}
+.assign-bulk-workflow::before{ content: url("../../../../assets/images/icon/assign-workflow.png"); }
+.icon-workflow::before{ content: url("../../../../assets/images/icon/workflow.png"); }
+::ng-deep .nb-theme-dark .icon-workflow::before{ content: url("../../../../assets/images/icon/workflow-dark.png"); }
+.height-16px, .icon-workflow, .icon-workflow::before{ height: 16px; max-height: 16px; }
+.mb-2px{ margin-bottom: 2px; }
+
+.filters-five .case-listing-filters .filter-width { 
+    @media (min-width: 1200px) { max-width: 250px; min-width: 92px;
+        &.checkbox-column { max-width: initial; }
+    }
+}
+
+.custom-control.custom-checkbox .custom-control-input.w-20-size, .check-group .custom-control-input.w-20-size{ width: 20px; height: 20px; }
+.case-listing-filters .pt-30px{ padding-top: 24px;
+    @media (max-width: 1279px) and (min-width: 1200px) { padding-top: 13px; }
+    @media (max-width: 991px) and (min-width: 576px) { padding-top: 9px; }
+}
+::ng-deep .expanded .case-listing-filters .pt-30px{ 
+    @media (max-width: 1439px) and (min-width: 1200px) { padding-top: 13px !important; }
+}

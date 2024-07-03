@@ -1,0 +1,382 @@
+<div>
+    <div cdkDropListGroup class="board-content-wrapper p-md-24 p-16">
+        <div class="container-fluid pr-0 drag-boundary">
+            <div class="height-full">
+                <div class="scrolling-wrapper-flexbox">
+                    <div class="row flex-row flex-nowrap w-100 ml-0 elements" cdkDropListOrientation="horizontal"
+                        cdkScrollable>
+                        <div cdkDropList class="col cardss scrumboard-board-list list-wrapper elements"
+                            id="cardSections-{{stage.id}}" *ngFor="let stage of stages; let i = index"
+                            [cdkDropListData]="stage.cards" [cdkDropListAutoScrollDisabled]="false"
+                            [cdkDropListAutoScrollStep]="10" (cdkDropListDropped)="onCardDropEvent($event)"
+                            [ngClass]="(stage.isCollapsed ?? false) ? 'collapsedStage' : ''">
+                            <div id="widget-loader-{{stage.id}}"
+                                [ngClass]="stage.showLoader ? 'show-widget-loader' : 'hide-widget-loader'"
+                                class="widget-loader ">
+                                <div class="bounce-spinner">
+                                    <div class="bounce1"></div>
+                                    <div class="bounce2"></div>
+                                    <div class="bounce3"></div>
+                                </div>
+                            </div>
+                            <div class="list p-card" id="listKanban">
+                                <div class="cards-header sticky-header" fxLayout="row"
+                                    fxLayoutAlign="space-between center">
+                                    <div>
+                                        <div class="d-flex justify-content-between pl-3 pt-10px w-100">
+                                            <span style="display:none;" id="stageId">{{stage.id}}</span>
+                                            <span style="display:none;" id="stageName">{{stage.name}}</span>
+                                            <span style="display:none;"
+                                                id="stageNoteRequired">{{stage.isNoteRequired}}</span>
+                                            <span style="display:none;"
+                                                id="stageIsAllTasksRequired">{{stage.isAllTasksRequired}}</span>
+                                            <div id="kanbanStageTitle"
+                                                class="scrumboard-board-edit-list-name list-header-name font-weight-700 float-left">
+                                                <span class="d-inline-block w-100">{{ stage.name }}</span>
+                                                <span id="stageTotalItems" class="d-inline-block ml-1 text-nowrap">({{
+                                                    stage.totalItems }})</span>
+                                            </div>
+                                            <div class="pe-3 stage-count-and-collapse d-flex pt-10px">
+                                                <button type="button" class="btn btn-outline-secondary btn-collapse" (click)="stageExpand(stage)" [ngbTooltip]="stage.isCollapsed ? ('COMMON.STAGE_EXPAND' | translate) : ('COMMON.STAGE_COLLAPSED' | translate)"  placement="top auto" container="body">
+                                                    <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="sticky-header-2 d-flex justify-content-between" *ngIf="showStageSubheader">
+                                            <div>
+                                                <strong>Total Value</strong>
+
+                                            </div>
+                                            <div class="font-semibold font-12">
+                                                $
+                                                <span *ngIf="stage.totalItems && stage.totalItems > 0">
+                                                    {{stage.totalOpportunityValue | number:'1.2-2' }}
+                                                    <ng-template #amount>
+                                                        <div>&nbsp;</div>
+                                                    </ng-template>
+                                                </span>
+                                                <span *ngIf="stage.totalItems == 0">
+                                                    0.00
+                                                    <ng-template #amount>
+                                                        <div>&nbsp;</div>
+                                                    </ng-template>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="stage.totalItems && stage.totalItems > 0" class="list-content">
+                                    <div class="list-cards" id="listCards">
+                                        
+                                        <section cdkDrag class="scrumboard-board-card" id="dragCard" cdkDragBoundary=".drag-boundary"
+                                            *ngFor="let card of stage.cards" vsDragScroll [cdkDragData]="card"
+                                            [cdkDragDisabled]="!isEditPermission || card.disabled"
+                                            [ngClass]="[!isEditPermission || card.disabled ? 'scrum-grey' : '', 
+                                                selectedCard == card.id ? 'selected-card' : '',
+                                                card.isHandRaised ? 'raised-outline' : '', 
+                                                (card.cardColorClass != null && card.cardColorClass != '') ? card.cardColorClass : '']"
+                                            (click)="onCardClickEvent(card)">
+                                            <section [ngClass]="card.isSubTask ? 'parent-card' : ''">
+                                                <div class="fw-600 font-12 mb-2" *ngIf="card.isSubTask">
+                                                    <span class="d-flex">
+                                                        <span [ngbTooltip]="card.parentLabelTooltip1" container="body" placement="top-left auto" class="d-flex">
+                                                            <i *ngIf="card.parentLabelIconClass" ngClass="{{card.parentLabelIconClass}}" class="me-1 font-15 dark-grey"></i>
+                                                            <ng-container *ngTemplateOutlet="parentLabel"></ng-container>
+                                                            <!--  Parent Task start -->
+                                                            <ng-template #parentLabel [ngSwitch]="card.parentTokenType">
+                                                                <a *ngSwitchCase="_kanbanBoardTokenTypes.Link"
+                                                                    class="dark-blue font-weight-bold no-underline cursor-pointer text-nowrap" id="linkParentRecord"
+                                                                    [routerLink]="card.parentLabelRedirectUrl"
+                                                                    [ngClass]="(isViewPermission && (card.isViewParentSubTypePermission != null ? card.isViewParentSubTypePermission : true)) ? 'dark-blue font-weight-bold no-underline cursor-pointer pre-text' : 'no-link'">
+                                                                    <span>{{ card.parentLabel}}</span>
+                                                                </a>
+                                                                <span *ngSwitchDefault>{{ card.parentLabel }}</span>
+                                                            </ng-template>
+                                                        </span>
+                                                        <span class="ml-2 text-truncate d-inline-block max-w-100" [ngbTooltip]="card.parentNameToolTip" container="body" placement="top-left auto">{{card?.parentName}}</span>
+                                                        <!-- Parent Task end -->   
+                                                    </span>
+                                                </div>
+                                                <section class="child-card">
+                                                    <section class="list-card-details">
+                                                        <span
+                                                            class="entity-card-icons d-flex justify-content-start align-items-center"> 
+                                                            <div class="height-22px bookmark vertical-center">
+                                                                <ngx-bookmark [entityTypeId]="entityTypeId" [entityId]="card.id" [isStarred]="card?.isStarred"
+                                                                    [isEditPermission]="isEditPermission && !card.isPaused" [isFromKanbanOrListView]="true"></ngx-bookmark>
+                                                            </div>
+                                                            <div *ngIf="card.review != 0" class="ml-2 height-22px vertical-center">
+                                                                <entity-review-display [entityTypeId]="entityTypeId" [entityId]="card.id"[entityReviewID]="card.entityReviewID" [rating]="card.rating" [review]="card.review" [isFromKanbanOrListView]="true" [isEditPermission]="isEditPermission && card.isEntityReviewEditable"></entity-review-display>
+                                                            </div>
+                                                            <div *ngIf="iconflag" class="m-0 vertical-center height-22px worktask-icon"
+                                                            [ngClass]="!stage.isFrozen && isEditPermission && !card.disabled ? 'cursor-pointer' : 'cursor-default'"
+                                                            tooltipClass="tooltip-backward-small"
+                                                            ngbTooltip="{{ card.priorityName!= null && card.priorityName != '' ? (card.priorityTooltip + ': ' + card.priorityName) : card.priorityDefaultTooltip }}"
+                                                            container="body">
+                                                            <span *ngIf="card.priority != 0" class="ml-2 btn-priority"
+                                                            (click)="onCardPriorityClickEvent(card, stage, card.priority);stopPropagation($event);"
+                                                            id="btn-priority"
+                                                            [ngClass]="[(priorityDetails | displayValueFinder: { intValue1: card.priority})?.length > 0 ? ((priorityDetails | displayValueFinder: { intValue1: card.priority})[0]?.strValue1?.colorClass ?? '') : '']"
+                                                            aria-hidden="true">
+                                                                    {{
+                                                                    (priorityDetails | displayValueFinder: { intValue1: card.priority})?.length > 0
+                                                                        ? ((priorityDetails | displayValueFinder: { intValue1: card.priority})[0]?.strValue1?.initials ?? '')
+                                                                        : null
+                                                                    }}
+                                                                </span>
+                                                            </div>
+                                                            <div *ngIf="iconflag" class="m-0 vertical-center height-22px worktask-icon"
+                                                                tooltipClass="tooltip-backward-small"
+                                                                [ngClass]="!stage.isFrozen && isEditPermission && !card.disabled ? 'cursor-pointer' : 'cursor-default'"
+                                                                ngbTooltip="{{ card.severityName!= null && card.severityName != '' ? (card.severityTooltip + ': ' + card.severityName) : card.severityDefaultTooltip }}"
+                                                                container="body">
+                                                                <span *ngIf="card.severity != 0" class="ml-2 btn-severity"
+                                                                    (click)="onCardSeverityClickEvent(card, stage, card.severity);stopPropagation($event);"
+                                                                    id="btn-severity"
+                                                                    [ngClass]="[(severityDetails | displayValueFinder: { intValue1: card.severity})?.length > 0 ? ((severityDetails | displayValueFinder: { intValue1: card.severity})[0]?.strValue1?.colorClass ?? '') : '']"
+                                                                    aria-hidden="true">
+                                                                    {{
+                                                                        (severityDetails | displayValueFinder: { intValue1: card.severity})?.length > 0
+                                                                        ? ((severityDetails | displayValueFinder: { intValue1: card.severity})[0]?.strValue1?.initials ?? '')
+                                                                        : null
+                                                                    }}
+                                                                </span>
+                                                            </div>
+                                                        </span>
+                                                        <p *ngIf='card.title' class="list-card-name">
+                                                            <a>
+                                                                <span placement="top top-left"
+                                                                    tooltipClass="tooltip-backward-small"
+                                                                    [ngbTooltip]="card.titleTooltip" container="body"
+                                                                    id="cardEntityName">{{ card.title }}</span>
+                                                            </a>
+                                                        </p>
+                                                        <ng-container *ngIf='card.label1' [ngSwitch]="card.labelType1">
+                                                            <p *ngSwitchCase="_kanbanBoardTokenTypes.Email"
+                                                                class="list-card-name font-semibold">
+                                                                <a class="dark-blue font-weight-bold no-underline cursor-pointer"
+                                                                    href="mailto:{{card.label1}}"
+                                                                    (click)="stopPropagation($event);" id="link-email">
+                                                                    <span [ngbTooltip]="card.labelTooltip1"
+                                                                        container="body">{{card.label1}}</span>
+                                                                </a>
+                                                            </p>
+                                                            <p *ngSwitchCase="_kanbanBoardTokenTypes.Phone"
+                                                                class="list-card-name font-semibold">
+                                                                <a class="dark-blue font-weight-bold no-underline cursor-pointer"
+                                                                    href="{{ card.label1 | phone:'link'}}"
+                                                                    (click)="stopPropagation($event);" id="link-phone">
+                                                                    <span [ngbTooltip]="card.labelTooltip1" container="body">{{
+                                                                        card.label1 | phone  }}</span>
+                                                                </a>
+                                                            </p>
+                                                                <p *ngSwitchCase="_kanbanBoardTokenTypes.Link" class="list-card-name font-semibold">
+                                                                <span class="d-flex">
+                                                                    <span [ngbTooltip]="card.labelTooltip1" container="body" placement="top-left auto">
+                                                                        <i *ngIf="card.label1IconClass" ngClass="{{card.label1IconClass}}" class="me-1 font-15 dark-grey"></i>
+                                                                        <a id="link-headingRecord" class="height-15px"
+                                                                            [routerLink]="card.label1RedirectURL"
+                                                                            [ngClass]="isViewPermission && (card.isViewSubTypePermission != null ? card.isViewSubTypePermission : true) ? 'dark-blue font-weight-bold no-underline cursor-pointer pre-text' : 'no-link'">                                                                
+                                                                            <span class="text-truncate d-inline">{{card.label1 }}</span>
+                                                                        </a>
+                                                                    </span>
+                                                                </span>
+                                                            </p>
+                                                            <p *ngSwitchDefault class="list-card-name font-semibold">
+                                                                <span class="d-flex">
+                                                                    <span [ngbTooltip]="card.labelTooltip1" class="text-truncate" container="body">
+                                                                        {{ card.label1 }}
+                                                                    </span>
+                                                                    <ng-container *ngIf="card.isSubTask">
+                                                                        <ng-container *ngTemplateOutlet="parentLabel"></ng-container>
+                                                                    </ng-container>
+                                                                </span>
+                                                            </p>
+                                                        </ng-container>
+                                                        <ng-container *ngIf='card.label2' [ngSwitch]="card.labelType2">
+                                                            <p *ngSwitchCase="_kanbanBoardTokenTypes.Email"
+                                                                class="list-card-email font-semibold">
+                                                                <a class="dark-blue font-weight-bold no-underline cursor-pointer"
+                                                                    href="mailto:{{card.label2}}"
+                                                                    (click)="stopPropagation($event);" id="link-email">
+                                                                    <span [ngbTooltip]="card.labelTooltip2"
+                                                                        container="body">{{card.label2}}</span>
+                                                                </a>
+                                                            </p>
+                                                            <p *ngSwitchCase="_kanbanBoardTokenTypes.Phone"
+                                                                class="list-card-email font-semibold">
+                                                                <a class="dark-blue font-weight-bold no-underline cursor-pointer"
+                                                                    href="{{ card.label2 | phone:'link'}}"
+                                                                    (click)="stopPropagation($event);" id="link-phone">
+                                                                    <span [ngbTooltip]="card.labelTooltip2" container="body">{{
+                                                                        card.label2 | phone  }}</span>
+                                                                </a>
+                                                            </p>
+                                                            <p *ngSwitchCase="_kanbanBoardTokenTypes.Currency"
+                                                                class="list-card-email font-semibold">
+                                                                <span [ngbTooltip]="card.labelTooltip2"
+                                                                    container="body">{{(card.currencySymbol2)+(card.label2 |
+                                                                    number:'1.2-2') }}</span>
+                                                            </p>
+                                                            <p *ngSwitchCase="_kanbanBoardTokenTypes.Link" class="list-card-name font-semibold">
+                                                                <a id="link-headingRecord" [routerLink]="card.label2RedirectURL"
+                                                                    class="dark-blue font-weight-bold no-underline cursor-pointer text-truncate">
+                                                                    <span [ngbTooltip]="card.labelTooltip2" class="text-truncate" container="body">
+                                                                        {{ card.label2 }}
+                                                                    </span>
+                                                                </a>
+                                                            </p>
+                                                            <p *ngSwitchDefault class="list-card-email font-semibold">
+                                                                <span [ngbTooltip]="card.labelTooltip2" container="body">{{
+                                                                    card.label2 }}</span>
+                                                            </p>
+                                                        </ng-container>
+                                                        <ng-container *ngIf='card.label3' [ngSwitch]="card.labelType3">
+                                                            <p *ngSwitchCase="_kanbanBoardTokenTypes.Email"
+                                                                class="list-card-email font-semibold">
+                                                                <a class="dark-blue font-weight-bold no-underline cursor-pointer"
+                                                                    href="mailto:{{card.label3}}"
+                                                                    (click)="stopPropagation($event);" id="link-email">
+                                                                    <span [ngbTooltip]="card.labelTooltip3"
+                                                                        container="body">{{card.label3}}</span>
+                                                                </a>
+                                                            </p>
+                                                            <p *ngSwitchCase="_kanbanBoardTokenTypes.Phone"
+                                                                class="list-card-email font-semibold">
+                                                                <a class="dark-blue font-weight-bold no-underline cursor-pointer"
+                                                                    href="{{ card.label3 | phone:'link'}}"
+                                                                    (click)="stopPropagation($event);" id="link-phone">
+                                                                    <span [ngbTooltip]="card.labelTooltip3" container="body">{{
+                                                                        card.label3 | phone  }}</span>
+                                                                </a>
+                                                            </p>
+                                                            <p *ngSwitchCase="_kanbanBoardTokenTypes.Currency"
+                                                                class="list-card-email font-semibold">
+                                                                <span [ngbTooltip]="card.labelTooltip3"
+                                                                    container="body">{{(card.currencySymbol3)+(card.label3 |
+                                                                    number:'1.2-2') }}</span>
+                                                            </p>
+                                                            <p *ngSwitchCase="_kanbanBoardTokenTypes.Link" class="list-card-name font-semibold">
+                                                                <span [ngbTooltip]="card.labelTooltip3" container="body" placement="top auto" class="d-flex align-items-center justify-content-start">
+                                                                    <i [class]="_commonHelper.getEntityIconClass(7)" class="me-1 dark-grey"></i>
+                                                                    <a id="link-headingRecord" [routerLink]="card.label3RedirectURL"
+                                                                        class="dark-blue font-weight-bold no-underline cursor-pointer text-truncate">
+                                                                        <span  class="text-truncate" container="body">
+                                                                            {{ card.label3 }}
+                                                                        </span>
+                                                                    </a>
+                                                                </span>
+                                                            </p>
+                                                            <p *ngSwitchDefault [ngbTooltip]="card.labelTooltip3" class="list-card-email font-semibold">
+                                                                <span [ngbTooltip]="card.labelTooltip3" container="body">{{
+                                                                    card.label3 }}</span>
+                                                            </p>
+                                                        </ng-container>
+                                                        <p *ngIf='card.relatedToLabel' class="list-card-email font-semibold">
+                                                            <span class="d-flex align-items-center">
+                                                                <i class="{{card.relatedToIconClass}}" class="font-14 dark-grey" [ngbTooltip]="card.relatedToIconToolTip" container="body" placement="top auto" aria-hidden="true"></i>
+                                                                <a [routerLink]="card.relatedToRedirectURL" (click)="stopPropagation($event);"
+                                                                    class="dark-blue font-weight-bold no-underline cursor-pointer pre-text ms-1 link-relatedTo d-flex"
+                                                                    id="link-relatedTo">
+                                                                    <span [ngbTooltip]="card.relatedToTooltip" container="body" placement="top-left" class="text-truncate d-inline-block w-100">{{
+                                                                        card.relatedToLabel }}</span>
+                                                                </a>
+                                                            </span>
+                                                        </p>
+                                                        <!-- <div *ngIf="stage.tasks && stage.tasks.length > 0"
+                                                            class="input-group entity-dropdown custom-dropdown-muliselect entity-stage-dropdown">
+                                                            <p-multiSelect [options]="stage.tasks"
+                                                                class="entity-multiSelect stage-task-cd" optionLabel="name"
+                                                                [(ngModel)]="card.selectedTasks"
+                                                                [disabled]="stage.isFrozen || card.selectedTasksDisabled || !isEditPermission || card.disabled || stage.isCompleted || stage.isClosed"
+                                                                [maxSelectedLabels]="500" [showToggleAll]="false"
+                                                                [defaultLabel]="stage.tasks && stage.tasks.length > 0 
+                                                                    ? (card.selectedTasks?.length ?? 0) + ' of ' + stage.tasks.length + ' completed' : ''"
+                                                                [filter]="false" [showHeader]="false"
+                                                                [displaySelectedLabel]='false'
+                                                                (onChange)="onCardTaskChangeEvent(card, stage, $event.value)"
+                                                                (onClick)="stopPropagation($event)">
+                                                            </p-multiSelect>
+                                                        </div> -->
+                                                    </section>
+                                                    <section class="list-card-icons d-flex justify-content-between">
+                                                        <div class="d-flex align-items-center">
+                                                            <ng-container *ngIf="hasOwner1 && !(entityHiddenFieldSettings | isEntityFieldHidden: entityTypeId : sectionCodeName?.KanbanCard : fieldNames?.AssignedTo)">
+                                                                <ngx-common-user-profile 
+                                                                    [userId]="card?.owner1Id"
+                                                                    [userTypeId]="card.owner1userTypeId"
+                                                                    [privacyLevel]="card?.privacyLevel"
+                                                                    [isShowName]="false"
+                                                                    [userLabel]="card?.userLabel1"
+                                                                    [isItemDisable]="stage.isFrozen || stage.isCompleted || stage.isClosed || !isEditPermission"
+                                                                    (clickEvent)="onCardOwner1ClickEvent(card, stage, card.owner1Id);stopPropagation($event)">
+                                                                </ngx-common-user-profile>
+                                                            </ng-container>
+                                                            <ng-container *ngIf="hasOwner2 && !(entityHiddenFieldSettings | isEntityFieldHidden: entityTypeId : sectionCodeName?.KanbanCard : fieldNames?.VerifiedBy)">
+                                                                <ngx-common-user-profile 
+                                                                    [userId]="card?.owner2Id"
+                                                                    [userTypeId]="card.owner2userTypeId"
+                                                                    [privacyLevel]="card?.privacyLevel"
+                                                                    [isShowName]="false"
+                                                                    [userLabel]="card?.userLabel2"
+                                                                    [isItemDisable]="stage.isFrozen || stage.isCompleted || stage.isClosed || !isEditPermission"
+                                                                    (clickEvent)="onCardOwner2ClickEvent(card, stage, card.owner2Id);stopPropagation($event)">
+                                                                </ngx-common-user-profile>
+                                                            </ng-container>
+                                                            <p *ngIf='card.footerLabel1' class="mb-0"
+                                                                [ngbTooltip]="card.footerLabelTooltip1" container="body">
+                                                                {{ card.footerLabel1 }}
+                                                            </p>
+                                                        </div>
+                                                        <div class="d-flex align-items-center ml-2">
+                                                            <ng-container *ngIf="hasOwner3">
+                                                                <ngx-common-user-profile 
+                                                                    [userId]="card?.owner3Id"
+                                                                    [userTypeId]="card.owner3userTypeId"
+                                                                    [privacyLevel]="card?.privacyLevel"
+                                                                    [isShowName]="false"
+                                                                    [isItemDisable]="stage.isFrozen || stage.isCompleted || stage.isClosed || !isEditPermission"
+                                                                    [userLabel]="card?.userLabel3"
+                                                                    (clickEvent)="onCardOwner3ClickEvent(card, stage, card.owner3Id);stopPropagation($event)">
+                                                                </ngx-common-user-profile>
+                                                            </ng-container>
+                                                            <div class="font-11">
+                                                                <div>{{ card?.created | dateFormatPipe: _commonHelper.globalDateFormate }}</div>
+                                                                <div>{{ card?.created | dateFormatPipe:_commonHelper.globalTimeFormate}}</div>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+                                                    
+                                                    <div *ngIf="!stage.isCompleted && !stage.isClosed && card.showPauseResumeButtons"
+                                                        [ngClass]="card.isPaused ? 'resume-card' : ''"
+                                                        class="m-0 vertical-center worktask-icon" container="body">
+                                                        <div *ngIf="card.isPaused" class="resume-icon cursor-pointer"
+                                                            (click)="onCardPauseChangeEvent(card, stage, false);stopPropagation($event);"
+                                                            id="resumeButton"></div>
+                                                    </div>
+                                                    <div *ngIf="!stage.isCompleted && !stage.isClosed && !card.showPauseResumeButtons"
+                                                        class="m-0 vertical-center worktask-icon resume-card">
+                                                        <i *ngIf="card.isPaused" class="resume-icon cursor-pointer"
+                                                            (click)="stopPropagation($event);" id="resumeButton"
+                                                            aria-hidden="true" container="body"
+                                                            tooltipClass="tooltip-backward-small"
+                                                            ngbTooltip="{{ card.resumeNotAccess }}"></i>
+                                                    </div>
+                                                </section>
+                                            </section>
+                                        </section>
+                                        <div *ngIf='stage.pagination.totalPages > 1 && (stage.pagination.pageNo < stage.pagination.totalPages)'
+                                            class="text-center">
+                                            <a class="btn btn-link p-0 link-loadmore" id="linkLoadMore"
+                                                (click)='onLoadMoreEvent(stage)'>Load more</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

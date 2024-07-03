@@ -1,0 +1,37 @@
+@import '../../../../scss/entity_kanban.scss';
+.tbl-misc-worktask-list{
+    @media (min-width: 641px){
+        .checkbox-col{ width: 50px; max-width: 50px; }
+        th.user-img, td.user-img { width:50px; text-align: center; }
+        th.taskNumber, td.taskNumber, th.duration, td.duration{ width: 150px; min-width: 150px; }
+        th.reason, td.reason {width: 200px; min-width: 200px; max-width: 200px; }
+        th.created, td.created {width: 190px; min-width: 190px; }
+        th.description, td.description{ width: 250px; min-width: 250px; max-width: 250px; }
+        th.createdByName, td.createdByName, th.entityName, td.entityName{ width: 180px; min-width: 180px; }
+        th.phone, td.phone, th.tag, td.tag{width: 170px; min-width: 170px;}
+        th.assignedToName, td.assignedToName, th.verifiedByName, td.verifiedByName{ width: 60px; min-width: 60px; }
+        th.startTime, td.startTime, th.endTime, td.endTime{ width: 180px; min-width: 180px; }
+        th.priority, td.priority{ width: 60px; min-width: 60px; max-width: 60px; }
+        th.severity, td.severity{ width: 60px; min-width: 60px; max-width: 60px;}
+        th.dueDate, td.dueDate{ width: 120px; min-width: 120px; max-width: 120px;}
+        th.icon-dropdown, td.icon-dropdown { width:60px; min-width: 60px; max-width: 60px; }
+        th.isPaused, td.isPaused{ width: 60px; min-width: 60px; max-width: 60px; }
+        th.isHandRaised, td.isHandRaised{ width: 60px; min-width: 60px; max-width: 60px; }
+        th.id.action, td.action{ justify-content: flex-end; }
+        // th.action, td.action{width: 50px;}
+    }
+}
+.avatar {
+    position: relative;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+}
+
+.btn-mg{ margin: 22px 16px 0 0;
+    @media (max-width: 575px) { margin-top: 8px; }
+}
+
+.filters-five .misc-worktask-listing-filters .filter-width { 
+    @media (max-width: 1600px) and (min-width: 1200px) { max-width: initial; }
+}

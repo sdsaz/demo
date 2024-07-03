@@ -1,0 +1,151 @@
+<!-- Model Header Start -->
+<div class="modal-header border-bottom-0 padding-32 pb-0">
+    <h4 class="modal-title font-weight-bold" id="headingPopupEntity">{{ 'CASES.ADD_DIALOG.TITLE' | translate | configuredEntityName }}</h4>
+    <button type="button" id="btn-close" class="close" (click)="onCloseForm(false)">
+        <span class="font-24 fonts-close"><i class="fas fa-times" aria-hidden="true"></i></span>
+    </button>
+</div>
+<!-- Model Header End -->
+
+<!-- Add Case Start -->
+<div class="modal-body padding-32 pt-3" *ngIf="caseForm">
+    <form [formGroup]="caseForm">
+        <!-- Name -->
+        <div class=" form-group">
+            <label>{{'CASES.ADD_DIALOG.NAME' | translate}} <span class="mandatory"></span></label>
+            <input type="text" #caseName id="txt-name" class="form-control ht--40" name="name" formControlName="name"
+                [ngClass]="{ 'is-invalid': caseForm['controls'].name.errors && (caseForm['controls'].name.dirty || caseForm['controls'].name.touched) }"
+                trimValue autofocus>
+            <div *ngFor='let validation of validation_messages.name' class='invalid-feedback'>
+                <div *ngIf="caseForm['controls'].name.hasError(validation.type) && caseForm['controls'].name.errors && (caseForm['controls'].name.dirty || caseForm['controls'].name.touched)"
+                    id="errorNameIsRequired">
+                    {{ validation.message | translate}}
+                </div>
+            </div>
+        </div>
+        <!-- Name -->
+
+        <!-- Description -->
+        <div class=" form-group">
+            <label>{{'CASES.ADD_DIALOG.DESCRIPTION' | translate}}</label>
+            <input type="text" id="txt-description" class="form-control ht--40" name="description" formControlName="description"
+                [ngClass]="{ 'is-invalid': caseForm['controls'].description.errors && (caseForm['controls'].description.dirty || caseForm['controls'].description.touched) }"
+                trimValue>
+            <div *ngFor='let validation of validation_messages.description' class='invalid-feedback'>
+                <div
+                    *ngIf="caseForm['controls'].description.hasError(validation.type) && caseForm['controls'].description.errors && (caseForm['controls'].description.dirty || caseForm['controls'].description.touched)">
+                    {{ validation.message | translate}}
+                </div>
+            </div>
+        </div>
+        <!-- Description -->
+
+        <!-- Record Type -->
+        <div class=" form-group" *ngIf="isShowRecordTypes ">
+            <label> {{'CASES.ADD_DIALOG.RECORD_TYPE' | translate}} </label>
+        <p-dropdown id="drp-entityRecordType" name="entityRecordTypeId" optionLabel="label" appendTo="body"
+            panelStyleClass="maxWidthOverride-xxl" formControlName="entityRecordTypeId" filterBy="label" class="form-control"
+            [options]="entityRecordTypes" placeholder="{{ 'CASES.ADD_DIALOG.RECORDTYPE_PLACEHOLDER' | translate}}"
+            [filter]="true" [resetFilterOnHide]="false"
+            [ngClass]="{ 'is-invalid': submitted && caseForm['controls'].entityRecordTypeId.errors && (caseForm['controls'].entityRecordTypeId.dirty || caseForm['controls'].entityRecordTypeId.touched) }"
+            [showClear]="true" (onChange)="onRecordTypeChange($event)" (onClear)="onRecordTypeClear($event)">
+        </p-dropdown>
+            <div *ngFor='let validation of validation_messages.entityRecordTypeId' class='invalid-feedback'>
+                <div *ngIf="caseForm['controls'].entityRecordTypeId.hasError(validation.type) && caseForm['controls'].entityRecordTypeId.errors && (caseForm['controls'].entityRecordTypeId.dirty || caseForm['controls'].entityRecordTypeId.touched)"
+                    id="errorEntityRecordTypeIdValidation">
+                    {{ validation.message | translate}}
+                </div>
+            </div>
+        </div>
+        <!-- Record Type -->
+
+        <!-- Related To -->
+        <ng-container *ngIf="isShowRelatedTo">
+            <div class=" form-group">
+                <label class="mb-1 fs13px w-100">{{relatedToEntiyName ? relatedToEntiyName : 'CASES.ADD_DIALOG.LISTING_RELATED_TO' | translate}} </label>
+                <div class="d-flex align-items-center w-100">
+                    <div [ngClass]="isAddRelatedTo && isShowAddButton ? 'w-with-btn' : 'w-100'">
+                        <ngx-related-to-control class="d-inline-block w-100"
+                            #relatedTo
+                            formControlName="relatedTo" 
+                            [isReadOnly]="isReadOnly"
+                            [SelectedEntityTypeId]="SelectedEntityTypeId" 
+                            [entityTypeId]="entityTypeId" 
+                            (onChangeRelatedTo)="onRelatedToChange($event)"
+                            (isAddRelatedTo)="setIsAddRelatedTo($event)">
+                            
+                        </ngx-related-to-control>
+                    </div>                    
+
+                    <ng-container *ngIf="isAddRelatedTo && isShowAddButton">
+                        <button type="button" id="btn-add-related-to"
+                            class="btn btn-outline-secondary btn-light-grey min-w-30px ml-3 rounded-circle d-flex align-items-center justify-content-center"
+                            (click)="addRelatedTo()" triggers="hover" tooltipClass="tooltip-backward-small"
+                            ngbTooltip="{{'CASES.ADD_DIALOG.TOOLTIP_ADD_RELATEDTO' | translate}}">
+                            <i class="fas fa-plus" aria-hidden="true"></i>
+                        </button>
+                    </ng-container>
+                </div>
+            </div>
+        </ng-container>
+        <!-- Related To -->
+
+        <!-- Workflow -->
+        <ng-container *ngIf="isShowWorkFlow">
+            <div class="form-group">
+                <label>{{'CASES.ADD_DIALOG.WORKFLOW' | translate}}<span class="mandatory"></span></label>
+                <p-dropdown id="drp-workflow" name="entityWorkflowId" optionLabel="label" optionValue="value" appendTo="body"
+                    panelStyleClass="maxWidthOverride-xxl" formControlName="entityWorkflowId" class="form-control"
+                    [options]="workflows" placeholder="{{'CASES.ADD_DIALOG.WORKFLOW_PLACEHOLDER' | translate}}"
+                    (onChange)="onWorkflowChange($event)" (onClear)="onWorkflowClear($event)"
+                    [ngClass]="{ 'is-invalid': submitted && caseForm['controls'].entityWorkflowId.errors && (caseForm['controls'].entityWorkflowId.dirty || caseForm['controls'].entityWorkflowId.touched) }"
+                    [showClear]="true" [filter]="true" [resetFilterOnHide]="false" required>
+                </p-dropdown>
+                <div *ngFor='let validation of validation_messages.entityWorkflowId' class='invalid-feedback'>
+                    <div *ngIf="caseForm['controls'].entityWorkflowId.hasError(validation.type) && caseForm['controls'].entityWorkflowId.errors && (caseForm['controls'].entityWorkflowId.dirty || caseForm['controls'].entityWorkflowId.touched)"
+                        id="errorWorkflowValidation">
+                        {{ validation.message | translate}}
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <!-- Workflow -->
+        
+        <!-- Assigned To -->
+        <ng-container *ngIf="isAssignCase">
+            <div *ngIf="isShowAssignTo && !(entityHiddenFieldSettings | isEntityFieldHidden: entityTypeId : sectionCodes : fieldNames?.AssignedTo)" class=" form-group">
+                <label>{{'CASES.ADD_DIALOG.ASSIGNED_TO' | translate}}</label>
+            
+                    <!-- Assigned To Loading Bar -->
+                    <ngx-control-level-loading-bar *ngIf="showAssignedToLoader"></ngx-control-level-loading-bar>
+            
+                    <p-dropdown id="drp-assigned-to" name="assignedTo" optionLabel="label" appendTo="body"
+                        panelStyleClass="maxWidthOverride-xxl" optionValue="value" formControlName="assignedTo"
+                        (onFilter)="assignedToOnFilter($event)" (onChange)="assignedToOnChange($event)" class="form-control"
+                        [options]="assignedToUsers" placeholder="{{ 'CASES.ADD_DIALOG.ASSIGNED_TO_PLACEHOLDER' | translate}}"
+                        [filter]="true" [resetFilterOnHide]="false" [showClear]="true">
+                    </p-dropdown>
+                </div>
+        </ng-container>
+        <!-- Assigned To -->
+
+        <!-- Privacy Level -->
+        <div *ngIf="isShowPrivacyLevels" class=" form-group">
+            <label>{{'CASES.ADD_DIALOG.PRIVACY_LEVEL' | translate}}</label>
+        
+            <ngx-control-level-loading-bar *ngIf="showPrivacyLevelLoader"></ngx-control-level-loading-bar>
+            <p-dropdown id="drp-privacy-levels" name="privacyLevel" optionLabel="name" optionValue="intValue1"
+                formControlName="privacyLevel" class="form-control" [options]="privacyLevels"
+                placeholder="{{ 'CASES.ADD_DIALOG.PRIVACY_LEVEL_PLACEHOLDER'| translate}}">
+            </p-dropdown>
+        </div>
+        <!-- Privacy Level -->
+
+        <div class="modal-footer border-top-0 px-0 pb-0">
+            <button type="button" class='btn btn-outline-secondary me-2' id="btn-cancel"
+                (click)="onCloseForm(false)">{{'CASES.ADD_DIALOG.BUTTON_CANCEL' | translate}}</button>
+            <button type="button" (click)="saveCase(caseForm.value)" id="btn-save" class='btn btn-primary'>{{'CASES.ADD_DIALOG.BUTTON_ADD' | translate}}</button>
+        </div>
+    </form>
+</div>
+<!-- Add Case End -->

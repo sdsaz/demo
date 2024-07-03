@@ -1,0 +1,380 @@
+<!-- START: Loading Bar-->
+<ngx-tab-level-loader *ngIf="showLoadingBar"></ngx-tab-level-loader>
+<!-- END: Loading Bar-->
+
+<div class="navTabs">
+    <div class="card border-0 p-0 mb-0">
+        <div class='card-body pt-0'>
+            <div class="tbl-entity tbl-dynamic mb-0">
+                <div class="table-spinner"> 
+                    <p-table *ngIf="dataSource.columnSchema" #pTable [responsive]="true" responsiveLayout="stack"
+                        [rows]="_commonHelper.DefaultPageSize"
+                        [rowsPerPageOptions]='_commonHelper.globalRowsPerPageOptions'
+                        [columns]="dataSource.columnSchema.fields | visible" [value]="dataSource.data" sortField="field"
+                        [sortOrder]="1" [lazy]="true" [totalRecords]="totalRecords" [autoLayout]="true"
+                        [scrollable]="true" [paginator]="paginationEnabled && totalRecords > 0" [ngClass]="totalRecords == 0 ? 'tbl-height-zero' : ''"
+                        [scrollHeight]="'calc(100vh - 248px)'" (onPage)="paginate($event)"
+                        paginatorDropdownAppendTo="body">
+                        <ng-template pTemplate="caption">
+                            <div *ngIf="enableSearch" class="p-input-icon-right w-100">
+                                <i class="pi pi-search" aria-hidden="true"></i>
+                                <input #searchBoxInput pInputText type="text" id="txt-search-text"
+                                    class="w-100 customInputText form-control" size="50"
+                                    (keyup)="search($event.target.value)" />
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <ng-container *ngFor="let col of columns"> 
+                                    <ng-container *ngIf="col.isVisible">
+                                        <th [pSortableColumn]="col.field" id="tblColumnHeader"
+                                            [pSortableColumnDisabled]="!col.sortable" 
+                                            [ngStyle]="col.style ? col.style : ''"    
+                                            [ngClass]="[(col.type == dynamicTableColumnType[dynamicTableColumnType.percentage] || col.type == dynamicTableColumnType[dynamicTableColumnType.currency] || col.type == dynamicTableColumnType[dynamicTableColumnType.numeric] || col.type == dynamicTableColumnType[dynamicTableColumnType.duration] || col.type == dynamicTableColumnType[dynamicTableColumnType.workingduration]) ? 'justify-right-lg pr-46px' : '', col.header == '' ? 'hide-when-no-records' : '', (col.type == dynamicTableColumnType[dynamicTableColumnType.bookmark]) && col.class ? col.class : '', ((col.type == dynamicTableColumnType[dynamicTableColumnType.action]) && !(col | showHideAction : data) ? 'w-0px' : '') ]"                                
+                                            scope="col" 
+                                            (click)="changeOrder(col)">                                            
+                                            {{ col.header | translate | configuredEntityName}}
+                                            <i *ngIf="col.type.toLowerCase() == 'duration'" class="fas fa-info-circle dark-grey ml-1 info-tooltip" tooltipClass="custom-tooltip-class" [ngbTooltip]="('CRM.DYNAMIC_COMPONENTS.TABLE.TOLLTIP_DURATION' | translate).replace('[[hoursInDay]]','24')" placement="top top-left" container="body" aria-hidden="true"></i>
+                                            <i *ngIf="col.type.toLowerCase() == 'workingduration'" class="fas fa-info-circle dark-grey ml-1 info-tooltip" tooltipClass="custom-tooltip-class" [ngbTooltip]="('CRM.DYNAMIC_COMPONENTS.TABLE.TOLLTIP_DURATION' | translate).replace('[[hoursInDay]]',hoursInDay)" placement="top top-left" container="body" aria-hidden="true"></i>
+                                            <i *ngIf="col.field == 'uomName'" class="fas fa-info-circle dark-grey ml-1 info-tooltip" tooltipClass="custom-tooltip-class" ngbTooltip="Unit Of Measurement" placement="top top-left" container="body" aria-hidden="true"></i>
+                                            <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
+                                        </th>
+                                    </ng-container>
+                                </ng-container>
+                            
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-data let-columns="columns">
+                            <tr>
+                                <ng-container *ngFor="let col of columns">
+                                    <ng-container *ngIf="col.isVisible">
+                                        <td [ngStyle]="col.style ? col.style : ''" 
+                                            [ngClass]="[col.class ? col.class : '', ((col.type == dynamicTableColumnType[dynamicTableColumnType.action]) && !(col | showHideAction : data) ? 'w-0px' : '')]">
+                                            <ng-container [ngSwitch]="col.type">
+                                                <!-- <p>Column: {{ col | json}}</p>
+                                                <p>Data: {{ data[col.field] | json}}</p> -->
+                                                <!-- Started Text -->
+                                                <span *ngSwitchCase="dynamicTableColumnType[dynamicTableColumnType.text]" class="w-100 d-flex">
+                                                    <span class="p-column-title">
+                                                        {{ col.header | translate | configuredEntityName}}
+                                                    </span>
+                                                    <span class="pre-text"
+                                                        [ngbTooltip]="col.tooltipField && col.tooltipField != '' ? ((data[col.tooltipField] && data[col.tooltipField] != '') ? data[col.tooltipField] : null) : ((col.tooltip && col.tooltip!='') ? (col.tooltip | translate | configuredEntityName) : null)" placement="top auto" container="body">
+                                                        <span
+                                                            *ngIf="col.iconClassField && col.iconClassField != '' && data[col.iconClassField] && data[col.iconClassField] !=''">
+                                                            <i [class]="data[col.iconClassField]" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        <span *ngIf="(col.iconClass && col.iconClass != '') ? col.iconClass : null">
+                                                            <i [class]="col.iconClass" class="me-1 dark-grey"></i>
+                                                        </span>{{ data[col.field] }}</span>
+                                                </span>
+                                                <!-- Started Download -->
+                                                <span *ngSwitchCase="dynamicTableColumnType[dynamicTableColumnType.download]" class="w-100 d-flex">
+                                                    <span class="p-column-title">
+                                                        {{ col.header | translate | configuredEntityName}}
+                                                    </span>
+                                                    <span class="d-block"
+                                                        [ngbTooltip]="col.tooltipField && col.tooltipField != '' ? ((data[col.tooltipField] && data[col.tooltipField] != '') ? data[col.tooltipField] : null) : ((col.tooltip && col.tooltip!='') ? (col.tooltip | translate | configuredEntityName) : null)" placement="top auto" container="body">
+                                                        <span
+                                                            *ngIf="col.iconClassField && col.iconClassField != '' && data[col.iconClassField] && data[col.iconClassField] !=''">
+                                                            <i [class]="data[col.iconClassField]" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        <span *ngIf="(col.iconClass && col.iconClass != '') ? col.iconClass : null">
+                                                            <i [class]="col.iconClass" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        <a class="dark-blue cursor-pointer-link pre-text" (click)='onPreviewButtonClick(data[col.paramField])'
+                                                            id="link-downloadEntity">{{ data[col.field] }}</a>
+                                                    </span>
+                                                </span>
+                                                <!-- Started Link -->
+                                                <span *ngSwitchCase="dynamicTableColumnType[dynamicTableColumnType.link]" class="w-100 d-flex">
+                                                    <span class="p-column-title">
+                                                        {{ col.header | translate | configuredEntityName}}
+                                                    </span>
+                                                    <span class="d-block"
+                                                        [ngbTooltip]="col.tooltipField && col.tooltipField != '' ? ((data[col.tooltipField] && data[col.tooltipField] != '') ? data[col.tooltipField] : null) : ((col.tooltip && col.tooltip!='') ? (col.tooltip | translate | configuredEntityName) : null)" placement="top auto" container="body">
+                                                        <span
+                                                            *ngIf="col.iconClassField && col.iconClassField != '' && data[col.iconClassField] && data[col.iconClassField] !=''">
+                                                            <i [class]="data[col.iconClassField]" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        <span *ngIf="(col.iconClass && col.iconClass != '') ? col.iconClass : null">
+                                                            <i [class]="col.iconClass" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        <a *ngIf="col.link && (col.link.permission | hasPermission) && (col.link.permissionField ? data[col.link.permissionField] : true) && (col.link.url | linkFormat: data : col.link.params) else nolink"
+                                                            [routerLink]="[col.link.url | linkFormat: data : col.link.params]" id="link-navigateToEntity"
+                                                            class="dark-blue font-weight-bold no-underline pre-text">{{ data[col.field] }}</a>
+                                                    </span>
+                                                    <ng-template #nolink class="pre-text">{{ data[col.field] }}</ng-template>
+                                                </span>
+                                                <!-- Started Email -->
+                                                <span *ngSwitchCase="dynamicTableColumnType[dynamicTableColumnType.email]" class="w-100 d-flex">
+                                                    <span class="p-column-title">
+                                                        {{ col.header | translate | configuredEntityName}}
+                                                    </span>
+                                                    <span class="d-block"
+                                                        [ngbTooltip]="col.tooltipField && col.tooltipField != '' ? ((data[col.tooltipField] && data[col.tooltipField] != '') ? data[col.tooltipField] : null) : ((col.tooltip && col.tooltip!='') ? (col.tooltip | translate | configuredEntityName) : null)" placement="top auto" container="body">
+                                                        <span
+                                                            *ngIf="col.iconClassField && col.iconClassField != '' && data[col.iconClassField] && data[col.iconClassField] !=''">
+                                                            <i [class]="data[col.iconClassField]" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        <span *ngIf="(col.iconClass && col.iconClass != '') ? col.iconClass : null">
+                                                            <i [class]="col.iconClass" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        <a class="dark-blue font-weight-bold no-underline cursor-pointer" href="mailto:{{data[col.field]}}"
+                                                            id="link-email">
+                                                            {{ data[col.field] ? data[col.field] : '' }}
+                                                        </a>
+                                                    </span>
+                                                </span>
+                                                <!-- Started Phone -->
+                                                <span *ngSwitchCase="dynamicTableColumnType[dynamicTableColumnType.phone]" class="w-100 d-flex">
+                                                    <span class="p-column-title">
+                                                        {{ col.header | translate | configuredEntityName}}
+                                                    </span>
+                                                    <span class="d-block"
+                                                        [ngbTooltip]="col.tooltipField && col.tooltipField != '' ? ((data[col.tooltipField] && data[col.tooltipField] != '') ? data[col.tooltipField] : null) : ((col.tooltip && col.tooltip!='') ? (col.tooltip | translate | configuredEntityName) : null)" placement="top auto" container="body">
+                                                        <span
+                                                            *ngIf="col.iconClassField && col.iconClassField != '' && data[col.iconClassField] && data[col.iconClassField] !=''">
+                                                            <i [class]="data[col.iconClassField]" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        <span *ngIf="(col.iconClass && col.iconClass != '') ? col.iconClass : null">
+                                                            <i [class]="col.iconClass" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        <ng-container *ngIf="data[col.field]">
+                                                            <a class="dark-blue font-weight-bold no-underline cursor-pointer" href="{{ data[col.field] | phone:'link'}}"
+                                                            id="link-phone">
+                                                            {{ data[col.field] }}
+                                                        </a>
+                                                        </ng-container>
+                                                    </span>
+                                                </span>
+                                                <!-- Started Currency -->
+                                                <span *ngSwitchCase="dynamicTableColumnType[dynamicTableColumnType.currency]" class="w-100 d-flex justify-right-lg pr-5">
+                                                    <span class="p-column-title">
+                                                        {{ col.header | translate | configuredEntityName}}
+                                                    </span>
+                                                    <div *ngIf="data[col.field] !== null   else blankprice"
+                                                        [ngbTooltip]="col.tooltipField && col.tooltipField != '' ? ((data[col.tooltipField] && data[col.tooltipField] != '') ? data[col.tooltipField] : null) : ((col.tooltip && col.tooltip!='') ? (col.tooltip | translate | configuredEntityName) : null)" placement="top auto" container="body">
+                                                        <span
+                                                            *ngIf="col.iconClassField && col.iconClassField != '' && data[col.iconClassField] && data[col.iconClassField] !=''">
+                                                            <i [class]="data[col.iconClassField]" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        <span *ngIf="(col.iconClass && col.iconClass != '') ? col.iconClass : null">
+                                                            <i [class]="col.iconClass" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        {{(currencySymbol)+(data[col.field] | number:'1.2-2') }}
+                                                    </div>
+                                                    <ng-template #blankprice>
+                                                        <div>&nbsp;</div>
+                                                    </ng-template>
+                                                </span>
+                                                <!-- Started Percent -->
+                                                <span *ngSwitchCase="dynamicTableColumnType[dynamicTableColumnType.percentage]" class="w-100 d-flex justify-right-lg pr-5">
+                                                    <span class="p-column-title">
+                                                        {{ col.header | translate | configuredEntityName}}
+                                                    </span>
+
+                                                    <div *ngIf="data[col.field] !== null   else blankprice"
+                                                        [ngbTooltip]="col.tooltipField && col.tooltipField != '' ? ((data[col.tooltipField] && data[col.tooltipField] != '') ? data[col.tooltipField] : null) : ((col.tooltip && col.tooltip!='') ? (col.tooltip | translate | configuredEntityName) : null)" placement="top auto" container="body">
+                                                        <span
+                                                            *ngIf="col.iconClassField && col.iconClassField != '' && data[col.iconClassField] && data[col.iconClassField] !=''">
+                                                            <i [class]="data[col.iconClassField]" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        <span *ngIf="(col.iconClass && col.iconClass != '') ? col.iconClass : null">
+                                                            <i [class]="col.iconClass" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        {{(data[col.field] | number:'1.0-0')+'%' }}
+                                                    </div>
+                                                    <ng-template #blankprice>
+                                                        <div>&nbsp;</div>
+                                                    </ng-template>
+                                                </span>
+                                                <!-- Started Multiline -->
+                                                <span *ngSwitchCase="dynamicTableColumnType[dynamicTableColumnType.multiline]" class="w-100 d-flex">
+                                                    <span class="p-column-title">
+                                                        {{ col.header | translate | configuredEntityName}}
+                                                    </span>
+                                                    <span class="description-box" ngbTooltip="{{ data[col.field] }}" placement="top right" container="body">{{ data[col.field] }}</span>
+                                                </span>
+                                                <!-- Started Person -->
+                                                <span *ngSwitchCase="dynamicTableColumnType[dynamicTableColumnType.person]"
+                                                    class="w-100 d-flex">
+                                                    <span class="p-column-title">
+                                                        {{ col.header | translate | configuredEntityName}}
+                                                    </span>
+                                                    <ng-container *ngIf="col?.person !== null else elsePersonPart">
+                                                        <ngx-common-user-profile [userId]="data[col?.person?.id]" [userTypeId]="col?.person?.userTypeId"
+                                                            [privacyLevel]="data[col?.person?.privacyLevel]" [isShowName]="false" [isItemDisable]="true"
+                                                            [userLabel]="col?.person?.label | translate | configuredEntityName">
+                                                        </ngx-common-user-profile>
+                                                    </ng-container>
+                                                    <ng-template #elsePersonPart>
+                                                        <div>&nbsp;</div>
+                                                    </ng-template>
+                                                </span>
+                                                <!-- Started Numeric -->
+                                                <span *ngSwitchCase="dynamicTableColumnType[dynamicTableColumnType.numeric]" class="w-100 d-flex justify-right-lg pr-5">
+                                                    <span class="p-column-title">
+                                                        {{ col.header | translate | configuredEntityName}}
+                                                    </span>
+                                                    <div *ngIf="data[col.field] !== null   else blanknumaric"
+                                                        [ngbTooltip]="col.tooltipField && col.tooltipField != '' ? ((data[col.tooltipField] && data[col.tooltipField] != '') ? data[col.tooltipField] : null) : ((col.tooltip && col.tooltip!='') ? (col.tooltip | translate | configuredEntityName) : null)" placement="top auto" container="body">
+                                                        <span
+                                                            *ngIf="col.iconClassField && col.iconClassField != '' && data[col.iconClassField] && data[col.iconClassField] !=''">
+                                                            <i [class]="data[col.iconClassField]" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        <span *ngIf="(col.iconClass && col.iconClass != '') ? col.iconClass : null">
+                                                            <i [class]="col.iconClass" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        {{ data[col.field] | customPipe: col.type.toLowerCase() : col.format : hoursInDay}}
+                                                    </div>
+                                                    <ng-template #blanknumaric>
+                                                        <div>&nbsp;</div>
+                                                    </ng-template>
+                                                </span>
+                                                <!-- Started Datetime -->
+                                                <span *ngSwitchCase="dynamicTableColumnType[dynamicTableColumnType.datetime]" class="w-100 d-flex">
+                                                    <span class="p-column-title">
+                                                        {{ col.header | translate | configuredEntityName}}
+                                                    </span>
+                                                    <span class="pre-text" *ngIf="data[col.field] !== null   else blanknumaric"
+                                                        [ngbTooltip]="col.tooltipField && col.tooltipField != '' ? ((data[col.tooltipField] && data[col.tooltipField] != '') ? data[col.tooltipField] : null) : ((col.tooltip && col.tooltip!='') ? (col.tooltip | translate | configuredEntityName) : null)" placement="top auto" container="body">
+                                                        <span
+                                                            *ngIf="col.iconClassField && col.iconClassField != '' && data[col.iconClassField] && data[col.iconClassField] !=''">
+                                                            <i [class]="data[col.iconClassField]" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        <span *ngIf="(col.iconClass && col.iconClass != '') ? col.iconClass : null">
+                                                            <i [class]="col.iconClass" class="me-1 dark-grey"></i>
+                                                        </span>{{ data[col.field] | customPipe: col.type.toLowerCase() : col.format : hoursInDay}}</span>
+                                                    <ng-template #blanknumaric>
+                                                        <div>&nbsp;</div>
+                                                    </ng-template>
+                                                </span>
+                                                <!-- Started Duration -->
+                                                <span *ngSwitchCase="dynamicTableColumnType[dynamicTableColumnType.duration]" class="w-100 d-flex justify-right-lg pr-5">
+                                                    <span class="p-column-title">
+                                                        {{ col.header | translate | configuredEntityName}}
+                                                    </span>
+                                                    <div *ngIf="data[col.field] !== null   else blanknumaric"
+                                                        [ngbTooltip]="col.tooltipField && col.tooltipField != '' ? ((data[col.tooltipField] && data[col.tooltipField] != '') ? data[col.tooltipField] : null) : ((col.tooltip && col.tooltip!='') ? (col.tooltip | translate | configuredEntityName) : null)" placement="top auto" container="body">
+                                                        <span
+                                                            *ngIf="col.iconClassField && col.iconClassField != '' && data[col.iconClassField] && data[col.iconClassField] !=''">
+                                                            <i [class]="data[col.iconClassField]" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        <span *ngIf="(col.iconClass && col.iconClass != '') ? col.iconClass : null">
+                                                            <i [class]="col.iconClass" class="me-1 dark-grey"></i>
+                                                        </span> {{ data[col.field] | customPipe: col.type.toLowerCase() : col.format : hoursInDay}}
+                                                    </div>
+                                                    <ng-template #blanknumaric>
+                                                        <div>&nbsp;</div>
+                                                    </ng-template>
+                                                </span>
+                                                <!-- Started Working Duration -->
+                                                <span *ngSwitchCase="dynamicTableColumnType[dynamicTableColumnType.workingduration]"
+                                                    class="w-100 d-flex justify-right-lg pr-5">
+                                                    <span class="p-column-title">
+                                                        {{ col.header | translate | configuredEntityName}}
+                                                    </span>
+                                                    <div *ngIf="data[col.field] !== null   else blanknumaric"
+                                                        [ngbTooltip]="col.tooltipField && col.tooltipField != '' ? ((data[col.tooltipField] && data[col.tooltipField] != '') ? data[col.tooltipField] : null) : ((col.tooltip && col.tooltip!='') ? (col.tooltip | translate | configuredEntityName) : null)" placement="top auto" container="body">
+                                                        <span
+                                                            *ngIf="col.iconClassField && col.iconClassField != '' && data[col.iconClassField] && data[col.iconClassField] !=''">
+                                                            <i [class]="data[col.iconClassField]" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        <span *ngIf="(col.iconClass && col.iconClass != '') ? col.iconClass : null">
+                                                            <i [class]="col.iconClass" class="me-1 dark-grey"></i>
+                                                        </span>{{ data[col.field] | customPipe: col.type.toLowerCase() : col.format : hoursInDay}}
+                                                    </div>
+                                                    <ng-template #blanknumaric>
+                                                        <div>&nbsp;</div>
+                                                    </ng-template>
+                                                </span>
+                                                <!-- Started DateTime Period Ago Duration -->
+                                                <span *ngSwitchCase="dynamicTableColumnType[dynamicTableColumnType.dateTimePeriodAgo]" class="w-100 d-flex">
+                                                    <span class="p-column-title">
+                                                        {{ col.header | translate | configuredEntityName}}
+                                                    </span>
+                                                    <span
+                                                        [ngbTooltip]="col.tooltipField && col.tooltipField != '' ? ((data[col.tooltipField] && data[col.tooltipField] != '') ? data[col.tooltipField] : null) : ((col.tooltip && col.tooltip!='') ? (col.tooltip | translate | configuredEntityName) : null)" placement="top auto" container="body">
+                                                        <span
+                                                            *ngIf="col.iconClassField && col.iconClassField != '' && data[col.iconClassField] && data[col.iconClassField] !=''">
+                                                            <i [class]="data[col.iconClassField]" class="me-1 dark-grey"></i>
+                                                        </span>
+                                                        <span *ngIf="(col.iconClass && col.iconClass != '') ? col.iconClass : null">
+                                                            <i [class]="col.iconClass" class="me-1 dark-grey"></i>
+                                                        </span>{{ (data[col.field] | timeAgoPipe : data['utcCreated'])}}</span>
+                                                </span>
+                                                <!-- Started Badge -->
+                                                <span *ngSwitchCase="dynamicTableColumnType[dynamicTableColumnType.badge]" class="w-100 d-flex">
+                                                    <span class="p-column-title">
+                                                        {{ col.header | translate | configuredEntityName}}
+                                                    </span>
+                                                    <span *ngIf="data[col.field] != null" [ngClass]="data[col.field] == true ? 'bg-primary' : 'bg-danger'"
+                                                        class="h-21 badge badge--status">
+                                                        {{ data[col.field] | active }}
+                                                    </span>
+                                                </span>
+                                                <!-- Bookmark Icon -->
+                                                <span *ngSwitchCase="dynamicTableColumnType[dynamicTableColumnType.bookmark]" class="w-100 d-flex">
+                                                    <span ngbTooltip="{{'ACTIVITY.ENTITYBOOKMARK.TOOLTIP' | translate}}" placement="top auto" container="body">
+                                                        <span *ngIf="data[col.field]" class="d-inline-block position-relative">
+                                                            <i class="fa-solid fa-bookmark clr-orange font-14"></i>
+                                                            <i class="fa-solid fa-star star-icon"></i>
+                                                        </span>
+                                                        <i *ngIf="!data[col.field]" class="fa-regular fa-bookmark dark-grey font-14"></i>
+                                                    </span>
+                                                </span>
+                                                <!-- Started Action -->
+                                                <ng-container *ngSwitchCase="dynamicTableColumnType[dynamicTableColumnType.action]">
+                                                    <span  *ngIf="col | showHideAction : data" class="w-100">
+                                                        <div class="dropdown text-right">
+                                                            <button pButton icon="fas fa-wrench" class="p-button-rounded p-button-sm" type="button"
+                                                                id="drp-action" data-bs-toggle="dropdown" aria-expanded="false">   
+                                                            </button>
+                                                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="drp-action">
+                                                                <li *ngFor="let action of col.actionGroup" [id]="'action-'+ (action?.type)"
+                                                                    [ngClass]="{ 'd-none': _commonHelper.havePermission(action.permissionHash.split(',')) ? (action.hasOwnProperty('visibilityExpression') ? !data[action.visibilityExpression] : false) : true }">
+                                                                    <a [id]="'link-'+ (action?.type)" (click)="onActionClick(data[col.field], action?.type, data)" class="dropdown-item"
+                                                                        [ngClass]="{ 'd-none': _commonHelper.havePermission(action.permissionHash.split(',')) ? (action.hasOwnProperty('visibilityExpression') ? !data[action.visibilityExpression] : false) : true }">
+                                                                        <i class="{{action?.class}}" aria-hidden="true"></i>
+                                                                        {{ action?.buttonName | translate}}
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </span>
+                                                </ng-container>
+                                            </ng-container>
+                                        </td>
+                                    </ng-container>                                
+                                </ng-container>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorleft">
+                            <span id="startToEndOfTotalRecords">{{ start }} - {{ end }} of {{ totalRecords }} records</span>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorright">
+                            <p-button type="button" icon="pi pi-chevron-left" styleClass="p-button-text" id="paginatorLeftPage"
+                                (click)="prev()" [disabled]="end == pagingParams.pageSize">
+                            </p-button>
+                            <input type="number" min="1" [max]="totalPages" [(ngModel)]="pagingParams.pageNo" id="paginatorInputPage"
+                                (change)="changePage()" class="pageNoInput"> / 
+                            <span id="paginatorTotalPages" class="ml-1">{{totalPages}}</span>
+                            <p-button type="button" icon="pi pi-chevron-right" styleClass="p-button-text" id="paginatorRightPage"
+                                (click)="next()" [disabled]="end == totalRecords"></p-button>
+                            <p-button type="button" icon="pi pi-undo" styleClass="p-button-text" id="paginatorResetButton"
+                                (click)="resetPaginator()" [disabled]="end == pagingParams.pageSize"></p-button>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage" let-columns>
+                            <tr>
+                                <td [colSpan]="columns.length" id="lbl-NoRecordsFound" class="table-no-record text-center">
+                                    No Records Found
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

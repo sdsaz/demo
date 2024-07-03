@@ -1,0 +1,64 @@
+<!-- Model Header Start -->
+<div class="modal-header border-bottom-0 padding-32 pb-0">
+    <h4 class="modal-title font-weight-bold">{{ 'WORKTASK.DETAIL.LINKED_WORK_TASKS_TAB.LINK_WORKTASK_TITLE' | translate | configuredEntityName }}</h4>
+    <button type="button" id="btn-close" class="close" (click)="onCloseForm(false)">
+        <span class="font-24 fonts-close"><i class="fas fa-times" aria-hidden="true"></i></span>
+    </button>
+</div>
+<!-- Model Header End -->
+
+<!-- Link Work Task Start -->
+<div class="modal-body padding-32 pt-3" *ngIf="form">
+    <form [formGroup]='form'>
+        <div class="row">
+
+            <!-- Related Work Task -->
+            <div class="col-md-12 form-group">
+                <label>{{'WORKTASK.DETAIL.LINKED_WORK_TASKS_TAB.RELATED_WORKTASK_LABEL' | translate | configuredEntityName}} <span class="mandatory"></span></label>
+                <ng-container *ngIf="!isEdit else linkLabel">
+                    <p-dropdown #workTasksDropdown id="drp-worktasks" [options]="workTasks" [filter]="true" [resetFilterOnHide]="false"
+                        [showClear]="true" formControlName="relatedTo" class="form-control text-left mb-3 mb-sm-0" 
+                        placeholder="{{'WORKTASK.DETAIL.LINKED_WORK_TASKS_TAB.RELATED_WORKTASK_PLACEHOLDER' | translate| configuredEntityName}}"
+                        (onFilter)="onFilterWorkTasks($event)" [ngClass]="{ 'is-invalid': submitted && f.relatedTo.errors }"
+                        (onChange)="onChangeWorkTask($event)" optionLabel="displayName" optionValue="id" >
+                    </p-dropdown>
+                </ng-container>
+                <ng-template #linkLabel>
+                    <div class="disable-text">
+                        {{ (workTasks | displayValueFinder : {id:relatedTo}).length >0 ? (workTasks | displayValueFinder : {id:relatedTo})[0].displayName : ' '}}
+                    </div>
+                </ng-template>
+                <div *ngFor='let validation of validation_messages.relatedTo' class='invalid-feedback'>
+                    <div *ngIf='f.relatedTo.hasError(validation.type) && submitted && f.relatedTo.errors'>
+                        {{ validation.message | translate | configuredEntityName}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Relation Type -->
+            <div class=" col-md-12 form-group">
+                <label>{{'WORKTASK.DETAIL.LINKED_WORK_TASKS_TAB.RELATION_TYPE_LABEL' | translate}} <span
+                        class="mandatory"></span></label>
+                <p-dropdown id="drp-relationType" class="form-control" formControlName="relationTypeId" [filter]="true"
+                    [resetFilterOnHide]="false" [showClear]="true" [options]="relationTypes"
+                    placeholder="{{'WORKTASK.DETAIL.LINKED_WORK_TASKS_TAB.RELATION_TYPE_PLACEHOLDER' | translate}}" optionLabel="name"
+                    optionValue="intValue1" [ngClass]="{ 'is-invalid': submitted && f.relationTypeId.errors }">
+                </p-dropdown>
+
+                <div *ngFor='let validation of validation_messages.relationTypeId' class='invalid-feedback'>
+                    <div *ngIf='f.relationTypeId.hasError(validation.type) && submitted && f.relationTypeId.errors'>
+                        {{ validation.message | translate | configuredEntityName}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer border-top-0 px-0 pb-0">
+            <button type="button" class='btn btn-outline-secondary me-2' id="btn-cancel"
+                (click)="onCloseForm(false)">{{'WORKTASK.DETAIL.LINKED_WORK_TASKS_TAB.BUTTON_CANCEL' |translate}}</button>
+            <button type="button" (click)="linkWorkTask(form.value)" id="btn-save"
+                class='btn btn-primary'>{{'WORKTASK.DETAIL.LINKED_WORK_TASKS_TAB.BUTTON_LINK_SAVE' | translate}}</button>
+        </div>
+    </form>
+</div>
+<!-- Link Work Task End -->

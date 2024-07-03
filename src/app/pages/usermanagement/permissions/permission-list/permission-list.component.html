@@ -1,0 +1,42 @@
+<div class="flexlayout" *ngIf="!isListPermissions">
+    <div class="form_wrapper">
+      <div id="no-access-form">
+        <div class="top">
+          <div class="subtitle m-0">{{'PERMISSION.MESSAGE_PERMISSIONS_NOT_ACCES' | translate}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="isListPermissions" class="entity-page entity-main">
+<!-- Table Header Start -->
+<div class="container-fluid mb-2 lineheight35">
+    <span id="headingEntity" class="fw-600 fs-4">
+        {{ 'URAM.PERMISSION.TITLE' | translate }}
+    </span>
+</div>
+<!-- Table Header End -->
+
+<!-- Table Start -->
+<div class="container-fluid mb-3 pb-5 pb-xl-0">
+    <div class="tbl-permissions-list">
+        <div class="card-columns">
+            <div *ngFor="let object of dataSource | groupBy:'groupName'; let i=index">
+                <div class="mb-3">
+                    <p-card styleClass="customCard">
+                        <ng-template pTemplate="header">
+                            <div class="fw-600 fs-5 pt-3 pb-2 px-3 lineHeight21">{{ object.key }}</div>
+                        </ng-template>
+                        <div class="px-3">
+                            <ul>
+                                <li class="mb-2" *ngFor="let obj of object.value">{{ obj.name }}</li>
+                            </ul>
+                        </div>
+                    </p-card>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- Table End -->

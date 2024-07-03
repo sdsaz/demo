@@ -1,0 +1,655 @@
+<!-- Page Header Start -->
+<div class="container-fluid lineheight35">
+    <div class="row">
+        <div class="col">
+            <span id="headingEntity" class="fw-600 fs-4">{{ 'MYPROFILE_DIALOG.TITLE' | translate }}</span>
+        </div>
+        <div class="col-auto">
+            <button type="button" class="btn  btn-secondary grey-400bg mb-10px mr-2" id="btn-clear-cache" (click)="onClearLocalCache()">
+                {{ 'MYPROFILE_DIALOG.BUTTON_CLEARCACHE' | translate }}
+            </button>
+            <button type="button" class="btn btn-secondary mb-10px" (click)="onBack()" id="btn-back">
+                {{ 'MYPROFILE_DIALOG.TAB_BASIC.BACK' | translate }}
+            </button>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+<!-- Page Content Start -->
+<div class='container-fluid pb-5 pb-12px'>
+    <div class="row gx-3">
+        <!-- Basic Information-->
+        <div class="col-xl-6 mb-3">
+            <p-card styleClass="customProfileCard">
+                <ng-template pTemplate="header">
+                    <div class="row">
+                        <div class="col-6 p-s-t fw-600">
+                            {{ 'MYPROFILE_DIALOG.TAB_BASIC.TITLE' | translate }}
+                        </div>
+
+                    </div>
+                </ng-template>
+                <div *ngIf="basicInfoForm">
+                    <form [formGroup]='basicInfoForm' autocomplete="off">
+                        <div class="row mb-2">
+                            <div class="col-lg-6 vertical-center">
+                                <div class="user-img mb-lg-0 mb-4 mx-auto">
+                                    <ng-container *ngIf="croppedImage;else avatar">
+                                        <img class='rounded-circle' id="img-user"
+                                        [src]='croppedImage != null ? croppedImage : "assets/images/default/users/no-image.jpg"'
+                                        onerror="this.src='assets/images/default/users/no-image.jpg';" alt="">
+                                    </ng-container>
+                                    <ng-template #avatar>
+                                        <ngx-avatar  size="100" class="custom-avatar"
+                                            [name]="profile.shortName" [bgColor]="profile.avatarBGColor" 
+                                             ngbTooltip="{{profile.name}}" placement="top top-left" container="body">
+                                        </ngx-avatar>
+                                    </ng-template>
+                                    <a id="link-add-photo" class="text-nowrap d-inline-block link-icon btn-edit-link"
+                                        (click)="openProfileCropper()">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                    <div *ngIf="croppedImage != '' && croppedImage != null && croppedImage != 'assets/images/default/users/no-image.jpg'" class="btn-remove-link">
+                                        <a id="link-remove-photo" class='text-nowrap link-icon'
+                                            (click)='removeImage()'><i class="fa-regular fa-trash-can"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class='mb-3'>
+                                    <label class="mb-1 fs13px">
+                                        {{ 'MYPROFILE_DIALOG.TAB_BASIC.FIRSTNAME' | translate }}
+                                        <span class="mandatory"></span></label>
+                                    <input type='text' id="txt-firstName" formControlName='firstName' pInputText
+                                        class='w-100' [ngClass]="{ 'is-invalid': submitted && bf.firstName.errors }" />
+                                    <div *ngFor='let validation of basicInfo_validation_messages.firstName'
+                                        class='invalid-feedback'>
+                                        <div id="errorEnterFirstName"
+                                            *ngIf='bf.firstName.hasError(validation.type) && submitted && bf.firstName.errors'>
+                                            {{ validation.message | translate }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='mb-3'>
+                                    <label class="mb-1 fs13px">{{ 'MYPROFILE_DIALOG.TAB_BASIC.LASTNAME' |
+                                        translate }}<span class="mandatory"></span></label>
+                                    <input type='text' id="txt-lastName" formControlName='lastName' class='w-100'
+                                        pInputText [ngClass]="{ 'is-invalid': submitted && bf.lastName.errors }" />
+                                    <div *ngFor='let validation of basicInfo_validation_messages.lastName'
+                                        class='invalid-feedback'>
+                                        <div id="errorEnterLastName"
+                                            *ngIf='bf.lastName.hasError(validation.type) && submitted && bf.lastName.errors'>
+                                            {{ validation.message | translate }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='mb-3'>
+                                    <label class="mb-1 fs13px">{{ 'MYPROFILE_DIALOG.TAB_BASIC.EMAIL' | translate
+                                        }}<span class="mandatory"></span></label>
+                                    <input type='text' id="txt-email" formControlName='email' class='w-100' pInputText
+                                        [ngClass]="{ 'is-invalid': submitted && bf.email.errors }" maxlength="100" />
+                                    <div *ngFor='let validation of basicInfo_validation_messages.email'
+                                        class='invalid-feedback'>
+                                        <div *ngIf='bf.email.hasError(validation.type) && submitted && bf.email.errors'
+                                            id="errorEnterEmail">
+                                            {{ validation.message | translate }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class='col-sm-6 mb-3'>
+                                    <label class="mb-1 fs13px">{{ 'MYPROFILE_DIALOG.TAB_BASIC.PHONENUMBER' |
+                                        translate }}</label>
+                                    <div >
+                                        <!-- <span>+1</span> -->
+                                        <!-- <input type="text" id="txt-phone" class='form-control' pInputText
+                                            mask='(000) 000-0000' formControlName='phone' maxlength='16'
+                                            (input)='inputPhoneMaskValid()'
+                                            [ngClass]="{ 'is-invalid': submitted && bf.phone.errors }" /> -->
+                                            <ngx-phone-control  formControlName="phone"></ngx-phone-control>
+                                        <div *ngFor='let validation of basicInfo_validation_messages.phone'
+                                            class='invalid-feedback'>
+                                            <div id="errorPhoneNumber"
+                                                *ngIf='bf.phone.hasError(validation.type) && submitted && bf.phone.errors'>
+                                                {{ validation.message | translate }}
+                                            </div>
+                                        </div>
+                                        <div *ngIf='isPhoneInvalid' class='invalid-feedback'
+                                            id="errorEnterAValidPhoneNumber">
+                                            {{ 'MYPROFILE_DIALOG.TAB_BASIC.MESSAGE_INVALID_PHONENUMBER' |
+                                            translate
+                                            }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <label class="mb-1 fs13px" for='timezone'>
+                                        {{ 'MYPROFILE_DIALOG.TAB_BASIC.TIMEZONE' | translate}}
+                                        <span class="mandatory"></span>
+                                    </label>
+                                    <p-dropdown id='drp-time-zone' [options]="timeZoneList" formControlName='timezone'
+                                        styleClass="customDropdown" placeholder="Select timezone"
+                                        optionLabel="displayName" optionValue="standardName"
+                                        [ngClass]="{ 'is-invalid': submitted && bf.timezone.errors }" [filter]="true"
+                                        filterBy="displayName">
+                                        <ng-template let-timeZone pTemplate="item">
+                                            <span class="ctryDropdownItem" pTooltip="{{timeZone.displayName}}"
+                                                container="body">{{timeZone.displayName}}</span>
+                                        </ng-template>
+                                    </p-dropdown>
+                                    <div *ngFor='let validation of basicInfo_validation_messages.timezone'
+                                        class='invalid-feedback'>
+                                        <div id="errorSelectATimeZone"
+                                            *ngIf='bf.timezone.hasError(validation.type) && submitted && bf.timezone.errors'>
+                                            {{ validation.message }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6 mb-3'>
+                                    <label class="mb-1 fs13px">{{ 'MYPROFILE_DIALOG.TAB_BASIC.PROFILE_TITLE' | translate
+                                        }}</label>
+                                    <input type='text' id="txt-title" formControlName='title' pInputText class='w-100'
+                                        [ngClass]="{ 'is-invalid': submitted && bf.title.errors }" trimValue />
+                                    <div *ngFor='let validation of basicInfo_validation_messages.title' class='invalid-feedback'>
+                                        <div id="errorEnterTitle" *ngIf='bf.title.hasError(validation.type) && submitted && bf.title.errors'>
+                                            {{ validation.message | translate }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6 mb-3'>
+                                    <label class="mb-1 fs13px">{{ 'MYPROFILE_DIALOG.TAB_BASIC.WEBSITE' | translate
+                                        }}</label>
+                                    <input type='text' id="txt-website" formControlName='website' class='w-100' pInputText
+                                        [ngClass]="{ 'is-invalid': submitted && bf.website.errors }" trimValue />
+                                    <div *ngFor='let validation of basicInfo_validation_messages.website' class='invalid-feedback'>
+                                        <div id="errorEnterWebsite" *ngIf='bf.website.hasError(validation.type)  && submitted &&  bf.website.errors'>
+                                            {{ validation.message | translate }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6 mb-3'>
+                                    <label class="mb-1 fs13px">{{ 'MYPROFILE_DIALOG.TAB_BASIC.LINKEDIN_PROFILE' | translate
+                                        }}</label>
+                                    <input type='text' id="txt-linkedInProfile" formControlName='linkedInProfile' class='w-100' pInputText
+                                        [ngClass]="{ 'is-invalid': submitted && bf.linkedInProfile.errors }" trimValue />
+                                    <div *ngFor='let validation of basicInfo_validation_messages.linkedInProfile' class='invalid-feedback'>
+                                        <div id="errorEnterLinkedInProfile"
+                                            *ngIf='bf.linkedInProfile.hasError(validation.type) && submitted &&  bf.linkedInProfile.errors'>
+                                            {{ validation.message | translate }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6 mb-3'>
+                                    <label class="mb-1 fs13px">{{ 'MYPROFILE_DIALOG.TAB_BASIC.FACEBOOK_PROFILE' | translate
+                                        }}</label>
+                                    <input type='text' id="txt-facebookProfile" formControlName='facebookProfile' class='w-100' pInputText
+                                        [ngClass]="{ 'is-invalid':submitted && bf.facebookProfile.errors }" trimValue />
+                                    <div *ngFor='let validation of basicInfo_validation_messages.facebookProfile' class='invalid-feedback'>
+                                        <div id="errorEnterFacebookProfile"
+                                            *ngIf='bf.facebookProfile.hasError(validation.type) && submitted && bf.facebookProfile.errors'>
+                                            {{ validation.message | translate }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6 mb-3'>
+                                    <label class="mb-1 fs13px">{{ 'MYPROFILE_DIALOG.TAB_BASIC.TWITTER_PROFILE' | translate
+                                        }}</label>
+                                    <input type='text' id="txt-twitterProfile" formControlName='twitterProfile' class='w-100' pInputText
+                                        [ngClass]="{ 'is-invalid': submitted && bf.twitterProfile.errors }" trimValue />
+                                    <div *ngFor='let validation of basicInfo_validation_messages.twitterProfile' class='invalid-feedback'>
+                                        <div id="errorEnterTwitterProfile"
+                                            *ngIf='bf.twitterProfile.hasError(validation.type) && submitted && bf.twitterProfile.errors'>
+                                            {{ validation.message | translate }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='col-sm-6 mb-3'>
+                                    <label class="mb-1 fs13px">{{ 'MYPROFILE_DIALOG.TAB_BASIC.QUALIFICATIONS' | translate
+                                        }}</label>
+                                    <input type='text' id="txt-qualifications" formControlName='qualifications' class='w-100' pInputText
+                                        [ngClass]="{ 'is-invalid': submitted && bf.qualifications.errors }" trimValue />
+                                    <div *ngFor='let validation of basicInfo_validation_messages.qualifications' class='invalid-feedback'>
+                                        <div id="errorEnterQualifications"
+                                            *ngIf='bf.qualifications.hasError(validation.type) && submitted && bf.qualifications.errors'>
+                                            {{ validation.message | translate }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right py-2">
+                                    <button type='button' id="btn-reset-basic" class='btn btn-secondary me-2' (click)='onResetBasicInfoForm()'>{{
+                                        'MYPROFILE_DIALOG.TAB_BASIC.BUTTON_RESET' | translate }}</button>
+                                    <button type='button' id="btn-save-basic" class='btn btn-primary' (click)='saveBasicInfo(basicInfoForm.value)'> {{
+                                        'MYPROFILE_DIALOG.TAB_BASIC.BUTTON_SAVE' | translate }}</button>
+                                </div>
+                        </div>
+                    </form>
+                </div>
+            </p-card>
+        </div>
+
+        <div class="col-xl-6 mb-3">
+            <div class="row">
+                <!-- Address -->
+                <div class="col-xl-12 mb-3">
+                    <p-card styleClass="customProfileCard">
+                        <ng-template pTemplate="header">
+                            <div class="row">
+                                <div class="col-6 p-s-t fw-600" id="sectionAddress">
+                                    {{ 'MYPROFILE_DIALOG.TAB_ADDRES.TITLE' | translate }}
+                                </div>
+
+                            </div>
+                        </ng-template>
+                        <div *ngIf="addressForm">
+                            <form [formGroup]='addressForm' autocomplete="off">
+                                <div class="row mb-2">
+                                    <div class="col-md-12 mb-2">
+                                        <label class="mb-1 fs13px">{{ 'MYPROFILE_DIALOG.TAB_ADDRES.ADDRESS' | translate
+                                            }}</label>
+                                        <input type="text" id="txt-address1" class='w-100' pInputText formControlName="address1"
+                                            autocomplete="off" maxlength="200" trimValue
+                                            [ngClass]="{ 'is-invalid': addresssubmitted && af.address1.errors }"
+                                            (input)="onAddressChangeValidation(addressForm)" />
+                                        <div *ngFor='let validation of address_validation_messages.address1'
+                                            class='invalid-feedback'>
+                                            <div *ngIf='af.address1.hasError(validation.type) && addresssubmitted && af.address1.errors'
+                                                id="errorEnterAddress1">
+                                                {{ validation.message | translate }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <input type="text" id="txt-address2" class="mt-2 w-100" pInputText
+                                            formControlName="address2" autocomplete="off" maxlength="200" trimValue>
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label class="mb-1 fs13px">{{ 'MYPROFILE_DIALOG.TAB_ADDRES.CITY' | translate }}</label>
+                                        <input type="text" id="txt-city" class='w-100' pInputText formControlName="city"
+                                            autocomplete="off" maxlength="100" trimValue
+                                            (input)="onAddressChangeValidation(addressForm)">
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label class="mb-1 fs13px">{{ 'MYPROFILE_DIALOG.TAB_ADDRES.STATE' | translate }}</label>
+                                        <p-dropdown id="drp-state" formControlName="stateId" styleClass="customDropdown"
+                                            [filter]="true" [resetFilterOnHide]="false" [showClear]="true" [options]="states"
+                                            optionLabel="label" optionValue="value"
+                                            placeholder="{{ 'MYPROFILE_DIALOG.TAB_ADDRES.STATE_PLACEHOLDER' | translate }}"
+                                            (onChange)="onAddressChangeValidation(addressForm)">
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label class="mb-1 fs13px">{{ 'MYPROFILE_DIALOG.TAB_ADDRES.ZIPCODE' | translate
+                                            }}</label>
+                                        <input type="text" id="txt-postal-code" class='w-100' pInputText
+                                            formControlName="postalCode" autocomplete="off" maxlength={{MaxLength.ZipCode}}
+                                            (keypress)="allowOnlyNumericValues($event)"
+                                            (input)="onAddressChangeValidation(addressForm)">
+                                    </div>
+                                    <div class="mb-3 col-md-6">
+                                        <label class="mb-1 fs13px">{{ 'MYPROFILE_DIALOG.TAB_ADDRES.COUNTRY' | translate
+                                            }}</label>
+                                        <p-dropdown id="drp-country" formControlName="countryId" styleClass="customDropdown"
+                                            [options]="countries" optionLabel="name" optionValue="id"
+                                            placeholder="{{ 'MYPROFILE_DIALOG.TAB_ADDRES.COUNTRY_PLACEHOLDER' | translate }}"
+                                            [filter]="true" [resetFilterOnHide]="false" [showClear]="false"
+                                            (onChange)="onCountrySelectionChange($event.value, addressForm)">
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-12 text-right py-2">
+                                        <button type='button' id="btn-reset-address" class='btn btn-secondary me-2'
+                                            (click)='onResetAddressForm()'>{{
+                                            'MYPROFILE_DIALOG.TAB_BASIC.RESET' | translate }}</button>
+                                        <button type='button' id="btn-save-address" class='btn btn-primary'
+                                            (click)='saveAddress(addressForm.value)'> {{
+                                            'MYPROFILE_DIALOG.TAB_BASIC.BUTTON_SAVE' | translate }}</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </p-card>
+                </div>
+
+                
+                <!-- Change Passsword -->
+                <div class="col-xl-12">
+                    <p-card styleClass="customProfileCard">
+                        <ng-template pTemplate="header">
+                            <div class="row">
+                                <div class="col-6 p-s-t fw-600" id="sectionChangePasssword">
+                                    {{ 'MYPROFILE_DIALOG.TAB_BASIC.CHANGE_PASSWORD' | translate }}
+                                </div>
+
+                            </div>
+                        </ng-template>
+                        <div *ngIf="changePasswordForm">
+                            <form [formGroup]='changePasswordForm' autocomplete="off">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="mb-1 fs13px">
+                                            {{ 'MYPROFILE_DIALOG.TAB_CHANGE_PASSWORD.OLDPASSWORD' | translate}}
+                                            <span class="mandatory"></span>
+                                        </label>
+                                        <input id="txt-old-password" type="text"
+                                        class="form-control customPassword txt-password" formControlName="oldPassword"
+                                        autocomplete="off"
+                                            [ngClass]="{ 'is-invalid': passwordSubmitted && cpf.oldPassword.errors }" />
+                                        <div *ngFor='let validation of changePassword_validation_messages.oldPassword'
+                                        class='invalid-feedback'>
+                                        <div id="errorOldPasswordIsRequired"
+                                        *ngIf='cpf.oldPassword.hasError(validation.type) && passwordSubmitted && cpf.oldPassword.errors'>
+                                        {{ validation.message | translate }}
+                                    </div>
+                                </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="mb-1 fs13px">
+                                            {{ 'MYPROFILE_DIALOG.TAB_CHANGE_PASSWORD.NEWPASSWORD' | translate}}
+                                            <span class="mandatory"></span>
+                                        </label>
+                                        <input id="txt-new-password" type="text"
+                                            class="form-control customPassword txt-password" formControlName="newPassword"
+                                            autocomplete="off"
+                                            [ngClass]="{ 'is-invalid': passwordSubmitted && cpf.newPassword.errors }"
+                                            (focus)="onfocusPassword()" (blur)="onblurPassword()" />
+                                            <ngx-password-strength *ngIf="isPasswordStrengthVisible" [showLabel]="true"
+                                            [value]="cpf.newPassword.value"></ngx-password-strength>
+                                            <div *ngFor='let validation of changePassword_validation_messages.newPassword'
+                                            class='invalid-feedback'>
+                                            <div id="errorNewPasswordIsRequired"
+                                                *ngIf='cpf.newPassword.hasError(validation.type) && passwordSubmitted && cpf.newPassword.errors'>
+                                                {{ validation.message | translate }}
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="mb-1 fs13px">
+                                            {{ 'MYPROFILE_DIALOG.TAB_CHANGE_PASSWORD.CONFIRMPASSWORD' | translate}}
+                                            <span class="mandatory"></span>
+                                        </label>
+                                        <input id="txt-confirm-password" type="text"
+                                            class="form-control customPassword txt-password" formControlName="confirmPassword"
+                                            autocomplete="off"
+                                            [ngClass]="{ 'is-invalid': passwordSubmitted && cpf.confirmPassword.errors }" />
+                                            <div *ngFor='let validation of changePassword_validation_messages.confirmPassword'
+                                            class='invalid-feedback'>
+                                            <div id="errorConfirmPasswordIsRequired"
+                                            *ngIf='cpf.confirmPassword.hasError(validation.type) && passwordSubmitted && cpf.confirmPassword.errors'>
+                                                {{ validation.message | translate }}
+                                            </div>
+                                            <div class="error-message" id="errorConfirmPasswordAndNewPasswordMustBeSame"
+                                            *ngIf="changePasswordForm.controls['confirmPassword'].errors && (changePasswordForm.controls['confirmPassword'].value != null && changePasswordForm.controls['confirmPassword'].value != '')">
+                                            {{
+                                                'MYPROFILE_DIALOG.TAB_CHANGE_PASSWORD.MESSAGE_NEWPASSWORD_CONFIRMPASSWORD'
+                                                |
+                                                translate }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 text-right py-2">
+                                        <button type='button' id="btn-reset-password" class='btn btn-secondary me-2'
+                                        (click)='onResetPasswordForm()'>{{
+                                            'MYPROFILE_DIALOG.TAB_BASIC.RESET' | translate }}</button>
+                                        <button type='button' id="btn-save-password" class='btn btn-primary'
+                                        (click)='saveChangePasswordForm(changePasswordForm.value)'> {{
+                                            'MYPROFILE_DIALOG.TAB_BASIC.BUTTON_SAVE' | translate }}</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </p-card>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details Section-->
+        <div class="col-xl-12 mb-3">
+            <p-card styleClass="customProfileCard">
+                <ng-template pTemplate="header">
+                    <div class="row">
+                        <div class="col-6 p-s-t fw-600" id="sectionDetails">
+                            {{ 'MYPROFILE_DIALOG.TAB_DETAILS.TITLE' | translate }}
+                        </div>
+                    </div>
+                </ng-template>
+                <div *ngIf="detailsForm">
+                    <form [formGroup]='detailsForm' autocomplete="off">
+                        <div class="row mb-2">
+                            <div class="mb-3 col-md-6">
+                                <label class="mb-1 fs13px">{{ 'MYPROFILE_DIALOG.TAB_DETAILS.ABOUT_ME' | translate
+                                    }}</label>
+                                <editor apiKey="{{tinyMceApiKey}}" formControlName="aboutMe" id="txt-aboutMe-editor"
+                                    class="editor-aboutMe-iframe"
+                                    [ngClass]="{ 'is-invalid': detailSubmitted && df.aboutMe.errors && (df.aboutMe.dirty || df.aboutMe.touched) }"
+                                    [ngModelOptions]="{standalone: true}" [init]="{ height: 280 }">
+                                </editor>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label class="mb-1 fs13px">{{ 'MYPROFILE_DIALOG.TAB_DETAILS.ACHIEVEMENTS' | translate }}</label>
+                                <editor apiKey="{{tinyMceApiKey}}" formControlName="achievements" id="txt-achievements-editor"
+                                    class="editor-achievements-iframe"
+                                    [ngClass]="{ 'is-invalid': detailSubmitted && df.achievements.errors && (df.achievements.dirty || df.achievements.touched) }"
+                                    [ngModelOptions]="{standalone: true}" [init]="{ height: 280 }">
+                                </editor>
+                            </div>
+                            <div class="col-12 text-right py-2">
+                                <button type='button' id="btn-reset-details" class='btn btn-secondary me-2'
+                                    (click)='onResetDetailsForm()'>{{
+                                    'MYPROFILE_DIALOG.TAB_BASIC.RESET' | translate }}</button>
+                                <button type='button' id="btn-save-details" class='btn btn-primary'
+                                    (click)='saveDetailForm(detailsForm.value)'> {{
+                                    'MYPROFILE_DIALOG.TAB_BASIC.BUTTON_SAVE' | translate }}</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </p-card>
+        </div>
+        
+        <div class="col-xl-12 mb-3" *ngIf="teams">
+            <div class='row align-items-end'>
+                <div class="col-12">
+                    <p-card styleClass="customProfileCard">
+                        <ng-template pTemplate="header">
+                            <div class="row">
+                                <div class="col-6 p-s-t fw-600" id="headingMyTeams">
+                                    {{'MYPROFILE_DIALOG.TEAMS.TITLE' | translate}}
+                                </div>
+                            </div>
+                        </ng-template>
+                        <p-table *ngIf="teams" #pTable [responsive]="true" responsiveLayout="stack" [rows]="10" paginatorDropdownAppendTo="body"
+                        [columns]="cols" sortField="teamName" class="tbl-my-teams tbl-max-height" [value]="teams"
+                            [scrollable]="true" [sortOrder]="1" [ngClass]="totalRecords == 0 ? 'tbl-height-zero' : ''">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th id="tblColumnHeader" *ngFor="let col of columns" [pSortableColumn]="col.field" [ngClass]="col.header == '' ? 'hide-when-no-records' : ''"
+                                        [pSortableColumnDisabled]="!col.sort" class="{{col.field}} {{col.class}}"
+                                        scope="col">
+                                        {{ col.header | translate }}
+                                        <p-sortIcon [field]="col.field" *ngIf="col.sort"></p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                <tr>
+                                    <td class="name">
+                                        <span class="p-column-title">
+                                            {{columns[0].header | translate}}
+                                        </span>
+                                        <span class="pre-text">{{rowData.teamName}}</span>
+                                    </td>
+                                    <td class="teammemberRolename">
+                                        <span class="p-column-title">
+                                            {{columns[1].header | translate}}
+                                        </span>
+                                        {{rowData.teamMemberRoleName}}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                        <div *ngIf="totalRecords == 0" id="lbl-NoRecordsFound" class="table-no-record text-center">
+                            <div>{{ 'TEAMS.LIST.MESSAGE_NO_RECORDS_FOUND' | translate }}</div>
+                        </div>
+                    </p-card>
+                </div>
+            </div>
+        </div>
+
+        <ng-container *ngIf="userTenantSettingGroupsArray">
+            <div class="col-xl-12 mb-3" *ngFor="let group of userTenantSettingGroupsArray; let i = index">
+                <div class='row align-items-end'>
+                    <div class="col-12">
+                        <p-card styleClass="customProfileCard" class="mb-3">
+                            <ng-template pTemplate="header">
+                                <div class="row">
+                                    <div class="col-6 p-s-t fw-600" id="headingMyTeams">
+                                        {{ group.groupName }}
+                                    </div>
+                                </div>
+                            </ng-template>
+                            <form [formGroup]='userTenantSettingForm[i]'>
+                                <div class='row'>
+                                    <ng-container *ngFor="let tenant of group.values">
+                                        <div class="col-sm-6 mb-3">
+                                            <ng-container [ngSwitch]="tenant.fieldType">
+                                                <ng-container *ngSwitchCase="fieldTypesFromReferenceType.RADIOGROUP">
+                                                    <label id="lbl_{{ tenant.code }}" class="font-12 mb-1">{{ tenant.displayName | translate| configuredEntityName}}
+                                                        <span *ngIf='tenant.isRequired' class="mandatory"></span>
+                                                    </label>
+                                                    <i *ngIf="tenant.hint != null" class="fas fa-info-circle dark-grey ml-1"
+                                                        ngbTooltip="{{tenant.hint | translate| configuredEntityName }}" placement="top auto" container="body"
+                                                        aria-hidden="true">
+                                                    </i>
+                                                    <div *ngIf="tenant.dataSource ? tenant.dataSource.length > 0 : false"
+                                                        class="input-group entity-dropdown custom-dropdown-muliselect">
+                                                        <ng-container *ngFor="let option of tenant.dataSource;let i=index">
+                                                            <span class="d-flex align-items-center mr-3 mb-2">
+                                                                <p-radioButton formControlName="{{ tenant.code }}"
+                                                                    [value]="option.value" [inputId]="option.value"
+                                                                    id="rdg_{{ tenant.code }}{{i}}"
+                                                                    name="{{ tenant.code }}"></p-radioButton>
+                                                                <label [for]="option.value" class="pl-2 cursor-pointer">{{ option.text }}</label>
+                                                            </span>
+                                                        </ng-container>
+                                                    </div>
+                                                </ng-container>
+                                                <ng-container *ngSwitchCase="fieldTypesFromReferenceType.NUMBER">
+                                                    <label id="lbl_{{ tenant.code }}" class="font-12 mb-1">
+                                                        {{ tenant.displayName | translate| configuredEntityName }}<span *ngIf='tenant.isRequired' class="mandatory"></span>
+                                                    </label>
+                                                    <i *ngIf="tenant.hint != null" class="fas fa-info-circle dark-grey ml-1"
+                                                        ngbTooltip="{{tenant.hint | translate| configuredEntityName }}" placement="top auto" container="body"
+                                                        aria-hidden="true"></i>
+                                                    <input type="number" class="form-control" rows="3"
+                                                        formControlName="{{ tenant.code }}" id="txt_{{ tenant.code }}"
+                                                        name="{{ tenant.fieldType }}_{{ tenant.code }}"
+                                                        [ngClass]="{ 'is-invalid': submitted && userTenantSettingForm[i].controls[tenant.code].errors }">
+                                                    <div class="invalid-feedback"
+                                                        *ngIf="userTenantSettingForm[i].controls[tenant.code].invalid && (userTenantSettingForm[i].controls[tenant.code].dirty || userTenantSettingForm[i].controls[tenant.code].touched)">
+                                                        <span *ngIf="userTenantSettingForm[i].controls[tenant.code].errors?.min">
+                                                            {{ tenant.minValMessage }}
+                                                        </span>
+                                                        <span *ngIf="userTenantSettingForm[i].controls[tenant.code].errors?.max">
+                                                            {{ tenant.maxValMessage }}
+                                                        </span>
+                                                    </div>
+                                                </ng-container>
+                                                <ng-container *ngSwitchCase="fieldTypesFromReferenceType.TEXTBOX">
+                                                    <label id="lbl_{{ tenant.code }}" class="font-12 mb-1">
+                                                        {{ tenant.displayName | translate| configuredEntityName }}<span *ngIf='tenant.isRequired' class="mandatory"></span>
+                                                    </label>
+                                                    <i *ngIf="tenant.hint != null" class="fas fa-info-circle dark-grey ml-1"
+                                                        ngbTooltip="{{tenant.hint | translate| configuredEntityName }}" placement="top auto" container="body"
+                                                        aria-hidden="true"></i>
+                                                    <input type="text"
+                                                        *ngIf="!(tenant.dataSource ? tenant.dataSource.length > 0 : false)"
+                                                        class="form-control" rows="3" formControlName="{{ tenant.code }}"
+                                                        id="txt_{{ tenant.code }}" name="{{ tenant.fieldType }}_{{ tenant.code }}"
+                                                        [ngClass]="{ 'is-invalid': submitted && userTenantSettingForm[i].controls[tenant.code].errors }">
+                                                </ng-container>
+                                                <ng-container *ngSwitchCase="fieldTypesFromReferenceType.MULTISELECT">
+                                                    <label id="lbl_{{ tenant.code }}" class="font-12 mb-1">
+                                                        {{ tenant.displayName | translate| configuredEntityName }}<span *ngIf='tenant.isRequired' class="mandatory"></span>
+                                                    </label>
+                                                    <i *ngIf="tenant.hint != null" class="fas fa-info-circle dark-grey ml-1"
+                                                        ngbTooltip="{{tenant.hint | translate| configuredEntityName }}" placement="top auto" container="body"
+                                                        aria-hidden="true"></i>
+                                                    <div *ngIf="tenant.dataSource ? tenant.dataSource.length > 0 : false"
+                                                        class="input-group entity-dropdown custom-dropdown-muliselect">
+                                                        <p-multiSelect [options]="tenant.dataSource" formControlName="{{ tenant.code }}"
+                                                            id="drp_{{ tenant.code }}" name="{{ tenant.fieldType }}_{{ tenant.code }}"
+                                                            class="entity-multiSelect" optionLabel="text" optionValue="value"
+                                                            styleClass="multiSelectOverride" [maxSelectedLabels]="500"
+                                                            [showToggleAll]="false" [filter]="true" [showHeader]="true"
+                                                            [resetFilterOnHide]="false" [displaySelectedLabel]='true'
+                                                            defaultLabel="{{ 'MYPROFILE_DIALOG.USER_TENANT_SETTING.PLACEHOLDER_DROPDOWN' | translate| configuredEntityName }} {{ tenant.displayName | translate| configuredEntityName }}"
+                                                            [ngClass]="{ 'is-invalid': submitted && userTenantSettingForm[i].controls[tenant.code].errors }">
+                                                        </p-multiSelect>
+                                                        <div *ngIf='tenant.isRequired && submitted && userTenantSettingForm[i].controls[tenant.code].errors'
+                                                            class='invalid-feedback' id="errorSupportEmailIsRequired">
+                                                            {{ tenant.displayName | translate| configuredEntityName }} {{
+                                                            'MYPROFILE_DIALOG.USER_TENANT_SETTING.MESSAGE_ARE_REQUIRED' | translate }}
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                                <ng-container *ngSwitchCase="fieldTypesFromReferenceType.DROPDOWN">
+                                                    <label id="lbl_{{ tenant.code }}" class="font-12 mb-1">
+                                                        {{ tenant.displayName | translate| configuredEntityName }}<span *ngIf='tenant.isRequired' class="mandatory"></span>
+                                                    </label>
+                                                    <i *ngIf="tenant.hint != null" class="fas fa-info-circle dark-grey ml-1"
+                                                        ngbTooltip="{{tenant.hint | translate| configuredEntityName }}" placement="top auto" container="body"
+                                                        aria-hidden="true"></i>
+                                                    <div *ngIf="tenant.dataSource ? tenant.dataSource.length > 0 : false"
+                                                        class="input-group entity-dropdown custom-dropdown-muliselect">
+                                                        <p-dropdown [options]="tenant.dataSource" formControlName="{{ tenant.code }}"
+                                                            id="drp_{{ tenant.code }}" name="{{ tenant.fieldType }}_{{ tenant.code }}"
+                                                            class="entity-multiSelect" optionLabel="text" optionValue="value"
+                                                            [filter]="true" [resetFilterOnHide]="false" [showClear]="true"
+                                                            placeholder="{{ 'MYPROFILE_DIALOG.USER_TENANT_SETTING.PLACEHOLDER_DROPDOWN' | translate| configuredEntityName }} {{ tenant.displayName | translate| configuredEntityName }}"
+                                                            [ngClass]="{ 'is-invalid': submitted && userTenantSettingForm[i].controls[tenant.code].errors }">
+                                                        </p-dropdown>
+                                                        <div *ngIf='tenant.isRequired && submitted && userTenantSettingForm[i].controls[tenant.code].errors'
+                                                            class='invalid-feedback' id="errorSupportEmailIsRequired">
+                                                            {{ tenant.displayName | translate| configuredEntityName }} {{
+                                                            'MYPROFILE_DIALOG.USER_TENANT_SETTING.MESSAGE_IS_REQUIRED' | translate }}
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                                <div *ngIf='tenant.isRequired && submitted && userTenantSettingForm[i].controls[tenant.code].errors'
+                                                    class='invalid-feedback' id="errorSupportEmailIsRequired">
+                                                    {{ tenant.displayName | translate| configuredEntityName }} {{ 'MYPROFILE_DIALOG.USER_TENANT_SETTING.MESSAGE_IS_REQUIRED' |
+                                                    translate }}
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                        <div class="col-sm-6 mb-3" *ngIf="tenant.isDisplayTextRequired">
+                                            <label id="lbl_{{ tenant.code }}_DT" class="font-12 mb-1">
+                                                {{ tenant.displayName | translate| configuredEntityName }} {{'MYPROFILE_DIALOG.USER_TENANT_SETTING.DISPLAYTEAXT' | translate}}
+                                            </label>
+                                            <input type="text" class="form-control" rows="3" formControlName="{{tenant.code}}_DT"
+                                                [ngClass]="{ 'is-invalid': submitted && userTenantSettingForm[i].controls[tenant.code+'_DT'].errors }"
+                                                id="txt_{{ tenant.code }}_DT" name="{{ tenant.fieldType }}_{{ tenant.code }}_DT">
+                                            <div *ngIf="submitted && userTenantSettingForm[i].controls[tenant.code+'_DT'].errors"
+                                                class='invalid-feedback' id="errorSupportEmailIsRequired">
+                                                {{ 'MYPROFILE_DIALOG.USER_TENANT_SETTING.DT_MAX_VALIDATION' | translate }}
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                                <div class='text-right pb-3'>
+                                    <button type='button' class='btn btn-primary' id="btn-save"
+                                        (click)="saveUserTenantSettingsForm(userTenantSettingForm[i])">
+                                        {{ 'MYPROFILE_DIALOG.USER_TENANT_SETTING.BUTTON_SAVE' | translate }}
+                                    </button>
+                                </div>
+                            </form>
+                        </p-card>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>
+<!-- Page Content End -->

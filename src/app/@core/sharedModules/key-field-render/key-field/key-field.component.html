@@ -1,0 +1,829 @@
+<ng-container *ngIf="!isInitialLoading">
+    <ng-container *ngIf="(keyFields && keyFields.length > 0); else templateNoKeyFields">
+        <div class="py-2 row" [formGroup]="formGroup">
+            <div class='col-6 mb-12px'
+                *ngFor="let field of keyFields">
+                <div [ngSwitch]="field.fieldTypeName" class="p-0 edit-key-field">
+                    <!--Start Date Control -->
+                    <ng-container *ngSwitchCase="'Date'">
+                        <div>
+                            <label class="col-form-label fw-semibold">{{field.displayName}}</label>
+                            <ng-container *ngIf="field.settingsJson && field.settingsJson.isRequired">
+                                <span class="mandatory"></span>
+                            </ng-container>
+                        </div>
+                        <div class="pl-edit-fields">
+                            
+                            <div *ngIf="field.isLabelView" class="form-control-plaintext text-truncate" (click)="editField(field)">
+                                {{!field.value ? 'None' : field.value | dateFormatPipe: _commonHelper.globalDateFormate }}</div>
+                            
+                            <!-- Loading Bar -->    
+                            <ngx-control-level-loading-bar *ngIf="!field.isLabelView  && field.showLoading && !field.isReadOnly"></ngx-control-level-loading-bar>
+
+                            <p-calendar #calendar id="dp-{{(field.name | lowercase)}}"  *ngIf="!field.isLabelView && !field.isReadOnly" appendTo="body" panelStyleClass="maxWidth-key-field"
+                                class="time-calendar" [dateFormat]="_commonHelper.globalDatePickerFormate"
+                                [placeholder]="_commonHelper.globalDatePlaceholder" [dateMask]="_commonHelper.globalDateMask"
+                                [readonlyInput]="false" icon="fas fa-calendar-alt dark-grey" [showIcon]="true"
+                                [monthNavigator]="true" [yearNavigator]="true" selectOtherMonths="true" [showTime]="false"
+                                [minDate]="_commonHelper.globalMinDate" [maxDate]="_commonHelper.globalMaxDate"
+                                [yearRange]="_commonHelper.globalYearRange"
+                                formControlName='{{field.name}}'
+                                [(ngModel)]="field.value" 
+                                [ngClass]="{ 'is-invalid': formGroup.get(field.name).errors }"
+                                (onSelect)="onDateSelected(field)"
+                                (onClose)="onDateFieldClose(field)">
+                            </p-calendar>
+                        
+                            <button *ngIf="!field.isReadOnly && formGroup.get(field.name).errors" class="icon-error-key btn border-0 bg-transparent"
+                                [ngbTooltip]="TextFieldtooltipContent" placement="top top-right" container="body" tooltipClass="tooltip-key-icon">
+                                <i class="fa-solid fa-triangle-exclamation position-static p-0"></i>
+                            </button>
+                            <ng-template #DateFieldtooltipContent>
+                                <div *ngIf="!field.isLabelView && formGroup.get(field.name).errors">
+                                    <span *ngIf="formGroup.get(field.name).errors.required">
+                                        {{field.settingsJson.requiredValMessage}}
+                                    </span>
+                                    <span *ngIf="formGroup.get(field.name).errors.minlength">
+                                        {{field.settingsJson.minLengthValMessage}}
+                                    </span>
+                                    <span *ngIf="formGroup.get(field.name).errors.maxlength">
+                                        {{field.settingsJson.maxLengthValMessage}}
+                                    </span>
+                                </div>
+                            </ng-template>
+
+                        </div>
+                    </ng-container>
+                    <!-- End Date Control -->
+
+                    <!-- Start Text Control -->
+                    <ng-container *ngSwitchCase="'Text'">
+                            <label class="col-form-label fw-semibold">{{field.displayName}}</label>
+                            <ng-container *ngIf="field.settingsJson && field.settingsJson.isRequired">
+                                <span class="mandatory"></span>
+                            </ng-container>
+                        <div class="pl-edit-fields">
+
+                            <div *ngIf="field.isLabelView" class="form-control-plaintext pre-text" [ngClass]="{'dark-grey': field.displayValue == 'None'}" ngbTooltip="{{ field.value ? field.value : 'None' }}" placement="top-left top-right" container="body" tooltipClass="tooltip-key-field"
+                                (click)="editField(field)">{{ field.value ? field.value : 'None' }}</div>
+                            
+                            <div class="inner-addon right-addon">
+                                
+                                <!-- Loading Bar -->
+                                <ngx-control-level-loading-bar *ngIf="!field.isLabelView && field.showLoading && !field.isReadOnly"></ngx-control-level-loading-bar>
+                                
+                                <input #textbox id="txt-{{(field.name | lowercase)}}" pInputText *ngIf="!field.isLabelView && !field.isReadOnly"
+                                    class="form-control" type="text" formControlName='{{field.name}}' (keypress)="onTextFieldKeyPress($event,field)"
+                                    [(ngModel)]="field.value" [ngClass]="{ 'is-invalid': formGroup.get(field.name).errors }" (focusout)="onFocusOutEvent(field)" 
+                                    trimValue />
+                                
+                                    <button *ngIf="!field.isReadOnly && formGroup.get(field.name).errors" class="icon-error-key btn border-0 bg-transparent"
+                                        [ngbTooltip]="TextFieldtooltipContent" placement="top top-right" container="body" tooltipClass="tooltip-key-icon">
+                                        <i class="fa-solid fa-triangle-exclamation position-static p-0"></i>
+                                    </button>
+                                    <ng-template #TextFieldtooltipContent>
+                                        <div *ngIf="!field.isLabelView && formGroup.get(field.name).errors">
+                                            <span *ngIf="formGroup.get(field.name).errors.required">
+                                                {{field.settingsJson.requiredValMessage}}
+                                            </span>
+                                            <span *ngIf="formGroup.get(field.name).errors.minlength">
+                                                {{field.settingsJson.minLengthValMessage}}
+                                            </span>
+                                            <span *ngIf="formGroup.get(field.name).errors.maxlength">
+                                                {{field.settingsJson.maxLengthValMessage}}
+                                            </span>
+                                        </div>
+                                    </ng-template>
+
+                            </div>
+                        
+                            <div *ngIf="!field.isLabelView && !field.isReadOnly" class="edit-key-buttons">
+                                <button (mousedown)="onTextFieldSubmit(field)" type="button" class="btn btn-outline-secondary mr-1 vertical-center justify-content-center"><i
+                                        class="fa-solid fa-check" aria-hidden="true"></i></button>
+                                <button (mousedown)="discardChanges(field)" type="button"
+                                    class="btn btn-outline-secondary vertical-center justify-content-center"><i
+                                        class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- End Text Control -->
+
+                    <!--Start Picklist Control -->
+                    <ng-container *ngSwitchCase="'Picklist'">
+                            <label class="col-form-label fw-semibold">{{field.displayName}}</label>
+                            <ng-container *ngIf="field.settingsJson && field.settingsJson.isRequired">
+                                <span class="mandatory"></span>
+                            </ng-container>
+
+                            <div class="pl-edit-fields">
+
+                                <div *ngIf="field.isLabelView" class="form-control-plaintext text-truncate" (click)="editField(field)">
+                                    {{ (field.optionsJSON | displayValueFinder: { value: field.value })?.length ?
+                                    (field.optionsJSON | displayValueFinder: { value: field.value })[0].label : 'None' }}
+                                </div>
+                                
+                                <!-- Loading Bar -->
+                                <ngx-control-level-loading-bar *ngIf="!field.isLabelView  && field.showLoading && !field.isReadOnly"></ngx-control-level-loading-bar>
+                                
+                                <p-dropdown #dropdown id="drp-{{(field.name | lowercase)}}" *ngIf="!field.isLabelView && !field.isReadOnly" appendTo="body" panelStyleClass="maxWidth-key-field"
+                                    formControlName='{{field.name}}' [filter]="true"
+                                    [resetFilterOnHide]="false" [showClear]="field.settingsJson && field.settingsJson.isRequired? false:true" [options]="field.optionsJSON"
+                                    placeholder='Select' optionLabel="label" optionValue="value"
+                                    filterPlaceHolder="{{(field.dataSourceId ? 'Search at least 3 characters' : '')}}"
+                                    [(ngModel)]="field.value"
+                                    [ngClass]="{ 'is-invalid': field.isSubmitted && formGroup.get(field.name).errors }"
+                                    (onClick)="onDropdownClick($event, field, 'drp')"
+                                    (onFilter)="onDropdownSearchFilter($event, field, 'drp')" 
+                                    (onChange)="onDropdownChange($event, field, 'drp')"
+                                    (onHide)="onDropDownHide(field)">
+                                </p-dropdown>
+                            
+                                <button *ngIf="!field.isReadOnly && formGroup.get(field.name).errors" class="icon-error-key btn border-0 bg-transparent"
+                                    [ngbTooltip]="TextFieldtooltipContent" placement="top top-right" container="body" tooltipClass="tooltip-key-icon">
+                                    <i class="fa-solid fa-triangle-exclamation position-static p-0"></i>
+                                </button>
+                                <ng-template #PickListFieldtooltipContent>
+                                    <div *ngIf="!field.isLabelView && formGroup.get(field.name).errors">
+                                        <span *ngIf="formGroup.get(field.name).errors.required">
+                                            {{field.settingsJson.requiredValMessage}}
+                                        </span>
+                                    </div>
+                                </ng-template>
+
+                            </div>
+                    </ng-container>
+                    <!--End Picklist Control -->
+
+                    <!--Start Picklist (int) Control -->
+                    <ng-container *ngSwitchCase="'Picklist (int)'">
+                        <div>
+                            <label class="col-form-label fw-semibold">{{field.displayName}}</label>
+                            <ng-container *ngIf="field.settingsJson && field.settingsJson.isRequired">
+                                <span class="mandatory"></span>
+                            </ng-container>
+                        </div>
+                        <div class="pl-edit-fields">
+
+                            <div *ngIf="field.isLabelView" class="form-control-plaintext text-truncate" (click)="editField(field)">
+                                {{ (field.optionsJSON | displayValueFinder: { value: field.value })?.length ?
+                                (field.optionsJSON | displayValueFinder: { value: field.value })[0].label : 'None' }}
+                            </div>
+                            
+                            <!-- Loading Bar -->
+                            <ngx-control-level-loading-bar *ngIf="!field.isLabelView && field.showLoading && !field.isReadOnly"></ngx-control-level-loading-bar>
+                            
+                            <p-dropdown #dropdown  *ngIf="!field.isLabelView && !field.isReadOnly" id="drp-{{(field.name | lowercase)}}" appendTo="body" panelStyleClass="maxWidth-key-field"
+                                formControlName='{{field.name}}' [filter]="true"
+                                filterPlaceHolder="{{(field.dataSourceId ? 'Search at least 3 characters' : '')}}" [resetFilterOnHide]="false"
+                                [options]="field.optionsJSON" placeholder='Select' optionLabel="label" optionValue="value"
+                                [(ngModel)]="field.value" [showClear]="field.settingsJson && field.settingsJson.isRequired? false:true"
+                                [ngClass]="{ 'is-invalid': field.isSubmitted && formGroup.get(field.name).errors }"
+                                (onClick)="onDropdownClick($event, field, 'drp')" (onFilter)="onSearchPicklistFilter($event, field, 'drp')"
+                                (onChange)="onDropdownChange($event,field, 'drp')" (onHide)="onDropDownHide(field)">
+                            </p-dropdown>
+
+                            <button *ngIf="!field.isReadOnly && formGroup.get(field.name).errors" class="icon-error-key btn border-0 bg-transparent"
+                                [ngbTooltip]="TextFieldtooltipContent" placement="top top-right" container="body" tooltipClass="tooltip-key-icon">
+                                <i class="fa-solid fa-triangle-exclamation position-static p-0"></i>
+                            </button>
+                            <ng-template #PickListIntFieldtooltipContent>
+                                <div *ngIf="!field.isLabelView && formGroup.get(field.name).errors">
+                                    <span *ngIf="formGroup.get(field.name).errors.required">
+                                        {{field.settingsJson.minLengthValMessage}}
+                                    </span>
+                                </div>
+                            </ng-template>
+
+                        </div>
+                    </ng-container>
+                    <!--End Picklist (int) Control -->
+
+                    <!--Start Picklist (MultiSelect) Control -->
+                    <ng-container *ngSwitchCase="'Picklist (MultiSelect)'">
+                        <div>
+                            <label class="col-form-label fw-semibold">{{field.displayName}}</label>
+                            <ng-container *ngIf="field.settingsJson && field.settingsJson.isRequired">
+                                <span class="mandatory"></span>
+                            </ng-container>
+                        </div>
+                    
+                        <div class="pl-edit-fields">
+                    
+                            <div *ngIf="field.isLabelView" class="form-control-plaintext text-truncate" (click)="editField(field)">
+                                {{ field && field.value ? (field.optionsJSON | displayValueFinder: { value: field.value } :'label') : 'None'
+                                }}
+                            </div>
+
+                            <!-- Loading Bar -->
+                            <ngx-control-level-loading-bar
+                                *ngIf="!field.isLabelView && field.showLoading && !field.isReadOnly"></ngx-control-level-loading-bar>
+                    
+                            <p-multiSelect #multiSelect *ngIf="!field.isLabelView && !field.isReadOnly && field.optionsJSON"
+                                class="entity-multiSelect" id="drp-multiselect-{{(field.name | lowercase)}}" appendTo="body"
+                                panelStyleClass="maxWidth-key-field" styleClass="multiSelectOverride" formControlName={{field.name}}
+                                [filter]="true" filterPlaceHolder="{{(field.dataSourceId ? 'Search at least 3 characters' : '')}}"
+                                [resetFilterOnHide]="false" [options]="field.optionsJSON" placeholder="Select" optionLabel="label"
+                                optionValue="value" [showHeader]="true" [displaySelectedLabel]='true' [showToggleAll]="false"
+                                [maxSelectedLabels]="_commonHelper.globalMultiselectMaxSelectedLabels"
+                                [showClear]="field.settingsJson && field.settingsJson.isRequired? false:true"
+                                [ngClass]="{ 'is-invalid': formGroup.get(field.name).errors }"
+                                (onClick)="onMultiSelectClick($event, field, 'drp-multiselect')"
+                                (onFilter)="onMultiSelectDropdownSearchFilter($event, field, 'drp-multiselect')"
+                                (onChange)="onMultiSelectChange($event,field, 'drp-multiselect')"
+                                (onPanelHide)="onMultiSelectDropDownHide(field)">
+                            </p-multiSelect>
+                    
+                            <button *ngIf="!field.isReadOnly && formGroup.get(field.name).errors"
+                                class="icon-error-key btn border-0 bg-transparent" [ngbTooltip]="PickListMulFieldtooltipContent"
+                                placement="top top-right" container="body" tooltipClass="tooltip-key-icon">
+                                <i class="fa-solid fa-triangle-exclamation position-static p-0"></i>
+                            </button>
+                            <ng-template #PickListMulFieldtooltipContent>
+                                <div *ngIf="!field.isLabelView && formGroup.get(field.name).errors">
+                                    <span *ngIf="formGroup.get(field.name).errors.required">
+                                        {{field.settingsJson.requiredValMessage}}
+                                    </span>
+                                </div>
+                            </ng-template>
+                    
+                        </div>
+                    </ng-container>
+                    
+                    <!--End Picklist (MultiSelect) Control -->
+
+                    <!-- Start Percent Control -->
+                    <ng-container *ngSwitchCase="'Percent'">
+                        <div>
+                            <label class="col-form-label fw-semibold">{{field.displayName}}</label>
+                            <ng-container *ngIf="field.settingsJson && field.settingsJson.isRequired">
+                                <span class="mandatory"></span>
+                            </ng-container>
+                        </div>
+                        <div class="pl-edit-fields">
+                            <div *ngIf="field.isLabelView || isReadOnly" class="form-control-plaintext pre-text"
+                                [ngClass]="{'dark-grey': field.displayValue == 'None'}"
+                                ngbTooltip="{{ field.value == null ? 'None' : field.value + '%' }}" placement="top-left top-right" container="body"
+                                tooltipClass="tooltip-key-field" (click)="editField(field)">{{ field.value == null ? 'None' :
+                                field.value + '%' }}
+                            </div>
+                            <ng-container *ngIf="!field.isLabelView && !isReadOnly">
+                                <div class="inner-addon right-addon">
+                                    <!-- Loading Bar -->
+                                    <span [ngClass]="{ 'invalid-suffix': formGroup.get(field.name).errors }">%</span>
+                                    <ngx-control-level-loading-bar
+                                        *ngIf="!field.isLabelView && field.showLoading && !field.isReadOnly"></ngx-control-level-loading-bar>
+                    
+                                    <input #textbox type="number" id="txt-{{(field.name | lowercase)}}" pInputText
+                                        *ngIf="!field.isLabelView && !field.isReadOnly" class="form-control pr-26px"
+                                        formControlName='{{field.name}}' (keypress)="percentEventHandler($event)" [(ngModel)]="field.value"
+                                        (keydown)="onPercentFieldKeyPress($event,field)"
+                                        [ngClass]="{ 'is-invalid': formGroup.get(field.name).errors }" trimValue (focusout)="onFocusOutEvent(field)" />
+                    
+                                    <button *ngIf="!field.isReadOnly && formGroup.get(field.name).errors"
+                                        class="icon-error-key btn border-0 bg-transparent" [ngbTooltip]="PercentFieldtooltipContent"
+                                        placement="top top-right" container="body" tooltipClass="tooltip-key-icon">
+                                        <i class="fa-solid fa-triangle-exclamation position-static p-0"></i>
+                                    </button>
+                                    <ng-template #PercentFieldtooltipContent>
+                                        <div *ngIf="!field.isLabelView && formGroup.get(field.name).errors">
+                                            <span *ngIf="formGroup.get(field.name).errors.required">
+                                                {{field.settingsJson.requiredValMessage}}
+                                            </span>
+                                            <span *ngIf="formGroup.get(field.name).errors.min">
+                                                {{field.settingsJson.minValMessage}}
+                                            </span>
+                                            <span *ngIf="formGroup.get(field.name).errors.max">
+                                                {{field.settingsJson.maxValMessage}}
+                                            </span>
+                                            <span *ngIf="formGroup.get(field.name).errors.minlength">
+                                                {{field.settingsJson.minLengthValMessage}}
+                                            </span>
+                                            <span *ngIf="formGroup.get(field.name).errors.maxlength">
+                                                {{field.settingsJson.maxLengthValMessage}}
+                                            </span>
+                                        </div>
+                                    </ng-template>
+                                </div>
+                                <div *ngIf="!field.isLabelView && !field.isReadOnly" class="edit-key-buttons">
+                                    <button (mousedown)="onPercentFieldSubmit(field)" type="button"
+                                        class="btn btn-outline-secondary mr-1 vertical-center justify-content-center"><i
+                                            class="fa-solid fa-check" aria-hidden="true"></i></button>
+                                    <button (mousedown)="discardChanges(field)" type="button"
+                                        class="btn btn-outline-secondary vertical-center justify-content-center"><i
+                                            class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+                    <!--  End Percent Control-->
+
+                    <!-- Start Number with decimal Control-->
+                    <ng-container *ngSwitchCase="'Number'">
+                        <div>
+                            <label class="col-form-label fw-semibold">{{field.displayName }}</label>
+                            <ng-container *ngIf="field.settingsJson && field.settingsJson.isRequired">
+                                <span class="mandatory"></span>
+                            </ng-container>
+                        </div>
+                        <div class="pl-edit-fields">
+                            <div *ngIf="field.isLabelView || isReadOnly" class="form-control-plaintext pre-text"
+                                [ngClass]="{'dark-grey': field.displayValue == 'None'}"
+                                ngbTooltip="{{ field.value ? field.value : 'None' }}" placement="top-left top-right" container="body"
+                                tooltipClass="tooltip-key-field" (click)="editField(field)">{{field.value == null ? 'None' : field.value}}
+                            </div>
+                    
+                            <div class="inner-addon right-addon">
+                                <!-- Loading Bar -->
+                                <ngx-control-level-loading-bar
+                                    *ngIf="!field.isLabelView && field.showLoading && !field.isReadOnly"></ngx-control-level-loading-bar>
+                    
+                                <input #textbox id="txt-{{(field.name | lowercase)}}" pInputText
+                                    *ngIf="!field.isLabelView && !field.isReadOnly" class="form-control" type="number"
+                                    formControlName='{{field.name}}' (keydown)="onNumberFieldKeyPress($event,field)"
+                                    [(ngModel)]="field.value"
+                                    [ngClass]="{ 'is-invalid': formGroup.get(field.name).errors }" trimValue (focusout)="onFocusOutEvent(field)" />
+                                <button *ngIf="!field.isReadOnly && formGroup.get(field.name).errors"
+                                    class="icon-error-key btn border-0 bg-transparent" [ngbTooltip]="NumberFieldtooltipContent"
+                                    placement="top top-right" container="body" tooltipClass="tooltip-key-icon">
+                                    <i class="fa-solid fa-triangle-exclamation position-static p-0"></i>
+                                </button>
+                                <ng-template #NumberFieldtooltipContent>
+                                    <div *ngIf="!field.isLabelView && formGroup.get(field.name).errors">
+                                        <span *ngIf="formGroup.get(field.name).errors.required">
+                                            {{field.settingsJson.requiredValMessage}}
+                                        </span>
+                                        <span *ngIf="formGroup.get(field.name).errors.min">
+                                            {{field.settingsJson.minValMessage}}
+                                        </span>
+                                        <span *ngIf="formGroup.get(field.name).errors.max">
+                                            {{field.settingsJson.maxValMessage}}
+                                        </span>
+                                        <span *ngIf="formGroup.get(field.name).errors.maxlength">
+                                            {{field.settingsJson.minLengthValMessage}}
+                                        </span>
+                                        <span *ngIf="formGroup.get(field.name).errors.maxlength">
+                                            {{field.settingsJson.maxLengthValMessage}}
+                                        </span>
+                                    </div>
+                                </ng-template>
+                            </div>
+                            <div *ngIf="!field.isLabelView && !field.isReadOnly" class="edit-key-buttons">
+                                <button (mousedown)="onNumberFieldSubmit(field)" type="button"
+                                    class="btn btn-outline-secondary mr-1 vertical-center justify-content-center"><i
+                                        class="fa-solid fa-check" aria-hidden="true"></i></button>
+                                <button (mousedown)="discardChanges(field)" type="button"
+                                    class="btn btn-outline-secondary vertical-center justify-content-center">
+                                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!--  End Number with decimal Control -->
+                    
+                    <!-- Start Whole Number Control-->
+                    <ng-container *ngSwitchCase="'Whole Number'">
+                        <div>
+                            <label class="col-form-label fw-semibold">{{field.displayName}}</label>
+                            <ng-container *ngIf="field.settingsJson && field.settingsJson.isRequired">
+                                <span class="mandatory"></span>
+                            </ng-container>
+                        </div>
+                        <div class="pl-edit-fields">
+                            <div *ngIf="field.isLabelView || isReadOnly" class="form-control-plaintext pre-text"
+                                [ngClass]="{'dark-grey': field.displayValue == 'None'}" 
+                                ngbTooltip="{{ field.value ? field.value : 'None' }}" placement="top-left top-right" container="body"
+                                tooltipClass="tooltip-key-field" (click)="editField(field)">{{ field.value == null ? 'None' : field.value}}
+                            </div>
+                    
+                            <div class="inner-addon right-addon">
+                                <!-- Loading Bar -->
+                                <ngx-control-level-loading-bar
+                                    *ngIf="!field.isLabelView && field.showLoading && !field.isReadOnly"></ngx-control-level-loading-bar>
+                    
+                                <input #textbox type="number" id="txt-{{(field.name | lowercase)}}" pInputText
+                                    *ngIf="!field.isLabelView && !field.isReadOnly" class="form-control" formControlName='{{field.name}}'
+                                    (keydown)="onWholeNumberFieldKeyPress($event,field)" [(ngModel)]="field.value"
+                                    [ngClass]="{ 'is-invalid': formGroup.get(field.name).errors }" trimValue (focusout)="onFocusOutEvent(field)" />
+                                <button *ngIf="!field.isReadOnly && formGroup.get(field.name).errors"
+                                    class="icon-error-key btn border-0 bg-transparent" [ngbTooltip]="WholeNumberFieldtooltipContent"
+                                    placement="top top-right" container="body" tooltipClass="tooltip-key-icon">
+                                    <i class="fa-solid fa-triangle-exclamation position-static p-0"></i>
+                                </button>
+                                <ng-template #WholeNumberFieldtooltipContent>
+                                    <div *ngIf="!field.isLabelView && formGroup.get(field.name).errors">
+                                        <span *ngIf="formGroup.get(field.name).errors.required">
+                                            {{field.settingsJson.requiredValMessage}}
+                                        </span>
+                                        <span *ngIf="formGroup.get(field.name).errors.min">
+                                            {{field.settingsJson.minValMessage}}
+                                        </span>
+                                        <span *ngIf="formGroup.get(field.name).errors.max">
+                                            {{field.settingsJson.maxValMessage}}
+                                        </span>
+                                        <span *ngIf="formGroup.get(field.name).errors.minlength">
+                                            {{field.settingsJson.minLengthValMessage}}
+                                        </span>
+                                        <span *ngIf="formGroup.get(field.name).errors.maxlength">
+                                            {{field.settingsJson.maxLengthValMessage}}
+                                        </span>
+                                    </div>
+                                </ng-template>
+                            </div>
+                            <div *ngIf="!field.isLabelView && !field.isReadOnly" class="edit-key-buttons">
+                                <button (mousedown)="onWholeNumberFieldSubmit(field)" type="button"
+                                    class="btn btn-outline-secondary mr-1 vertical-center justify-content-center"><i
+                                        class="fa-solid fa-check" aria-hidden="true"></i></button>
+                                <button (mousedown)="discardChanges(field)" type="button"
+                                    class="btn btn-outline-secondary vertical-center justify-content-center">
+                                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!--  End Whole Number Control -->
+
+                    <!-- Start Text(Long) Control -->
+                    <ng-container *ngSwitchCase="'Text (Long)'">
+                        <label class="col-form-label fw-semibold">{{field.displayName}}</label>
+                        <ng-container *ngIf="field.settingsJson && field.settingsJson.isRequired">
+                            <span class="mandatory"></span>
+                        </ng-container>
+                        <div class="pl-edit-fields ht-field-textarea">
+                    
+                            <div *ngIf="field.isLabelView" class="form-control-plaintext pre-text"
+                                [ngClass]="{'dark-grey': field.displayValue == 'None'}"
+                                ngbTooltip="{{ field.value ? field.value : 'None' }}" placement="top-left top-right" container="body"
+                                tooltipClass="tooltip-key-field" (click)="editField(field)">{{ field.value ? field.value : 'None' }}</div>
+                    
+                            <div class="inner-addon right-addon">
+                    
+                                <!-- Loading Bar -->
+                                <ngx-control-level-loading-bar
+                                    *ngIf="!field.isLabelView && field.showLoading && !field.isReadOnly"></ngx-control-level-loading-bar>
+                    
+                                <textarea #textarea id="textarea-{{(field.name | lowercase)}}" pInputText
+                                    *ngIf="!field.isLabelView && !field.isReadOnly" class="form-control" rows="3"
+                                    formControlName='{{field.name}}' (keypress)="textLongEventHandler($event)"
+                                    (keydown)="onTextLongFieldKeyPress($event,field)" [(ngModel)]="field.value" value={{field.value}}
+                                    [ngClass]="{ 'is-invalid': formGroup.get(field.name).errors }" trimValue (focusout)="onFocusOutEvent(field)">
+                                </textarea>
+                    
+                                <button *ngIf="!field.isReadOnly && formGroup.get(field.name).errors"
+                                    class="icon-error-key btn border-0 bg-transparent" [ngbTooltip]="TextLongFieldtooltipContent"
+                                    placement="top top-right" container="body" tooltipClass="tooltip-key-icon">
+                                    <i class="fa-solid fa-triangle-exclamation position-static p-0"></i>
+                                </button>
+                                <ng-template #TextLongFieldtooltipContent>
+                                    <div *ngIf="!field.isLabelView && formGroup.get(field.name).errors">
+                                        <span *ngIf="formGroup.get(field.name).errors.required">
+                                            {{field.settingsJson.requiredValMessage}}
+                                        </span>
+                                        <span *ngIf="formGroup.get(field.name).errors.minlength">
+                                            {{field.settingsJson.minLengthValMessage}}
+                                        </span>
+                                        <span *ngIf="formGroup.get(field.name).errors.maxlength">
+                                            {{field.settingsJson.maxLengthValMessage}}
+                                        </span>
+                                    </div>
+                                </ng-template>
+                    
+                            </div>
+                    
+                            <div *ngIf="!field.isLabelView && !field.isReadOnly" class="edit-key-buttons">
+                                <button (mousedown)="onTextLongFieldSubmit(field)" type="button"
+                                    class="btn btn-outline-secondary mr-1 vertical-center justify-content-center"><i
+                                        class="fa-solid fa-check" aria-hidden="true"></i></button>
+                                <button (mousedown)="discardChanges(field)" type="button"
+                                    class="btn btn-outline-secondary vertical-center justify-content-center"><i class="fa-solid fa-xmark"
+                                        aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- End Text(Long) Control -->
+                    
+                    <!-- Start CheckBox Control -->
+                    <ng-container *ngSwitchCase="'Checkbox'">
+                        <div>
+                            <label class="col-form-label fw-semibold">{{field.displayName}}</label>
+                            <ng-container *ngIf="field.settingsJson && field.settingsJson.isRequired">
+                                <span class="mandatory"></span>
+                            </ng-container>
+                        </div>
+                        <div class="pl-edit-fields"
+                            [ngClass]="{'custom-control custom-checkbox flex-checkbox d-inline-flex align-items-center': !field.isLabelView && !field.isReadOnly }">
+                            <input #checkbox id="chk-{{(field.name | lowercase)}}" name="chk-{{(field.name | lowercase)}}"
+                                *ngIf="!field?.isLabelView && !field?.isReadOnly" class="custom-control-input" type="checkbox"
+                                formControlName='{{field?.name}}'
+                                [checked]='(field?.value == 1 || field?.value == true || (field?.value.toString() | lowercase) == "true") ? true : false'
+                                (change)="onCheckBoxFieldSubmit(field)" />
+                            <div class="pre-text custom-control-label form-control-plaintext" *ngIf="field?.isLabelView" (click)="editField(field)">{{ field?.value != null && (field?.value == 1 || field?.value == true || (field?.value.toString() | lowercase) == "true") ? 'True' : 'False' }}</div>
+                        </div>
+                    </ng-container>
+                    <!-- End CheckBox Control -->
+
+                    <!-- Start RadioGroup (Boolean) Control -->
+                    <ng-container *ngSwitchCase="'RadioGroup (Boolean)'">
+                        <div >
+                            <label class="col-form-label fw-semibold">{{field.displayName}}</label>
+                            <ng-container *ngIf="field.settingsJson && field.settingsJson.isRequired">
+                                <span class="mandatory"></span>
+                            </ng-container>
+                        </div>
+                        <div class="pl-edit-fields">
+                            <div *ngIf="field.isLabelView" id="radio-{{(field.name | lowercase)}}"
+                                [ngClass]="{'dark-grey': field.displayValue == 'None'}" class="form-control-plaintext pre-text"
+                                (click)="editField(field)">{{ (field.optionsJSON | displayValueFinder: {value:field.value})?.length ? (
+                                field.optionsJSON | displayValueFinder: {value:field.value})[0].label :'None' }}</div>
+                            <ng-container *ngIf="!field?.isLabelView && !field?.isReadOnly">
+                                <div class="custom-control custom-checkbox flex-checkbox py-1 pr-4 flex-radio" *ngFor="let radioGroupOptions of field.optionsJSON; let i = index" [ngClass]="{ 'is-invalid': submitted && formGroup.get(field.fieldName).errors }">
+                                    <p-radioButton #radio id="rdo-{{(field.name+i | lowercase)}}" #rdoBtn
+                                        [inputId]="radioGroupOptions.value" [name]="field.name" [value]="radioGroupOptions.value"
+                                        formControlName={{field.name}} [(ngModel)]="field.value" (click)="onRadioFieldSubmit(field);">
+                                    </p-radioButton>
+                                    <label for="rdo-{{(field.name+i | lowercase)}}" (click)="rdoBtn?.select();onRadioFieldSubmit(field);" class="radio-label cursor-pointer">{{radioGroupOptions.label}}</label>
+                                </div>
+                                <div class="invalid-feedback">
+                                    <button *ngIf="!field.isReadOnly && formGroup.get(field.name).errors"
+                                        class="icon-error-key btn border-0 bg-transparent" [ngbTooltip]="radioFieldtooltipContent"
+                                        placement="top top-right" container="body" tooltipClass="tooltip-key-icon">
+                                        <i class="fa-solid fa-triangle-exclamation position-static p-0"></i>
+                                    </button>
+                                    <ng-template #radioFieldtooltipContent>
+                                        <div *ngIf="!field.isLabelView && formGroup.get(field.name).errors">
+                                            <span *ngIf="formGroup.get(field.name).errors.required">
+                                                {{field.settingsJson.requiredValMessage}}
+                                            </span>
+                                        </div>
+                                    </ng-template>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+                    <!-- End RadioGroup (Boolean) Control -->
+                    
+                    <!-- Start Currency Control -->
+                    <ng-container *ngSwitchCase="'Currency'">
+                        <div>
+                            <label class="col-form-label fw-semibold">{{field.displayName}}</label>
+                            <ng-container *ngIf="field.settingsJson && field.settingsJson.isRequired">
+                                <span class="mandatory"></span>
+                            </ng-container>
+                        </div>
+                        <div class="pl-edit-fields">
+                            <div *ngIf="field.isLabelView || field.isReadOnly" class="form-control-plaintext pre-text"
+                                [ngClass]="{'dark-grey': field.displayValue == 'None'}"
+                                ngbTooltip="{{ field.value != null ? (field.value | currency:currencySymbol:'symbol-narrow':'1.2-2') : 'None' }}"
+                                placement="top-left top-right" container="body" tooltipClass="tooltip-key-field" (click)="editField(field)">{{ field.value != null ? (field.value | currency:currencySymbol:'symbol-narrow':'1.2-2') : 'None' }}
+                            </div>
+                    
+                            <div *ngIf="!field.isReadOnly" class="inner-addon left-addon">
+                                <!-- Loading Bar -->
+                                <ngx-control-level-loading-bar
+                                    *ngIf="!field.isLabelView && field.showLoading && !field.isReadOnly"></ngx-control-level-loading-bar>
+                                <span *ngIf="!field.isLabelView && !field.isReadOnly" class="font-16">
+                                    {{currencySymbol}}
+                                </span>
+                                <input #textbox id="txt-{{(field.name | lowercase)}}" pInputText
+                                    *ngIf="!field.isLabelView && !field.isReadOnly" class="form-control" type="text"
+                                    formControlName={{field.name}} thousandSeparator="," mask="separator.2"
+                                    (keypress)="currencyEventHandler($event)" (keydown)="onCurrencyFieldKeyPress($event,field)"
+                                    [allowNegativeNumbers]="true" [(ngModel)]="field.value"
+                                    [ngClass]="{ 'is-invalid': formGroup.get(field.name).errors }" trimValue (focusout)="onFocusOutEvent(field)" />
+                    
+                                <button *ngIf="!field.isReadOnly && formGroup.get(field.name).errors"
+                                    class="icon-error-key btn border-0 bg-transparent" [ngbTooltip]="CurrencyFieldtooltipContent"
+                                    placement="top top-right" container="body" tooltipClass="tooltip-key-icon">
+                                    <i class="fa-solid fa-triangle-exclamation position-static p-0"></i>
+                                </button>
+                    
+                                <ng-template #CurrencyFieldtooltipContent>
+                                    <div *ngIf="!field.isLabelView && formGroup.get(field.name).errors">
+                                        <span *ngIf="formGroup.get(field.name).errors.required">
+                                            {{field.settingsJson.requiredValMessage}}
+                                        </span>
+                                        <span *ngIf="formGroup.get(field.name).errors.min">
+                                            {{field.settingsJson.minValMessage}}
+                                        </span>
+                                        <span *ngIf="formGroup.get(field.name).errors.max">
+                                            {{field.settingsJson.maxValMessage}}
+                                        </span>
+                                        <span *ngIf="formGroup.get(field.name).errors.minlength">
+                                            {{field.settingsJson.minLengthValMessage}}
+                                        </span>
+                                        <span *ngIf="formGroup.get(field.name).errors.maxlength">
+                                            {{field.settingsJson.maxLengthValMessage}}
+                                        </span>
+                                    </div>
+                                </ng-template>
+                            </div>
+                            <div *ngIf="!field.isLabelView && !field.isReadOnly" class="edit-key-buttons">
+                                <button (mousedown)="onCurrencyFieldSubmit(field)" type="button"
+                                    class="btn btn-outline-secondary mr-1 vertical-center justify-content-center"><i
+                                        class="fa-solid fa-check" aria-hidden="true"></i></button>
+                                <button (mousedown)="discardChanges(field)" type="button"
+                                    class="btn btn-outline-secondary vertical-center justify-content-center">
+                                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- End Currency Control -->
+
+                    <!-- Start Email Control -->
+                    <ng-container *ngSwitchCase="'Email'">
+                        <label class="col-form-label fw-semibold">{{field.displayName}}</label>
+                        <ng-container *ngIf="field.settingsJson && field.settingsJson.isRequired">
+                            <span class="mandatory"></span>
+                        </ng-container>
+                        <div class="pl-edit-fields">
+                            <div *ngIf="field.isLabelView" class="form-control-plaintext pre-text" [ngClass]="{'dark-grey': field.displayValue == 'None'}" 
+                                ngbTooltip="{{ field.value ? field.value : 'None' }}" placement="top-left top-right" container="body" tooltipClass="tooltip-key-field"
+                                (click)="editField(field)">
+                                <ng-container *ngIf="field.value else nullValue">
+                                <a  class="dark-blue font-weight-bold no-underline cursor-pointer" id="link-email"
+                                    href="mailto:{{field.value}}">{{ field.value ? field.value : 'None' }}</a>
+                                </ng-container>
+                                <ng-template #nullValue>None</ng-template>
+                            </div>
+                            <div class="inner-addon right-addon">
+                                <!-- Loading Bar -->
+                                <ngx-control-level-loading-bar *ngIf="!field.isLabelView && field.showLoading && !field.isReadOnly"></ngx-control-level-loading-bar>
+                                
+                                <input #textbox id="email-{{(field.name | lowercase)}}" pInputText *ngIf="!field.isLabelView && !field.isReadOnly"
+                                    class="form-control" type="text" formControlName='{{field.name}}' (keypress)="onEmailFieldKeyPress($event,field)"
+                                    [(ngModel)]="field.value" [ngClass]="{ 'is-invalid': formGroup.get(field.name).errors }"
+                                    trimValue (focusout)="onFocusOutEvent(field)" />
+                                
+                                    <button *ngIf="!field.isReadOnly && formGroup.get(field.name).errors" class="icon-error-key btn border-0 bg-transparent"
+                                        [ngbTooltip]="TextFieldtooltipContent" placement="top top-right" container="body" tooltipClass="tooltip-key-icon">
+                                        <i class="fa-solid fa-triangle-exclamation position-static p-0"></i>
+                                    </button>
+                                    <ng-template #TextFieldtooltipContent>
+                                        <div *ngIf="!field.isLabelView && formGroup.get(field.name).errors">
+                                            <span *ngIf="formGroup.get(field.name).errors.email">
+                                                {{field.settingsJson.emailValMessage ? field.settingsJson.emailValMessage : ('COMMON_DETAILS_TAB.KEY_FIELDS.EMAIL_VALIDATION' | translate)}}
+                                            </span>
+                                            <span *ngIf="formGroup.get(field.name).errors.required">
+                                                {{field.settingsJson.requiredValMessage}}
+                                            </span>
+                                            <span *ngIf="formGroup.get(field.name).errors.minlength">
+                                                {{field.settingsJson.minLengthValMessage}}
+                                            </span>
+                                            <span *ngIf="formGroup.get(field.name).errors.maxlength">
+                                                {{field.settingsJson.maxLengthValMessage}}
+                                            </span>
+                                        </div>
+                                    </ng-template>
+                            </div>
+                            <div *ngIf="!field.isLabelView && !field.isReadOnly" class="edit-key-buttons">
+                                <button (mousedown)="onEmailFieldSubmit(field)" type="button" class="btn btn-outline-secondary mr-1 vertical-center justify-content-center"><i
+                                        class="fa-solid fa-check" aria-hidden="true"></i></button>
+                                <button (mousedown)="discardChanges(field)" type="button"
+                                    class="btn btn-outline-secondary vertical-center justify-content-center"><i
+                                        class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- End Email Control -->
+
+                    <!-- Start Phone Control -->
+                    <ng-container *ngSwitchCase="'Phone'">
+                        <label class="col-form-label fw-semibold">{{field.displayName}}</label>
+                        <ng-container *ngIf="field.settingsJson && field.settingsJson.isRequired">
+                            <span class="mandatory"></span>
+                        </ng-container>
+                        <div class="pl-edit-fields">
+                            <div *ngIf="field.isLabelView" class="form-control-plaintext pre-text" [ngClass]="{'dark-grey': field.displayValue == 'None'}" 
+                                ngbTooltip="{{ field.value ? (field.value) : 'None' }}" placement="top-left top-right" container="body" tooltipClass="tooltip-key-field"
+                                (click)="editField(field)">
+                                <ng-container *ngIf="field.value else nullValue">
+                                    <a class="dark-blue font-weight-bold no-underline cursor-pointer" id="link-email"
+                                        [href]="field.value | phone: 'link'">
+                                        {{ field.value }}
+                                    </a>
+                                </ng-container>
+                                <ng-template #nullValue>None</ng-template>
+                            </div>
+                            <div *ngIf="!field.isReadOnly">
+                                <!-- Loading Bar -->
+                                <ngx-control-level-loading-bar *ngIf="!field.isLabelView && field.showLoading && !field.isReadOnly"></ngx-control-level-loading-bar>
+                                
+                                    <ng-container *ngIf="!field.isLabelView && !field.isReadOnly">
+                                        <ngx-phone-control (click)="stopPropagation($event)" [formControlName]="field.name">
+                                        </ngx-phone-control>
+                                    </ng-container>
+                                    
+                                <button *ngIf="!field.isReadOnly && formGroup.get(field.name).errors" class="icon-error-key btn border-0 bg-transparent"
+                                    [ngbTooltip]="PhoneFieldtooltipContent" placement="top top-right" container="body" tooltipClass="tooltip-key-icon">
+                                    <i class="fa-solid fa-triangle-exclamation position-static p-0"></i>
+                                </button>
+                                <ng-template #PhoneFieldtooltipContent>
+                                    <div *ngIf="!field.isLabelView && formGroup.get(field.name).errors">
+                                        <span *ngIf="formGroup.get(field.name).errors.mask">
+                                            {{field.settingsJson.phoneValMessage ? field.settingsJson.phoneValMessage : ('COMMON_DETAILS_TAB.KEY_FIELDS.PHONE_PATTERN' | translate)}}
+                                        </span>
+                                        <span *ngIf="formGroup.get(field.name).errors.required">
+                                            {{field.settingsJson.requiredValMessage}}
+                                        </span>
+                                        <span *ngIf="formGroup.get(field.name).errors.minlength">
+                                            {{field.settingsJson.minLengthValMessage}}
+                                        </span>
+                                        <span *ngIf="formGroup.get(field.name).errors.maxlength">
+                                            {{field.settingsJson.maxLengthValMessage}}
+                                        </span>
+                                    </div>
+                                </ng-template>
+                            </div>
+                            <div *ngIf="!field.isLabelView && !field.isReadOnly" class="edit-key-buttons">
+                                <button (mousedown)="onPhoneFieldSubmit(field)" type="button" class="btn btn-outline-secondary mr-1 vertical-center justify-content-center"><i
+                                        class="fa-solid fa-check" aria-hidden="true"></i></button>
+                                <button (mousedown)="discardChanges(field)" type="button"
+                                    class="btn btn-outline-secondary vertical-center justify-content-center"><i
+                                        class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- End Phone Control -->
+
+                    <!-- Start Duration Control -->
+                    <ng-container *ngSwitchCase="'Duration'">
+                        <label class="col-form-label fw-semibold">{{field.displayName}}</label>
+                        <ng-container *ngIf="field.settingsJson && field.settingsJson.isRequired">
+                            <span class="mandatory"></span>
+                        </ng-container>
+                        <i class="fas fa-info-circle dark-grey ml-1 info-tooltip" tooltipClass="tooltip-key-icon"
+                            [ngbTooltip]="estimatedMinsToolTip" placement="top top-right" container="body" aria-hidden="true"></i>
+                        <ng-template #estimatedMinsToolTip>
+                            <div class="d-flex flex-column" style="text-align:left;">
+                                {{ 'COMMON_DETAILS_TAB.KEY_FIELDS.DURATION_TIME_TOOLTIP_HEADER' | translate }}<br />
+                                {{ 'COMMON_DETAILS_TAB.KEY_FIELDS.DURATION_TIME_TOOLTIP_LINE1' | translate }}<br />
+                                {{ 'COMMON_DETAILS_TAB.KEY_FIELDS.DURATION_TIME_TOOLTIP_LINE2' | translate }}<br />
+                                {{ 'COMMON_DETAILS_TAB.KEY_FIELDS.DURATION_TIME_TOOLTIP_LINE3' | translate }}<br />
+                                {{ 'COMMON_DETAILS_TAB.KEY_FIELDS.DURATION_TIME_TOOLTIP_LINE4' | translate }}<br />
+                            </div>
+                        </ng-template>
+
+                        <div class="pl-edit-fields">
+                            <div *ngIf="field.isLabelView" class="form-control-plaintext pre-text" [ngClass]="{'dark-grey': field.displayValue == 'None'}" ngbTooltip="{{ field.value ? field.value : 'None' }}" placement="top-left top-right" container="body" tooltipClass="tooltip-key-field"
+                                (click)="editField(field)">{{ field.value ? field.value : 'None' }}</div>
+                            
+                            <div class="inner-addon right-addon">
+                                <!-- Loading Bar -->
+                                <ngx-control-level-loading-bar *ngIf="!field.isLabelView && field.showLoading && !field.isReadOnly"></ngx-control-level-loading-bar>
+                                
+                                <input #textbox id="duration-{{(field.name | lowercase)}}" pInputText *ngIf="!field.isLabelView && !field.isReadOnly"
+                                    class="form-control" type="text" formControlName='{{field.name}}' (keypress)="onDurationFieldKeyPress($event,field)"
+                                    [(ngModel)]="field.value" [ngClass]="{ 'is-invalid': formGroup.get(field.name).errors }"
+                                    trimValue (focusout)="onFocusOutEvent(field)" />
+                                
+                                    <button *ngIf="!field.isReadOnly && formGroup.get(field.name).errors" class="icon-error-key btn border-0 bg-transparent"
+                                        [ngbTooltip]="DurationFieldtooltipContent" placement="top top-right" container="body" tooltipClass="tooltip-key-icon">
+                                        <i class="fa-solid fa-triangle-exclamation position-static p-0"></i>
+                                    </button>
+                                    <ng-template #DurationFieldtooltipContent>
+                                        <div *ngIf="!field.isLabelView && formGroup.get(field.name).errors">
+                                            <span *ngIf="formGroup.get(field.name).errors.invalidTimeFrame">
+                                                {{field.settingsJson.invalidTimeFrameMessage ? field.settingsJson.invalidTimeFrameMessage : ('COMMON_DETAILS_TAB.KEY_FIELDS.DURATION_TIME_VALIDATION' | translate)}}
+                                            </span>
+                                            <span *ngIf="formGroup.get(field.name).errors.timeTooLarge">
+                                                {{field.settingsJson.timeTooLargeMessage ? field.settingsJson.timeTooLargeMessage : ('COMMON_DETAILS_TAB.KEY_FIELDS.DURATION_TIME_LENGTH_VALIDATION' | translate)}}
+                                            </span>
+                                            <span *ngIf="formGroup.get(field.name).errors.timeTooSmall">
+                                                {{field.settingsJson.timeTooSmallMessage ? field.settingsJson.timeTooSmallMessage : ('COMMON_DETAILS_TAB.KEY_FIELDS.DURATION_TIME_MINIMUM_VALIDATION' | translate)}}
+                                            </span>
+                                            <span *ngIf="formGroup.get(field.name).errors.required">
+                                                {{field.settingsJson.requiredValMessage}}
+                                            </span>
+                                            <span *ngIf="formGroup.get(field.name).errors.minlength">
+                                                {{field.settingsJson.minLengthValMessage}}
+                                            </span>
+                                            <span *ngIf="formGroup.get(field.name).errors.maxlength">
+                                                {{field.settingsJson.maxLengthValMessage}}
+                                            </span>
+                                        </div>
+                                    </ng-template>
+                            </div>
+                        
+                            <div *ngIf="!field.isLabelView && !field.isReadOnly" class="edit-key-buttons">
+                                <button (mousedown)="onDurationFieldSubmit(field)" type="button" class="btn btn-outline-secondary mr-1 vertical-center justify-content-center"><i
+                                        class="fa-solid fa-check" aria-hidden="true"></i></button>
+                                <button (mousedown)="discardChanges(field)" type="button"
+                                    class="btn btn-outline-secondary vertical-center justify-content-center"><i
+                                        class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- End Duration Control -->
+                </div>
+            </div>
+        </div>
+    </ng-container>
+    <ng-template #templateNoKeyFields>
+        <div class="text-center keyfield-message d-flex align-items-center">
+            <div>
+                <i class="fa-solid fa-screwdriver-wrench keyFieldConfigIcon mb-2"></i>
+                <div class="font-semibold">{{ 'COMMON_DETAILS_TAB.KEY_FIELDS_MESSAGE' | translate}}</div>
+            </div>
+        </div>
+    </ng-template>
+</ng-container>

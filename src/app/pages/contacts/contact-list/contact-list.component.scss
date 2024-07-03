@@ -1,0 +1,81 @@
+@import "../../../../scss/variables";
+@import '../../../../scss/entity_kanban.scss';
+
+.tbl-contact-list{
+    @media (min-width: 641px){
+        .checkbox-col{ width: 50px; max-width: 50px; }
+        td.bookmark {text-align: left;padding-left: 12px !important;}
+        th.user-img, td.user-img { width:50px; min-width: 50px; text-align: center; }
+        th.name, td.name,  th.description, td.description, th.typename, td.typename, th.entityrecordtypename, td.entityrecordtypename, th.accountname, td.accountname {width: 176px; min-width: 176px; word-break: break-word; }
+        th.email, td.email, th.createdByName, td.createdByName{ width: 200px; min-width: 200px; }
+        th.name, td.name{ word-break: break-word; }
+        th.phone, td.phone, th.tag, td.tag{width: 170px; min-width: 170px;}
+        th.created, td.created, th.status, td.status { width: 135px; min-width: 135px; max-width: 135px; }
+        th.icon-dropdown, td.icon-dropdown { width:60px; min-width: 60px; max-width: 60px; }
+        // th.action, td.action{width: 50px;}
+        th.name, td.name, th.email, td.email{
+            width: 200px; min-width: 200px; word-break: break-word;
+        }
+        th.company, td.company, th.created, td.created {
+            min-width: 180px; width: 180px; word-break: break-word;
+        }
+        th.id.action, td.action {
+            width: 80px; max-width: 80px; justify-content: flex-end;
+        }
+    }
+}
+
+
+
+.btn-mg{ margin: 0;
+}
+
+.btn-reset-filter.btn-mg{ margin: 0 20px 0 0; 
+}
+
+.form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width), .form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width) + .form-group:not(.filter-width) { margin-top: 21px; padding-top: 0;
+    @media (max-width: 575px) { margin-top: 0px; padding-top: 0; }
+}
+
+.form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width), .form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width) + .form-group:not(.filter-width) { margin-top: 0; 
+    @media (max-width: 991px) { margin-top: 0; padding-top: 0; }
+}
+
+.form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width).col-sm-4, .form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width) + .form-group:not(.filter-width).col-sm-2 {
+    @media (max-width: 767px) and (min-width: 576px) { flex: 0 0 50%; max-width: 50%; }
+}
+
+.form-group:not(.filter-width) + .filter-width + .filter-width + .form-group:not(.filter-width), .form-group:not(.filter-width) + .filter-width + .filter-width + .form-group:not(.filter-width) + .form-group:not(.filter-width) { margin-top: 0; 
+    @media (max-width: 1024px) and (min-width: 992px) { margin-top: 0; padding-top: 0; }
+    @media (max-width: 575px) { margin-top: 0; padding-top: 0; }
+}
+
+.height-full{
+    @media (max-width: 1279px) and (min-width: 1200px) { height: calc(100vh - 135px); }
+}
+
+td .link--drag{ margin-right: 6px; display: flex; padding: 0; }
+
+.list-card-description{ white-space: normal; }
+
+::ng-deep .p-datatable .p-datatable-thead > tr > th{ white-space: nowrap; }
+
+.custom-control.custom-checkbox { font-size: 18px; }
+
+.avatar {
+    position: relative;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+}
+
+.customInputText{
+    height: 34px;
+}
+
+// prime ng input override - start
+:host ::ng-deep{
+    .dropDownOverride.p-dropdown {
+        width: 100%;
+    }
+}

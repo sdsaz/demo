@@ -1,0 +1,44 @@
+<div class="d-flex">
+    <p-dropdown
+        [options]="countries" 
+        class="form-control w-flag" 
+        [filter]="true" 
+        appendTo="body"
+        [(ngModel)]="selectedCountry" 
+        panelStyleClass="maxWidthOverride-xl-country" 
+        filterBy="name,phoneCode,twoLetterIsoCode,threeLetterIsoCode"
+        placeholder="+###"
+        (click)="stopPropagation($event)" 
+        (onChange)="onCountryCodeChange($event)" 
+        (focus)="markAsTouched()">
+        <ng-template pTemplate="selectedItem" let-selectedOption>
+            <div class="d-flex align-items-center">
+                <div [class]="'flag me-2 flag-' + selectedOption?.twoLetterIsoCode?.toLowerCase()"></div>
+                <span>{{ selectedOption.phoneCode }}</span>
+            </div>
+        </ng-template>
+
+        <ng-template let-country pTemplate="item">
+            <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center">
+                    <div [class]="'flag me-2 flag-' + country?.twoLetterIsoCode?.toLowerCase()"></div>
+                    <div class="me-2">{{ country?.name ? (country?.name | characterLimit : _commonHelper.globalTextCharSize) : country?.name | characterLimit : _commonHelper.globalTextCharSize }}</div>
+                </div>
+                <div class="text-nowrap">{{ country?.phoneCode }}</div>
+            </div>
+        </ng-template>
+    </p-dropdown>
+    
+    <input 
+        pInputText 
+        class="w-100 border-start-0 flag-input"
+        [(ngModel)]="value.phoneNumber"
+        [placeholder]="selectedCountry?.phoneMask !== null ? selectedCountry?.phoneMask : '##########'"
+        [mask]='selectedCountry?.validMask'
+        showMaskTyped="true"
+        (keyup)="onPhoneNumberChange($event)" 
+        (focus)="markAsTouched()"
+        #phoneInput="ngModel"
+        (keypress)="onKeyPress($event)"
+    />
+</div>

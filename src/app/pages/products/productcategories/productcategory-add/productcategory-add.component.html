@@ -1,0 +1,71 @@
+<!-- Model Header Start -->
+<div class="modal-header border-bottom-0 padding-32 pb-0">
+    <h4 class="modal-title font-weight-bold" id="headingPopupEntity">{{title}}</h4>
+    <button type="button" id="btn-close" class="close" (click)="onCloseForm(false)">
+        <span class="font-24 fonts-close"><i class="fas fa-times" aria-hidden="true"></i></span>
+    </button>
+</div>
+<!-- Model Header End -->
+
+<!-- Add Prpoduct Category Start -->
+<div class="modal-body padding-32 pt-3" *ngIf="parentCategoryForm">
+    <form [formGroup]='parentCategoryForm'>
+        <div class=" form-group">
+            <label>{{'PRODUCTCATEGORIES.ADD_DIALOG.NAME' | translate | configuredEntityName}} <span class="mandatory"></span></label>
+            <input type="text" formControlName="name" id="txt-name" class="form-control ht--40"
+                [ngClass]="{ 'is-invalid': parentCategoryForm['controls'].name.errors && (parentCategoryForm['controls'].name.dirty || parentCategoryForm['controls'].name.touched) }"
+                trimValue>
+            <div *ngFor='let validation of validation_messages.name' class='invalid-feedback'>
+                <div
+                    *ngIf="parentCategoryForm['controls'].name.hasError(validation.type) && parentCategoryForm['controls'].name.errors && (parentCategoryForm['controls'].name.dirty || parentCategoryForm['controls'].name.touched)">
+                    {{ validation.message | translate}}
+                </div>
+            </div>
+        </div>
+        <div class=" form-group"> 
+            <label>{{'PRODUCTCATEGORIES.ADD_DIALOG.CODE' | translate | configuredEntityName}} </label>
+            <input type="text" formControlName="code" id="txt-code" class="form-control ht--40"
+                [ngClass]="{ 'is-invalid': parentCategoryForm['controls'].code.errors && (parentCategoryForm['controls'].code.dirty || parentCategoryForm['controls'].code.touched) }"
+                trimValue>
+            <div *ngFor='let validation of validation_messages.code' class='invalid-feedback'>
+                <div
+                    *ngIf="parentCategoryForm['controls'].code.hasError(validation.type) && parentCategoryForm['controls'].code.errors && (parentCategoryForm['controls'].code.dirty || parentCategoryForm['controls'].code.touched)">
+                    {{ validation.message | translate}}
+                </div>
+            </div>
+        </div>
+        <div class=" form-group">
+            <label>{{'PRODUCTCATEGORIES.ADD_DIALOG.PARENTCATEGORY' | translate | configuredEntityName}} </label>
+            <p-dropdown id="drp-parentProductCategory" formControlName="parentId" optionLabel="label" optionValue="value"
+                [ngClass]="{ 'is-invalid': parentCategoryForm['controls'].parentId.errors }"
+                class="form-control" [options]="parentProductCategoryList"
+                placeholder="{{ 'PRODUCTCATEGORIES.ADD_DIALOG.PARENT_CATEGORY_PLACEHOLDER' | translate | configuredEntityName }}" [filter]="true" [resetFilterOnHide]="false"
+                [showClear]="true">
+                <ng-template let-entity pTemplate="item">
+                    <div class="entity-pad pl-0">
+                        {{entity.code ? (entity.label + ' ('+ entity.code+')') : entity.label}}
+                    </div>
+                </ng-template>
+            </p-dropdown>
+        </div>
+        <div class=" form-group">
+            <label>{{'PRODUCTCATEGORIES.ADD_DIALOG.DESCRIPTION' | translate | configuredEntityName}} </label>
+            <textarea formControlName="description" id="txt-description" class="form-control ht--40"
+                [ngClass]="{ 'is-invalid': parentCategoryForm['controls'].description.errors && (parentCategoryForm['controls'].description.dirty || parentCategoryForm['controls'].description.touched) }"
+                name="description" rows="6" trimValue>
+            </textarea>
+            <div *ngFor='let validation of validation_messages.description' class='invalid-feedback'>
+                <div
+                    *ngIf="parentCategoryForm['controls'].description.hasError(validation.type) && parentCategoryForm['controls'].description.errors && (parentCategoryForm['controls'].description.dirty || parentCategoryForm['controls'].description.touched)">
+                    {{ validation.message | translate}}
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer border-top-0 px-0 pb-0">
+            <button type="button" class='btn btn-outline-secondary me-2' id="btn-cancel"
+                (click)="onCloseForm(false)">{{'PRODUCTCATEGORIES.ADD_DIALOG.BUTTON_CANCEL' | translate}}</button>
+            <button type="button" (click)="saveProductCategory(parentCategoryForm.value)" id="btn-save" class='btn btn-primary'>{{'PRODUCTCATEGORIES.ADD_DIALOG.BUTTON_ADD' | translate}}</button>
+        </div>  
+    </form>
+</div>
+<!-- Add Product category Task End -->

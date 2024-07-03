@@ -1,0 +1,26 @@
+::ng-deep .page-containted .tbl-documents-list .p-datatable-wrapper {
+    @media (min-width: 641px) {
+        th.checkbox-col, td.checkbox-col { width: 45px !important; min-width: 45px; max-width: 45px; }
+        th.entityRecordTypeName, td.entityRecordTypeName { min-width: 90px; }
+        th.name, td.name, th.entityRecordSubTypeName, td.entityRecordSubTypeName, th.created, td.created, th.createdBy, td.createdBy { min-width: 130px; }
+        th.description, td.description { min-width: 200px; }
+        th.action, td.action { min-width: 64px; max-width: 64px; width: 64px !important; }
+        th.fileIcon, td.fileIcon { min-width: 28px; max-width: 28px; width: 28px !important; padding-right: 0 !important; }
+        .max-w-200px { max-width: 200px; }
+        tbody tr:first-child:nth-last-child(2) #drp-action + .dropdown-menu, tbody tr:first-child:nth-last-child(3) #drp-action + .dropdown-menu { transform: translate(-26px, -15px) !important; }
+        tbody tr:first-child:nth-last-child(1) #drp-action + .dropdown-menu { transform: translate(-26px, -43px) !important; }
+    }
+    @media (max-width: 640px) {
+        td.action .drop-no-arrow { width: 100%; }
+    }
+}
+
+::ng-deep .page-containted .search-wrapper .tbl-documents-list .p-datatable .p-datatable-header{
+    position: static !important; max-width: 100% !important; padding-left: 0 !important; padding-right: 0 !important;
+}
+
+.btn-outline-dark, .btn-outline-dark:hover, .btn-outline-dark:active { border-color: var(--surface-800) !important; color: var(--surface-800) !important; }
+
+.actions{
+    @media (max-width: 575px) { width: 100%; padding-top: 12px; }
+}

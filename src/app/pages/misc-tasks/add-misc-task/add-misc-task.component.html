@@ -1,0 +1,99 @@
+<!-- Model Header Start -->
+<div class="modal-header border-bottom-0 padding-32 pb-0">
+    <h4 class="modal-title font-weight-bold" id="headingPopupEntity">{{'WORKTASK.MISCELINIOUSTASK.ADD_DIALOG.TITLE' | translate}}</h4>
+    <button type="button" id="btn-close" class="close" (click)="onCloseForm(false)">
+        <span class="font-24 fonts-close"><i class="fas fa-times" aria-hidden="true"></i></span>
+    </button>
+</div>
+<!-- Model Header End -->
+
+<!-- Add product sku Start -->
+<div class="modal-body padding-32 pt-3" *ngIf="miscTaskForm">
+    <form *ngIf="isInitialLoaded"  [formGroup]="miscTaskForm">
+        <div class="row">
+            <div class=" col-md-12 form-group">
+                <label>{{'WORKTASK.MISCELINIOUSTASK.ADD_DIALOG.REASON' | translate}} <span class="mandatory"></span></label>                
+                <p-dropdown id="drp-reason"  class="form-control"  formControlName="reasonId"
+                    [ngClass]="{ 'is-invalid': miscTaskForm['controls'].reasonId.errors && (miscTaskForm['controls'].reasonId.dirty || miscTaskForm['controls'].reasonId.touched) }"
+                    [options]="workTaskReason" optionLabel="name" optionValue="intValue1"  
+                    placeholder="{{'WORKTASK.MISCELINIOUSTASK.ADD_DIALOG.REASON_PLACEHOLDER' | translate}}" 
+                    [showClear]="true" [filter]="true" [resetFilterOnHide]="false">
+                </p-dropdown>
+                <div *ngFor='let validation of validation_messages.reasonId' class='invalid-feedback'>
+                    <div *ngIf="miscTaskForm['controls'].reasonId.hasError(validation.type) && miscTaskForm['controls'].reasonId.errors && (miscTaskForm['controls'].reasonId.dirty || miscTaskForm['controls'].reasonId.touched)">
+                        {{ validation.message | translate}}
+                    </div>
+                </div>
+            </div>
+            <div class=" col-md-12 form-group">
+                <label>{{'WORKTASK.MISCELINIOUSTASK.ADD_DIALOG.STARTTIME' | translate}} <span class="mandatory"></span></label>
+                <p-calendar id="dp-startDate" [showTime]="true" [hourFormat]="12" formControlName="startTime" [maxDate]="dateTime"
+                    [dateFormat]="_commonHelper.globalDatePickerFormate" [dateMask]="_commonHelper.globalDateMaskWithTime"
+                    icon="fas fa-calendar-alt dark-grey" [showIcon]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="1900:2100" [selectOtherMonths]="true" [minDate]="_commonHelper.globalMinDate"
+                    [placeholder]="_commonHelper.globalDatePlaceholderWithTime"
+                    [ngClass]="{ 'is-invalid': miscTaskForm['controls'].startTime.errors && (miscTaskForm['controls'].startTime.dirty || miscTaskForm['controls'].startTime.touched) }"></p-calendar>
+                <div *ngFor='let validation of validation_messages.startTime' class='invalid-feedback'>
+                    <div *ngIf="miscTaskForm['controls'].startTime.hasError(validation.type) && miscTaskForm['controls'].startTime.errors && (miscTaskForm['controls'].startTime.dirty || miscTaskForm['controls'].startTime.touched)">
+                        {{ validation.message | translate}}
+                    </div>
+                </div>
+            </div>
+            <div class=" col-md-12 form-group">
+                <label>{{'WORKTASK.MISCELINIOUSTASK.ADD_DIALOG.ENDTIME' | translate}} <span class="mandatory"></span></label>
+                <p-calendar id="dp-endDate" [showTime]="true" [hourFormat]="12" formControlName="endTime" [maxDate]="dateTime"
+                [dateFormat]="_commonHelper.globalDatePickerFormate" [dateMask]="_commonHelper.globalDateMaskWithTime"
+                    [readonlyInput]="false" icon="fas fa-calendar-alt dark-grey" [showIcon]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="1900:2100" [selectOtherMonths]="true"
+                    [placeholder]="_commonHelper.globalDatePlaceholderWithTime" [minDate]="_commonHelper.globalMinDate"
+                    [ngClass]="{ 'is-invalid': miscTaskForm['controls'].endTime.errors && (miscTaskForm['controls'].endTime.dirty || miscTaskForm['controls'].endTime.touched) }"></p-calendar>
+                <div *ngFor='let validation of validation_messages.endTime' class='invalid-feedback'>
+                    <div *ngIf="miscTaskForm['controls'].endTime.hasError(validation.type) && miscTaskForm['controls'].endTime.errors && (miscTaskForm['controls'].endTime.dirty || miscTaskForm['controls'].endTime.touched)">
+                        {{ validation.message | translate }}
+                    </div>
+                </div>
+                <div *ngIf="miscTaskForm['controls'].endTime.errors" class="invalid-feedback">
+                    <div *ngIf="miscTaskForm['controls'].endTime.errors.minDateDiff">
+                        <ng-container *ngIf="minMinutes > 60; else elseMinHRTemplate">
+                            {{'WORKTASK.MISCELINIOUSTASK.ADD_DIALOG.MIN_TIME_VALIDATION_HOUR' | translate : { minMinute: minMinutesToHR } }}
+                        </ng-container>
+                        <ng-template #elseMinHRTemplate>
+                            {{'WORKTASK.MISCELINIOUSTASK.ADD_DIALOG.MIN_TIME_VALIDATION_MIN' | translate : { minMinute: minMinutes } }}
+                        </ng-template>
+                    </div>
+                    <div *ngIf="miscTaskForm['controls'].endTime.errors.maxDateDiff">
+                        <ng-container *ngIf="maxMinutes > 60; else elseMaxHRTemplate">
+                            {{'WORKTASK.MISCELINIOUSTASK.ADD_DIALOG.MAX_TIME_VALIDATION_HOUR' | translate : { maxMinute: maxMinutesToHR } }}
+                        </ng-container>
+                        <ng-template #elseMaxHRTemplate>
+                            {{'WORKTASK.MISCELINIOUSTASK.ADD_DIALOG.MAX_TIME_VALIDATION_MIN' | translate : { maxMinute: maxMinutes } }}
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>{{'WORKTASK.MISCELINIOUSTASK.ADD_DIALOG.DESCRIPTION' | translate}} <span class="mandatory"></span></label>
+                <textarea id="txt-description" class="form-control ht--40" rows="6"
+                    name="description" formControlName="description" trimValue
+                    [ngClass]="{ 'is-invalid': miscTaskForm['controls'].description.errors && (miscTaskForm['controls'].description.dirty || miscTaskForm['controls'].description.touched) }">
+                </textarea>
+                <div *ngFor='let validation of validation_messages.description' class='invalid-feedback'>
+                    <div *ngIf="miscTaskForm['controls'].description.hasError(validation.type) && miscTaskForm['controls'].description.errors && (miscTaskForm['controls'].description.dirty || miscTaskForm['controls'].description.touched)">
+                        {{ validation.message | translate}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer justify-content-between border-top-0 pt-0 px-0">
+            <div class="d-flex align-items-center mr-3">
+                <label class="mr-2">{{'WORKTASK.MISCELINIOUSTASK.ADD_DIALOG.DURATION' | translate}}</label>
+                <input class="form-control w-small bg-readonly" readonly value="{{duration}}">
+            </div>
+            <div>
+                <button type="button" class='btn btn-outline-secondary me-2' id="btn-cancel"
+                    (click)="onCloseForm(false)">{{'WORKTASK.MISCELINIOUSTASK.ADD_DIALOG.BUTTON_CANCEL' | translate}}</button>
+                <button type="button" (click)="saveMiscTask()" id="btn-save" class='btn btn-primary'>{{'WORKTASK.MISCELINIOUSTASK.ADD_DIALOG.BUTTON_ADD' | translate}}</button>
+            </div>
+        </div>
+    </form>
+</div>

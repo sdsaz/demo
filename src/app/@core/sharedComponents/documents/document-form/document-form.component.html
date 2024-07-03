@@ -1,0 +1,20 @@
+<div class="progress file-upload-process">
+    <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': uploader.progress + '%' }"></div>
+</div>
+<div ng2FileDrop id="file-drop-zone"
+     [ngClass]="{'file-drop-zone-over': hasDropZoneOver}"
+     [uploader]="uploader"
+     class="file-drop-zone">
+
+    <div class="drop-zone-area">
+        <span class="drop-text">{{'DOCUMENTS.DROP_FILES' | translate}}</span><span class="or-text text-nowrap">{{'DOCUMENTS.OR' | translate}}</span>
+        <span class="file-input-group">
+            <a href="javascript:void()" class="anchor dark-blue">{{'DOCUMENTS.CHOOSE_FILES' | translate}}</a>
+            <input #fileuploadcontrol type="file" id="file-upload" class="file-input" ng2FileSelect (click)="onSelectFileClick()" [uploader]="uploader" multiple />
+        </span>
+    </div>
+</div>
+
+<div class="vertical-center dark-grey mt-1 font-12" id="txtAllowFileTypes">
+    {{ documentUploadMsg }}
+</div>

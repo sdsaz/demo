@@ -1,0 +1,15 @@
+@import '../../../../scss/entity_kanban.scss';
+
+.tbl-pricebook-list{
+    @media (min-width: 641px){
+        th.name, td.name {width: 200px; min-width: 200px; }
+        td.bookmark {text-align: left;padding-left: 12px !important;}
+        th.description, td.description{ width: 250px; min-width: 250px; max-width: 250px; }
+        th.startDate, td.startDate, th.endDate, td.endDate { width: 160px; min-width: 160px; }
+        th.lastUpdatedOn, td.lastUpdatedOn { width: 180px; min-width: 180px; }
+        th.status, td.status { width: 100px; min-width: 100px; max-width: 100px; }
+        th.id.action, td.action{ justify-content: flex-end; }
+    }
+    .light-grey-row{ background-color: #e6e6e6; }
+}
+::ng-deep .nb-theme-dark .tbl-pricebook-list .light-grey-row{ background-color: #636b75 !important; }

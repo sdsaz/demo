@@ -1,0 +1,11 @@
+@import '../../../../../scss/entity_view.scss';
+
+.custom-control-input { margin-top: 0; }
+
+.custom-control.custom-checkbox.flex-checkbox { display: flex; align-items: baseline; margin-bottom: 4px; }
+
+.pt-custom-checkbox { 
+    @media (min-width: 576px) { padding-top: 23px; }
+}
+
+.custom-fields .inner-addon span:not(.text-danger) { padding: 0 5px 0 7px; display: flex; align-items: center; top: 0px; bottom: 0px; max-height: 34px; }

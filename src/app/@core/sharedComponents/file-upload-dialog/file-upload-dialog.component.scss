@@ -1,0 +1,49 @@
+@import '../../../../scss/variables';
+
+.progress.file-upload-process {
+    height: 5px;
+    background-color: transparent;
+}
+
+.line-height-25px{ line-height: 25px; }
+
+input[type="file"].custom-file-without-input{ display: none; }
+.btn-custom-file { background-color: #e9ecef; padding: 6px 12px; height: 34px; display: flex; align-items: center; }
+::ng-deep.nb-theme-dark .btn-custom-file { background-color: #304562; color: #fff; }
+
+::ng-deep .tbl-popup-scroll {
+    .min-width-long { min-width: 62%; }
+    .p-datatable-wrapper{ max-height: calc(100vh - 530px);
+        @media (max-height: 800px) { max-height: 450px; }
+        @media (max-width: 400px) { max-height: 450px; }
+    }
+    @media (max-width: 640px) {
+        .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr > td.text-right{ justify-content: flex-end !important; text-align: right !important; }
+        .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr > td .p-column-title { min-width: 100px; }
+    }
+    .word-break-all{ word-break: break-all; }
+}
+
+.btnRemoveFiles {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.custom-input-group{
+    .input-group-text { font-size: 12px; border-color: #ced4da; border-top-right-radius: 5px !important; border-bottom-right-radius: 5px !important; }
+}
+
+::ng-deep .nb-theme-dark .custom-input-group{
+    .input-group-text { border-color: #304562 !important; color: $clr-white; background: #17212f; }
+}
+
+::ng-deep .nb-theme-default .custom-input-group{
+    .input-group-text { background: #fff; }
+}
+
+.w-xs-100 { width: 100%; }
+.w-message + .w-xs-100{ width: auto;
+    @media (max-width: 991px) { width: 100%; }
+}
+.yellow-icon { color: #e1a510; }
+::ng-deep .nb-theme-dark .yellow-icon { color: #f3c85f; }

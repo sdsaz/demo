@@ -1,0 +1,35 @@
+<!-- Model Header Start -->
+<div class="modal-header border-bottom-0 padding-32 pb-0">
+    <h4 class="modal-title font-weight-bold">
+        {{dialogTitle | translate}}
+    </h4>
+    <button type="button" id="btn-close" class="close" aria-label="Close" (click)="onCloseForm()">
+        <span class="font-24 fonts-close" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i></span>
+    </button>
+</div>
+<!-- Model Header End -->
+
+<!-- Body Start -->
+<div class="modal-body padding-32 pt-3">
+    <form [formGroup]="dueDateFormGroup">
+        <div class="row">
+            <div class='col-md-12 form-group'>
+                <label>{{dueDateSelectLabel | translate}}<span class="mandatory"></span></label>
+
+                <p-calendar id="dp-task-date" [dateFormat]="_commonHelper.globalDatePickerFormate"
+                    [dateMask]="_commonHelper.globalDateMask" [readonlyInput]="false"
+                    icon="fas fa-calendar-alt dark-grey" [showIcon]="true" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="1900:2100" formControlName="selectedDueDate"
+                    selectOtherMonths="true" [minDate]="getCurrentDate()" [maxDate]="_commonHelper.globalMaxDate" [readonlyInput]="false" [showTime]="false"
+                    [placeholder]="_commonHelper.globalDatePlaceholder" class="time-calendar" required></p-calendar>
+            </div>
+        </div>
+        <div class="modal-footer border-top-0 px-0 pb-0">
+            <button type="button" id="btn-cancel" class='btn btn-outline-secondary me-2'
+                (click)="onCloseForm()">Cancel</button>
+            <button [disabled]="!dueDateFormGroup.valid" type="button" (click)="onSubmitChange()" id="btn-save"
+                class='btn btn-primary'>Select</button>
+        </div>
+    </form>
+</div>
+<!-- Body End -->

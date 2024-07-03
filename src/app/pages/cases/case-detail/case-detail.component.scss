@@ -1,0 +1,33 @@
+@import '../../../../scss/entity_view.scss';
+
+
+
+::ng-deep .detail-cases {
+    .details-box{ 
+        @media (max-width: 1199px){ height: auto; min-height: 1px !important; }
+    }
+    .bg-timeline .ht-card{ 
+        @media (max-width: 1199px){ height: auto !important; max-height: 400px; }
+    }
+}
+
+::ng-deep .custom-tooltip-class .tooltip-inner {
+    max-width: 250px !important;
+}
+
+.top-margin-minus{
+    @media (min-width: 1200px) { margin-top: -40px; }
+}
+
+.w-195px{
+    @media (max-width: 1559px) and (min-width: 1360px) { min-width: 195px; }
+    @media (max-width: 1359px) and (min-width: 1200px) { min-width: 105px; }
+}
+
+.w-155px{
+    @media (max-width: 1399px) and (min-width: 1360px) { flex: 0 0 155px; max-width: 155px; }
+}
+
+.min-w-xxl-2{
+    @media (min-width: 1400px) { min-width: 195px; }
+}

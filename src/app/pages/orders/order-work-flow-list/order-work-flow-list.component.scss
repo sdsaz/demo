@@ -1,0 +1,326 @@
+@import '../../../../scss/entity_kanban.scss';
+
+//Table
+.tbl-order-list{
+    @media (min-width: 641px){
+        .checkbox-col{ width: 50px; max-width: 50px; }
+        th.user-img, td.user-img { width:50px; text-align: center; }
+        th.billToContactName, td.billToContactName{ width: 150px; min-width: 150px; }
+        th.name, td.name {width: 190px; min-width: 190px; word-break: break-word; }
+        th.orderDate, td.orderDate { width: 130px; min-width: 130px; }
+        th.orderNumber, td.orderNumber { width: 240px; min-width: 240px; }
+        th.amount, td.amount{ width: 135px; min-width: 135px; }
+        th.description, td.description {width: 210px; min-width: 210px; max-width: 210px;}
+        th.totalAmount, td.totalAmount{width: 180px; min-width: 180px; max-width: 180px; justify-content: flex-end; text-align: right; padding-right: 30px; }
+        th.assignedToName, td.assignedToName{ width: 60px; min-width: 60px; }
+        th.stageName, td.stageName{ width: 160px; min-width: 160px; }
+        th.priority, td.priority{ width: 60px; min-width: 60px; max-width: 60px; }
+        th.severity, td.severity{ width: 60px; min-width: 60px; max-width: 60px;}
+        th.dueDate, td.dueDate{ width: 120px; min-width: 120px; max-width: 120px;}
+        th.icon-dropdown, td.icon-dropdown { width:60px; min-width: 60px; max-width: 60px; }
+        th.isPaused, td.isPaused{ width: 60px; min-width: 60px; max-width: 60px; }
+        th.id.action, td.action{ justify-content: flex-end; }
+        .pr-30px{ padding-right: 30px; }
+        // th.action, td.action{width: 50px;}
+    }
+
+    @media (max-width: 640px){
+        td { min-width: 100%; } 
+        td.checkbox-col, td.bookmark, td.isPaused, td.action { float: left; clear: none; min-width: auto; }
+        td.checkbox-col, td.bookmark { width: auto !important; max-width: none !important; align-items: flex-end;}
+        td.checkbox-col { padding-right: 0 !important;}
+        td.isPaused, td.action { float: left; clear: none; }
+        td.isPaused { width: calc(100% - 36px) !important; padding-right: 0; min-width: auto !important; }
+    }
+}
+
+
+
+.btn-mg{ margin: 0;
+}
+
+.btn-reset-filter.btn-mg{ margin: 0 20px 0 0; 
+}
+
+.form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width), .form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width) + .form-group:not(.filter-width) { margin-top: 21px; padding-top: 0;
+    @media (max-width: 575px) { margin-top: 0px; padding-top: 0; }
+}
+
+.form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width), .form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width) + .form-group:not(.filter-width) { margin-top: 0; 
+    @media (max-width: 991px) { margin-top: 0; padding-top: 0; }
+}
+
+.form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width).col-sm-4, .form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width) + .form-group:not(.filter-width).col-sm-2 {
+    @media (max-width: 767px) and (min-width: 576px) { flex: 0 0 50%; max-width: 50%; }
+}
+
+.form-group:not(.filter-width) + .filter-width + .filter-width + .form-group:not(.filter-width), .form-group:not(.filter-width) + .filter-width + .filter-width + .form-group:not(.filter-width) + .form-group:not(.filter-width) { margin-top: 0; 
+    @media (max-width: 1024px) and (min-width: 992px) { margin-top: 0; padding-top: 0; }
+    @media (max-width: 575px) { margin-top: 0; padding-top: 0; }
+}
+
+.height-full{
+    @media (max-width: 1279px) and (min-width: 1200px) { height: calc(100vh - 135px); }
+}
+
+td .link--drag{ margin-right: 6px; display: flex; padding: 0; }
+
+.list-card-description{ white-space: normal; }
+
+::ng-deep .p-datatable .p-datatable-thead > tr > th{ white-space: nowrap; }
+
+.custom-control.custom-checkbox { font-size: 18px; }
+
+.avatar {
+    position: relative;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+}
+
+.btn-group #btn-card-layout.btn{ border-top-left-radius: 5px; border-bottom-left-radius: 5px; }
+
+.desktop-overflow-hidden{
+    @media (min-width: 1200px){ overflow: hidden; }
+}
+
+.text--inline { display: flex; width: calc(100% - 60px); flex: 1; align-items: center;
+    .text--full { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }      
+}
+.border--top--light{border-top: 1px solid $brdr-grey;}
+
+.active-log-detail{display: flex; justify-content:space-between; }
+.height--full{ position: relative; }
+
+.resp-nav.col-xl{ 
+    @media (min-width: 1200px){ max-width: 90px; padding-top: 18px; }
+}
+
+::ng-deep .order-filters{
+    @media (max-width: 1199px){ position: relative;
+        .resp-nav{ position: absolute; right: 0; bottom: 10px; max-width: 130px; }
+    }
+    .filter-width, .search-width, .buttons-width, .resp-nav{
+        @media (min-width: 1200px){ margin-bottom: 5px !important; }
+    }
+    .filter-width{
+        @media (min-width: 1200px){ padding-right: 0 !important; }
+    }
+    .filters-dynamic{ 
+        @media (min-width: 1920px){ max-width: 1258px; }
+        @media (max-width: 1919px) and (min-width: 1560px){ max-width: 1105px; }
+		@media (max-width: 1559px) and (min-width: 1440px) { max-width: 1003px; }
+		@media (max-width: 1439px) and (min-width: 1360px) { max-width: 958px; }
+		@media (max-width: 1359px) and (min-width: 1280px) { max-width: 955px; }
+		@media (max-width: 1279px) and (min-width: 1200px) { max-width: 840px; }
+    }
+    
+    .filters-assign-entity .filters-dynamic{ 
+        @media (min-width: 1920px){ max-width: 1181px;
+            .basic-filter.filter-width:not(.small-filter):first-child:nth-last-child(5),
+            .basic-filter.filter-width:not(.small-filter):first-child:nth-last-child(5) ~ .basic-filter,
+            .basic-filter.filter-width:not(.date-range-filter):first-child:nth-last-child(5),
+            .basic-filter.filter-width:not(.date-range-filter):first-child:nth-last-child(5) ~ .basic-filter { min-width: 217px; max-width: 240px; }
+            .basic-filter.filter-width:not(.small-filter):first-child:nth-last-child(4),
+            .basic-filter.filter-width:not(.small-filter):first-child:nth-last-child(4) ~ .basic-filter,
+            .basic-filter.filter-width:not(.date-range-filter):first-child:nth-last-child(4),
+            .basic-filter.filter-width:not(.date-range-filter):first-child:nth-last-child(4) ~ .basic-filter { min-width: 297px; max-width: 320px; }
+        }
+        @media (max-width: 1919px) and (min-width: 1560px){ max-width: 1101px; }
+		@media (max-width: 1559px) and (min-width: 1440px) { max-width: 1003px; }
+		@media (max-width: 1439px) and (min-width: 1360px) { max-width: 958px; }
+		@media (max-width: 1359px) and (min-width: 1280px) { max-width: 928px; }
+    }
+}
+
+::ng-deep .entity-main.filters-four .entity-search-area .order-filters {
+    .search-width, .filter-width:not(.small-filter), .filter-width:not(.date-range-filter) {
+        @media (max-width: 1279px) and (min-width: 1200px) { min-width: 183px; max-width: 212px; }
+    }
+    .filters-assign-entity {
+        .search-width,
+        .filter-width:not(.small-filter), .filter-width:not(.date-range-filter) {
+            @media (min-width: 1920px) {
+                min-width: 217px;
+                max-width: 240px;
+            }
+            @media (max-width: 1919px) and (min-width: 1560px) {
+                min-width: 242px;
+                max-width: 269px;
+            }
+            @media (max-width: 1559px) and (min-width: 1360px) {
+                min-width: 219px;
+                max-width: 248px;
+            }
+            @media (max-width: 1559px) and (min-width: 1440px) {
+                min-width: 219px;
+                max-width: 248px;
+            }
+            @media (max-width: 1439px) and (min-width: 1360px) {
+                min-width: 219px;
+                max-width: 241px;
+            }
+            @media (max-width: 1359px) and (min-width: 1280px) {
+                min-width: 219px;
+                max-width: 241px;
+            }
+            @media (max-width: 1279px) and (min-width: 1200px) {
+                min-width: 188px;
+                max-width: 212px;
+            }
+        }
+    }
+    .buttons-width {
+        @media (min-width: 1200px) { max-width: 122px; }
+    }
+    .date-range-calendar {
+        @media (max-width: 1440px) and (min-width: 1360px) {	
+            input, input::-webkit-input-placeholder { /* WebKit browsers */
+                font-size: 0.9em;
+            }
+            
+            input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+                font-size: 0.9em;
+            }
+            
+            input::-moz-placeholder { /* Mozilla Firefox 19+ */
+                font-size: 0.9em;
+            }
+            
+            input:-ms-input-placeholder { /* Internet Explorer 10+ */
+                font-size: 0.9em;
+            }
+        }
+        @media (max-width: 1359px) and (min-width: 1280px) {	
+            input, input::-webkit-input-placeholder { /* WebKit browsers */
+                font-size: 0.86em; padding: 6px 3px;
+            }
+            
+            input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+                font-size: 0.86em; padding: 6px 3px;
+            }
+            
+            input::-moz-placeholder { /* Mozilla Firefox 19+ */
+                font-size: 0.86em; padding: 6px 3px;
+            }
+            
+            input:-ms-input-placeholder { /* Internet Explorer 10+ */
+                font-size: 0.86em; padding: 6px 3px;
+            }
+        }
+        @media (max-width: 1279px) and (min-width: 1200px) {	
+            input, input::-webkit-input-placeholder { /* WebKit browsers */
+                font-size: 0.8em; padding: 6px 3px;
+            }
+            
+            input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+                font-size: 0.8em; padding: 6px 3px;
+            }
+            
+            input::-moz-placeholder { /* Mozilla Firefox 19+ */
+                font-size: 0.8em; padding: 6px 3px;
+            }
+            
+            input:-ms-input-placeholder { /* Internet Explorer 10+ */
+                font-size: 0.8em; padding: 6px 3px;
+            }
+        }
+    }
+} 
+
+::ng-deep nb-sidebar.expanded + .content .entity-main.filters-four .entity-search-area {
+    .order-filters{
+        .filters-dynamic{ 
+    		@media (max-width: 1279px) and (min-width: 1200px) { max-width: 698px; }
+            .search-width, .filter-width:not(.small-filter), .filter-width:not(.date-range-filter) {
+                @media (max-width: 1279px) and (min-width: 1200px) { min-width: 163px; max-width: 183px; }
+            }
+        }
+    }
+}
+
+::ng-deep nb-sidebar.expanded + .content .entity-main.filters-four {
+    .order-filters{
+        .filters-dynamic{ 
+    		@media (max-width: 1439px) and (min-width: 1360px) { max-width: 855px; }
+            @media (max-width: 1359px) and (min-width: 1280px) { max-width: 773px; }
+        }
+        .filters-assign-entity .filters-dynamic{ 
+            @media (min-width: 1920px){ max-width: 1169px;
+                .basic-filter.filter-width:not(.small-filter):first-child:nth-last-child(5),
+                .basic-filter.filter-width:not(.small-filter):first-child:nth-last-child(5) ~ .basic-filter,
+                .basic-filter.filter-width:not(.date-range-filter):first-child:nth-last-child(5),
+                .basic-filter.filter-width:not(.date-range-filter):first-child:nth-last-child(5) ~ .basic-filter { min-width: 217px; max-width: 240px; }
+                .basic-filter.filter-width:not(.small-filter):first-child:nth-last-child(4),
+                .basic-filter.filter-width:not(.small-filter):first-child:nth-last-child(4) ~ .basic-filter,
+                .basic-filter.filter-width:not(.date-range-filter):first-child:nth-last-child(4),
+                .basic-filter.filter-width:not(.date-range-filter):first-child:nth-last-child(4) ~ .basic-filter { min-width: 297px; max-width: 320px; }
+            }
+            @media (max-width: 1919px) and (min-width: 1560px){ max-width: 1058px;
+                .filter-width:not(.small-filter), .filter-width:not(.date-range-filter){ min-width: 242px; max-width: 272px; }
+            }
+    		@media (max-width: 1559px) and (min-width: 1440px) { max-width: 900px;
+                .filter-width:not(.small-filter), .filter-width:not(.date-range-filter){ min-width: 232px; max-width: 242px; }
+            }
+    		@media (max-width: 1439px) and (min-width: 1360px) { max-width: 858px;
+                .filter-width:not(.small-filter), .filter-width:not(.date-range-filter){ min-width: 212px; max-width: 218px; }
+            }
+    		@media (max-width: 1359px) and (min-width: 1280px) { max-width: 775px;
+                .filter-width:not(.small-filter), .filter-width:not(.date-range-filter){ min-width: 171px; max-width: 188px; }
+            }
+    		@media (max-width: 1279px) and (min-width: 1200px) { max-width: 698px;
+                .filter-width:not(.small-filter), .filter-width:not(.date-range-filter){ min-width: 158px; max-width: 175px; }
+            }
+        }
+    }
+}
+
+::ng-deep .entity-main.filters-four .order-filters.five-basic-filters{
+    .basic-filter.filter-width:not(.small-filter),
+    .basic-filter.filter-width:not(.date-range-filter) {
+        @media (max-width: 1919px) and (min-width: 1560px){ min-width: 197px; max-width: 203px; }
+        @media (max-width: 1559px) and (min-width: 1440px){ min-width: 188px; max-width: 188px; }
+        @media (max-width: 1439px) and (min-width: 1360px){ min-width: 163px; max-width: 184px; }
+        @media (max-width: 1359px) and (min-width: 1280px){ min-width: 163px; max-width: 184px; }
+        @media (max-width: 1279px) and (min-width: 1200px){ min-width: 138px; max-width: 159px; }
+    }
+}
+
+::ng-deep nb-sidebar.expanded + .content .entity-main.filters-four  .order-filters.five-basic-filters {
+    .basic-filter.filter-width:not(.small-filter),
+    .basic-filter.filter-width:not(.date-range-filter) {
+        @media (max-width: 1919px) and (min-width: 1560px){ min-width: 188px; max-width: 203px; }
+        @media (max-width: 1559px) and (min-width: 1440px){ min-width: 172px; max-width: 182px; }
+        @media (max-width: 1439px) and (min-width: 1360px){ min-width: 160px; max-width: 160px; }
+        @media (max-width: 1359px) and (min-width: 1280px){ min-width: 141px; max-width: 141px; }
+        @media (max-width: 1279px) and (min-width: 1200px){ min-width: 126px; max-width: 126px; }
+    }
+}
+
+::ng-deep .entity-main.filters-four .advanced-filter .order-filters {
+    @media (min-width: 1920px){
+        .basic-filter.filter-width:not(.small-filter):first-child,
+        .basic-filter.filter-width:not(.small-filter):nth-child(2),
+        .basic-filter.filter-width:not(.small-filter):nth-child(3),
+        .basic-filter.filter-width:not(.small-filter):nth-child(4),
+        .basic-filter.filter-width:not(.date-range-filter):first-child,
+        .basic-filter.filter-width:not(.date-range-filter):first-child:nth-child(2),
+        .basic-filter.filter-width:not(.date-range-filter):first-child:nth-child(3),
+        .basic-filter.filter-width:not(.date-range-filter):first-child:nth-child(4) { min-width: 297px; max-width: 320px; }
+    }
+}
+
+::ng-deep .entity-main.filters-four .order-filters.five-basic-filters{
+    @media (min-width: 1920px){
+        .basic-filter.filter-width:not(.small-filter),
+        .basic-filter.filter-width:not(.date-range-filter),
+        .basic-filter.filter-width:not(.small-filter):first-child,
+        .basic-filter.filter-width:not(.small-filter):nth-child(2),
+        .basic-filter.filter-width:not(.small-filter):nth-child(3),
+        .basic-filter.filter-width:not(.small-filter):nth-child(4),
+        .basic-filter.filter-width:not(.date-range-filter):first-child,
+        .basic-filter.filter-width:not(.date-range-filter):first-child:nth-child(2),
+        .basic-filter.filter-width:not(.date-range-filter):first-child:nth-child(3),
+        .basic-filter.filter-width:not(.date-range-filter):first-child:nth-child(4) { min-width: 217px; max-width: 240px; }
+    }
+} 

@@ -1,0 +1,1086 @@
+<!-- if user dont have enough permission then display message -->
+<div class="flexlayout" *ngIf="!hasPermission">
+  <div class="form_wrapper">
+    <div id="no-access-form">
+      <div class="top">
+        <div class="subtitle m-0">
+          {{'OPPORTUNITIES.DETAIL.MESSAGE_OPPORTUNITY_NOT_ACCESS' | translate | configuredEntityName}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- If id is not exists then display message -->
+<div class="flexlayout" *ngIf="!opportunityDetailForm && !isInitialLoading && hasPermission">
+  <div class="form_wrapper">
+    <div id="no-access-form">
+      <div class="top">
+        <img src="assets/images/default/NoAccessImage.png" class="mb-3" alt="">
+        <div class="subtitle mt-0">
+          {{'OPPORTUNITIES.DETAIL.MESSAGE_OPPORTUNITY_NOT_EXISTS' | translate | configuredEntityName}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-containted detail-opportunity" *ngIf="opportunityDetailForm && hasPermission && isLoaded">
+
+  <!-- Header Start-->
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12 mb-10px">
+        <div class="detail-header h-100">
+          <div class="page-content card border-0 mb-0 h-100">
+            <div class="card-body p-card">
+              <div class="row align-items-start h-100">
+                <div class="col-xxl col-xl col-lg-12 col-md-12 mb-3 mb-xl-0 d-flex align-self-start order-top-mobile">
+                  <div class="float-left text-center">
+                    <div id="entity-icon" class="entity-icon">
+                      <i *ngIf="!opportunityDetails.parentID || opportunityDetails.parentID == 0"
+                        class="fas fa-hand-holding-usd" aria-hidden="true"></i>
+                    </div>
+                  </div>
+                  <div class="stage-details float-start">
+                    <p class="m-0">
+                      <span class="card-title mb-1">
+                        <label id="headingEntity">{{ 'OPPORTUNITIES.DETAIL.OPPORTUNITY_NAME_LABEL' | translate |
+                          configuredEntityName }}</label>
+                        <div id="nameEntity" class="overflow-box">
+                          <strong id="numberEntity" class="pre-text">{{opportunityDetails.code}}</strong><strong>:
+                          </strong>
+                          <strong id="nameOnlyEntity" class="pre-text">{{opportunityName}}</strong>
+                        </div>
+                        <label *ngIf="opportunityDetails.parentID != null" id="headingEntityParent" class="mt-2">{{
+                          'OPPORTUNITIES.DETAIL.PARENT_WORK_TASK_NAME_LABEL' | translate |
+                          configuredEntityName }}</label>
+                        <div>
+                          <span id="entityRating" class="mt-2 h-21 mr-2 vertical-center">
+                            <entity-review-display [entityTypeId]="entityTypeId" [entityId]="opportunityId" [isFromKanbanOrListView]="false"
+                              [isEditPermission]="isEditOpportunity">
+                            </entity-review-display>
+                          </span>
+                          <span class="mt-2 h-21 badge badge-primary badge--status mr-2"
+                            *ngIf="opportunityDetails.entityRecordTypeName" id="badgeEntityRecordType">
+                            {{opportunityDetails.entityRecordTypeName}}
+                          </span>
+                          <ng-container *ngIf="opportunityDetails.priceBookIsActive != null">
+                            <span *ngIf="!opportunityDetails.priceBookIsActive" class="mt-2 h-21 badge badge--status bg-warning text-dark" id="badgeOpportunityActiveInactive">
+                              <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                              {{ 'OPPORTUNITIES.DETAIL.HEADER_PRICEBOOK_INACTIVE_MSG' | translate | configuredEntityName}}
+                            </span>
+                          </ng-container>
+                          <span *ngIf="opportunityDetails.hasAnyInactiveItem && (opportunityDetails.priceBookIsActive == null || opportunityDetails.priceBookIsActive)" class="mt-2 h-21 badge badge--status bg-warning text-dark" id="badgeOpportunityActiveInactive">
+                            <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                            {{ 'OPPORTUNITIES.DETAIL.HEADER_PRODUCT_INACTIVE_MSG' | translate | configuredEntityName}}
+                          </span>
+                        </div>
+                      </span>
+                    </p>
+                  </div>
+                </div>
+                <div class="col-xxl col-xl xl-min-col-2 col-lg-3 col-md-4 col-sm-4 mb-sm-3 mb-lg-3 mb-xl-0 pt-sm-3 pt-xl-0 mb-1 header-value col-header">
+                  <div class="row mb-1 mb-sm-2">
+                    <div class="col-sm-12 col-header-label">
+                      <label>{{ 'OPPORTUNITIES.DETAIL.OWNER_NAME_LABEL' | translate }}</label>
+                    </div>
+                    <div class="col-sm-12 col">
+                      <p class="m-0" id="lnkOwner">
+                        <a [routerLink]="'/uram/users/details/' + (copyOfopportunity?.ownerID ?? '')" 
+                          [ngClass]="this.isViewUser ? 'dark-blue font-weight-bold no-underline cursor-pointer pre-text' : 'no-link'">{{copyOfopportunity.ownerName}}
+                        </a>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="row mb-1 mb-sm-2 col-header">
+                    <div class="col-sm-12 col-header-label">
+                      <label>{{ 'OPPORTUNITIES.DETAIL.TOTAL_AMOUNT_LABEL' | translate }}</label>
+                    </div>
+                    <div class="col-sm-12 col">
+                      <p class="m-0" id="lblTotalAmount">
+                        {{( currencySymbol )+( copyOfopportunity?.totalAmount ?? 0 | number:'1.2-2' )}}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="row col-header">
+                    <div class="col-sm-12 col-header-label">
+                      <label>{{ 'OPPORTUNITIES.DETAIL.ESTIMATED_CLOSE_DATE_LABEL' | translate }}</label>
+                    </div>
+                    <div class="col-sm-12 col">
+                      <p class="m-0" id="lblDueDate">
+                        {{copyOfopportunity.dueDate | date:'mediumDate' }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="isEntityWorkflow && isListViewLayout"
+                    class="col-header col-xxl-1 col-xl-auto col-lg-3 col-md-4 col-sm-4 mb-sm-3 mb-lg-3 mb-xl-0 pt-sm-3 pt-xl-0 mb-1">
+                    <div class="row">
+                        <div class="col-sm-12 col-header-label">
+                            <label>{{
+                                'OPPORTUNITIES.DETAIL.STATUS' | translate }}</label>
+                        </div>
+                        <div class="col-sm-12 col">
+                            <p class="m-0"><strong id="statusOrder">{{selectedStage?.name}}</strong></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xxl col-xl col-lg-3 col-md-4 col-sm-4 mb-sm-3 mb-lg-3 mb-xl-0 pt-sm-3 pt-xl-0 mb-1 header-value col-header">
+                  <div class="row mb-1 mb-sm-2">
+                    <div class="col-sm-12 col-header-label">
+                      <label>{{ 'OPPORTUNITIES.DETAIL.CREATED_LABEL' | translate }}</label>
+                    </div>
+                    <div class="col-sm-12 col">
+                      <p class="m-0" id="lblCreatedDate">
+                        {{opportunityDetails.created | date:'medium' }}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="row col-header">
+                    <div class="col-sm-12 col-header-label">
+                      <label>{{ 'OPPORTUNITIES.DETAIL.UPDATED_LABEL' | translate }}</label>
+                    </div>
+                    <div class="col-sm-12 col">
+                      <p class="m-0">
+                        {{opportunityDetails.modified | date:'medium' }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <!-- <div *ngIf="isShowRelatedTo" class="col-xl col-lg-3 col-md-4 col-sm-4 mb-sm-3 mb-lg-3 mb-xl-0 pt-sm-3 pt-xl-0 mb-1 header-value col-header order-top-mobile">
+                  <div class="row">
+                    <div class="col-auto px-0">
+                      <i [class]="relatedToIcon" class="font-26 dark-grey ml-2" aria-hidden="true" [ngbTooltip] = "relatedToIconToolTip" container="body" placement="top auto"></i>
+                    </div>
+                    <div class="col pl-2">
+                      <div class="">
+                        <label class="fs13px">{{relatedToNameForHeader}}</label>
+                      </div>
+                      <div class="">
+                        <p class="m-0">
+                          <a [routerLink]="'/' + _commonHelper.getRouteNameByEntityTypeId(opportunityDetails?.entityTypeID).toLowerCase() + '/details/' + opportunity.entityID"
+                            class="dark-blue font-weight-bold no-underline cursor-pointer pre-text">{{opportunityDetails.entityName}}</a>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div> -->
+                <div class="col-xxl col-xl col-lg-3 col-md-4 col-sm-4 mb-sm-3 mb-lg-3 mb-xl-0 pt-sm-3 pt-xl-0 mb-1 header-value col-header order-top-mobile">
+                  <div class="row mb-1 mb-sm-2">
+                    <div class="col-auto px-0 d-flex justify-content-center icon-relatedTo">
+                      <i [class]="accountIcon" class="font-18 dark-grey ml-2 fa-fw" aria-hidden="true" container="body" placement="top auto"></i>
+                    </div>
+                    <div class="col pl-2">
+                      <div>
+                        <label class="fs13px">{{accountNameForHeader | translate | configuredEntityName}}</label>
+                      </div>
+                      <div class="">
+                        <p class="m-0">
+                          <a [routerLink]="'/accounts/details/' + opportunityDetails.accountID"
+                            class="dark-blue font-weight-bold no-underline cursor-pointer pre-text">{{opportunityDetails.accountName}}</a>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-auto px-0 d-flex justify-content-center icon-relatedTo">
+                      <i [class]="contactIcon" class="font-18 dark-grey ml-2 fa-fw" aria-hidden="true" container="body" placement="top auto"></i>
+                    </div>
+                    <div class="col pl-2">
+                      <div>
+                        <label class="fs13px">{{contactNameForHeader | translate | configuredEntityName}}</label>
+                      </div>
+                      <div class="">
+                        <p class="m-0">
+                          <a [routerLink]="'/contacts/details/' + opportunityDetails.contactID"
+                            class="dark-blue font-weight-bold no-underline cursor-pointer pre-text">{{opportunityDetails.contactName}}</a>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="isEntityWorkflow" class="col-header col-xxl col-xl col-lg-3 col-md-4 col-sm-4 mb-sm-3 mb-lg-3 mb-xl-0 pt-sm-3 pt-xl-0 mb-1 header-value">
+                  <div class="row mb-1 mb-sm-2">
+                    <div class="col-sm-12 col-header-label">
+                      <label>{{ 'OPPORTUNITIES.DETAIL.TOTAL_SPENT_TIME' | translate }}</label>
+                      <i class="fas fa-info-circle dark-grey ml-1 info-tooltip" tooltipClass="custom-tooltip-class"
+                        [ngbTooltip]="('OPPORTUNITIES.DETAIL.TOLLTIP_DURATION' | translate).replace('[[hoursInDay]]',hoursInDay)"
+                        placement="top top-left" container="body" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-sm-12 col">
+                      <p-skeleton *ngIf="!totalSpentTime; else showTotalSpentTime" width="8rem" styleClass="mb-1"></p-skeleton>
+                      <ng-template #showTotalSpentTime>
+                        <p class="m-0" id="lblTotalSpentTime">
+                          {{ totalSpentTime }}
+                        </p>
+                      </ng-template>
+                    </div>
+                  </div>
+                  <div class="row mb-1 mb-sm-2">
+                    <div class="col-sm-12 col-header-label">
+                      <label>{{ 'OPPORTUNITIES.DETAIL.TOTAL_EFFECTIVE_TIME' | translate }}</label>
+                      <i class="fas fa-info-circle dark-grey ml-1 info-tooltip" tooltipClass="custom-tooltip-class"
+                        [ngbTooltip]="('OPPORTUNITIES.DETAIL.TOLLTIP_DURATION' | translate).replace('[[hoursInDay]]',hoursInDay)"
+                        placement="top top-left" container="body" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-sm-12 col">
+                      <p-skeleton *ngIf="!totalEffectiveTime; else showTotalEffectiveTime" width="8rem" styleClass="mb-1"></p-skeleton>
+                      <ng-template #showTotalEffectiveTime>
+                        <p class="m-0" id="lblTotalEffectiveTime">
+                          {{ totalEffectiveTime }}
+                        </p>
+                      </ng-template>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12 col-header-label">
+                      <label>{{ 'OPPORTUNITIES.DETAIL.TOTAL_PAUSE_TIME' | translate }}</label>
+                      <i class="fas fa-info-circle dark-grey ml-1 info-tooltip" tooltipClass="custom-tooltip-class"
+                        [ngbTooltip]="('OPPORTUNITIES.DETAIL.TOLLTIP_DURATION' | translate).replace('[[hoursInDay]]',hoursInDay)"
+                        placement="top top-left" container="body" aria-hidden="true"></i>
+                    </div>
+                    <div class="col-sm-12 col">
+                      <p-skeleton *ngIf="!totalPauseTime; else showTotalPauseTime" width="8rem" styleClass="mb-1"></p-skeleton>
+                      <ng-template #showTotalPauseTime>
+                        <p class="m-0" id="lblTotalPauseTime">
+                          {{ totalPauseTime }}
+                        </p>
+                      </ng-template>
+                    </div>
+                  </div>
+                </div>
+                <div class="back-arrow col-lg">
+                  <div class="row">
+                    <div class="col-12">
+                      <button id="btn-back" class='btn btn-secondary mb-12px' type='button' (click)="onBack()">
+                        {{ 'OPPORTUNITIES.DETAIL.BACK_BUTTON' | translate }}
+                      </button>
+                    </div>
+                    <div class="col-12">
+                      <div *ngIf="!opportunity?.isPaused && (isEditOpportunity || isDeleteOpportunity)" class="col-12">
+                        <div class="dropdown">
+                          <button class="btn btn-primary dropdown-toggle btn-action" type="button" id="dropdownActionMenu"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ 'OPPORTUNITIES.DETAIL.BUTTON_ACTION' | translate }}
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownActionMenu">
+                            <a *ngIf="isEditOpportunity && isAllowToReopen && !opportunity?.isPaused && (isCompleted || isClosed)"
+                              id="link-stage-reopen" (click)="onReopenStage()" class="dropdown-item menu--item">
+                              <i class="fa-regular fa-folder-open me-1"></i>
+                              {{ 'OPPORTUNITIES.DETAIL.ACTION_TITLE_STAGE_REOPEN' | translate }}
+                            </a>
+                            <a *ngIf="isDeleteOpportunity && !isCompleted && !isClosed" id="link-Delete" class="dropdown-item"
+                              (click)="onDeleteOpportunityClick(opportunity.id)">
+                              <i class="far fa-trash-alt me-1" aria-hidden="true"></i>
+                              {{ 'OPPORTUNITIES.DETAIL.ACTION_TITLE_DELETE' | translate }}
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-12 col-lg-12 align-self-end align-tags top-margin-tags">
+                  <div class="vertical-bottom flex-nowrap justify-content-between">
+                    <entity-tags-view [refreshEntityTag]="refreshEntityTag" [entityId]="entityId"
+                      [entityTypeId]="entityTypeId" [entityRecordTypeId]="entityRecordTypeId">
+                    </entity-tags-view>
+                
+                    <div class="pt-3 pl-3 pe-2 d-flex bookmark-icon">
+                      <ngx-bookmark [entityTypeId]="entityTypeId" [entityId]="entityId" [isEditPermission]="isEditOpportunity"
+                          class="font-18" [isFromKanbanOrListView]="false">
+                      </ngx-bookmark>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <!-- Header End-->
+  <!-- Body Start-->
+  <div *ngIf="isEntityWorkflow && !isListViewLayout" class="page-content container-fluid stage-process">
+    <!-- Stages Buttons List Start -->
+    <div class="con_scroll d-none d-lg-block d-md-block d-sm-none d-xs-none">
+      <div class="btn-group btn-group-toggle arrow-steps mb-10px" data-toggle="buttons" #menuContent>
+        <button type="button" class="btn btn-secondary btn--arrow" *ngFor="let stage of opportunityStages"
+          id="btnStatusChange" placement="top bottom" [ngbTooltip]="stage.name" container="body" triggers="hover" tooltipClass="tooltip-backward-small"
+          [disabled]="!isEditOpportunity || isCompleted || isClosed"
+          class="{{ 'btn btn-secondary btn--arrow ' + (stage | stageCss: currentStage) }}"
+          (click)="onMarkStageAsComplete(stage.id)">
+          <input type="radio" [name]="stage.name" autocomplete="off">
+          <span class="btn_name">{{ stage.name }}</span>
+        </button>
+      </div>
+    </div>
+    <div class="d-lg-none d-md-none d-sm-block d-xs-block py-2">
+      <label>{{ 'OPPORTUNITIES.DETAIL.STAGE_TITLE' | translate }}</label>
+      <p-dropdown id="drp-StatusChange" class="form-control mb-2" [disabled]="!isEditOpportunity || isCompleted || isClosed"
+        [options]="opportunityStages" [(ngModel)]="selectedStage" (onChange)="onMarkStageAsComplete($event.value.id)">
+        <ng-template let-stage pTemplate="selectedItem">
+          <div>{{stage.name}}</div>
+        </ng-template>
+        <ng-template let-stage pTemplate="item">
+          <div>{{stage.name}}</div>
+        </ng-template>
+      </p-dropdown>
+    </div>
+    <!-- Stages Buttons List End -->
+  </div>
+
+  <!-- Body Start-->
+  <div class="page-content container-fluid pr-0">
+    <div class="row h---100vh w-100">
+      <div class="col col-xl-8 col-lg-12 mb-xl-0 mb-2 pr-0 details-box">
+        <!-- nav Tab Menu Start -->
+        <div class="navTabs card-bottom-border border-0 p-card">
+          <div class="row width--100 border-bottom m-0 first-tabs">
+           <!-- Tab Section here -->
+           <ng-container>
+            <ngx-globle-nav-tab [navTabs]="navTabs" [isNativeTab]="isNativeTab"  (setTab)="checkTabCall($event,1)"
+                class="col tabs-mobile p-0" (closeTab)="closeNavTab($event)"
+                [ngClass]="{'edit-icon-section': isReadOnly && !(['navWorkTasks', 'navContacts', 'navAttachment', 'navProducts', 'navHistory', 'additionalTabs', 'navDocuments'] | showHidePencilButton: activeTab)}"></ngx-globle-nav-tab>
+            </ng-container>
+
+            <div class="col-auto edit-form-icon px-0">
+              <div *ngIf="isEditOpportunity && !isCompleted && !isClosed">
+                <i class="fas fa-pencil-alt pencil-icon fa-lg clr-blue float-right cursor-pointer"
+                  (click)="showHideDetailTab('EDIT')" id="btnEditTabDetail"
+                  *ngIf="isReadOnly && !(['navHistory', 'navOpportunityItems','navWorkTasks','additionalTabs','navDocuments'] | showHidePencilButton: activeTab)" aria-hidden="true"></i>
+              </div>
+              <!-- Global save and cancel start -->
+              <div *ngIf="!isReadOnly && !(['navHistory', 'navOpportunityItems','navWorkTasks','additionalTabs','navDocuments'] | showHidePencilButton: activeTab)"
+                class="form-update-icons">
+                <i id="btn-cancel" class="fas fa-times fa-lg dark-grey float-right mr-3"
+                  (click)="showHideDetailTab('CANCEL')" aria-hidden="true"></i>
+                <i *ngIf="isEditOpportunity && !isCompleted && !isClosed" id="btn-save" class="fas fa-check fa-lg clr-blue float-right"
+                  (click)="showHideDetailTab('SAVE')" aria-hidden="true"></i>
+              </div>
+              <!-- Global save and cancel end -->
+            </div>
+          </div>
+
+          <!-- Tab Content Start -->
+          <form [hidden]="isAdditionalTab"  [formGroup]="opportunityDetailForm">
+            <div class="tab-content border-0 mt-0" id="workTaskDetailTabContent">
+              <!-- Details Start-->
+              <div class="tab-pane fade px-0 p-0" id="navDetails" role="tabpanel"
+                [ngClass]="selectedTab == 'navDetails' ? 'show active' : ''" aria-labelledby="navDetails-tab"
+                name="navDetails">
+
+                <!-- Basic Information Start-->
+                <div class="card border-0 m-0 pt-md-0 pt-3">
+                  <div class="card-header btn-card-edit py-0">
+                    <span class="vertical-center py-md-3 pt-0 pb-3 line-height-1">
+                      {{
+                      'OPPORTUNITIES.DETAIL.DETAILS_TAB.BASIC_INFO_LABEL' | translate
+                      }}
+                    </span>
+                  </div>
+                  <div class='card-body'>
+                    <div class='row'>
+                      <div class='col-xl-4 col-sm-6 form-group'>
+                        <label>
+                          {{ 'OPPORTUNITIES.DETAIL.DETAILS_TAB.NAME' | translate }}<span class="mandatory"></span>
+                        </label>
+                        <div *ngIf="isReadOnly" class="disable-text pre-text">{{ opportunityDetails.name != null &&
+                          opportunityDetails.name != '' ? opportunityDetails.name : '' }}</div>
+                        <input #opportunityTxtName *ngIf="!isReadOnly" id="txt-name" type="text" class="form-control"
+                          formControlName="name" [(ngModel)]="opportunityDetails.name" trimValue
+                          [ngClass]="{ 'is-invalid': opportunityfrm.name.errors && (opportunityfrm.name.dirty || opportunityfrm.name.touched) }">
+                        <div *ngFor='let validation of opportunity_validation_messages.name' class='invalid-feedback'>
+                          <div id="errorNameIsRequired"
+                            *ngIf='opportunityfrm.name.hasError(validation.type) && opportunityfrm.name.errors && (opportunityfrm.name.dirty || opportunityfrm.name.touched)'>
+                            {{ validation.message | translate }}
+                          </div>
+                        </div>
+                      </div>
+                      <div *ngIf="isEntityWorkflow && !isListViewLayout" class="col-xl-4 col-sm-6 form-group">
+                        <!-- stage task start -->
+                        <label>{{ 'OPPORTUNITIES.DETAIL.DETAILS_TAB.TASKS' | translate }}</label>
+                        <div *ngIf="isReadOnly && currentStageTask != null" class="disable-text">
+                          {{
+                          currentStageTask && currentStageTask.length > 0
+                          ? (opportunityDetails.selectedStageTaskIds?.length ?? 0) + ' of ' + currentStageTask.length +
+                          '
+                          completed' : ''
+                          }}
+
+                        </div>
+                        <div *ngIf="isReadOnly && (currentStageTask == undefined || currentStageTask == null)"
+                          class="disable-text">
+                          {{ 'OPPORTUNITIES.DETAIL.DETAILS_TAB.NO_TASKS' | translate }}
+                        </div>
+
+                        <div *ngIf="!isReadOnly && currentStageTask != null"
+                          class="input-group entity-dropdown custom-dropdown-muliselect">
+                          <p-multiSelect [options]="currentStageTask" id="drp-stage-task" class="entity-multiSelect"
+                            optionLabel="name" formControlName="selectedStageTaskIds"
+                            [(ngModel)]="opportunityDetails.selectedStageTaskIds" [maxSelectedLabels]="500"
+                            [showToggleAll]="false" [filter]="false" [showHeader]="false" [displaySelectedLabel]='false'
+                            [defaultLabel]="currentStageTask && currentStageTask.length > 0
+                              ? (opportunityDetails.selectedStageTaskIds?.length ?? 0) + ' of ' + currentStageTask.length + ' completed' : ''">
+                          </p-multiSelect>
+                        </div>
+                        <div class="min-height-38px disable-text"
+                          *ngIf="!isReadOnly && (currentStageTask == null || currentStageTask == '')">
+                          {{ 'OPPORTUNITIES.DETAIL.DETAILS_TAB.NO_TASKS' | translate }}
+                        </div>
+                        <!-- stage task end -->
+                      </div>
+                      <div class='col-xl-4 col-sm-6 form-group' *ngIf="isEntityWorkflow && isListViewLayout">
+                          <label>{{'OPPORTUNITIES.DETAIL.DETAILS_TAB.STATUS' | translate}} <span class="mandatory"></span></label>
+                          <div class="disable-text" *ngIf="isReadOnly">
+                              {{ (opportunityStages | displayValueFinder: {id:opportunityDetails.entityStageId})?.length
+                              ?
+                              (opportunityStages | displayValueFinder: {id:opportunityDetails.entityStageId})[0].name : ' ' }}
+                          </div>
+                          <p-dropdown *ngIf="!isReadOnly" id="drp-stageId" class="form-control" formControlName="entityStageId"
+                              [filter]="true" [resetFilterOnHide]="false" [options]="opportunityStages"
+                              placeholder="{{'OPPORTUNITIES.DETAIL.DETAILS_TAB.STATUS_PLACEHOLDER' | translate}}" optionLabel="name"
+                              optionValue="id" [(ngModel)]="opportunityDetails.entityStageId"
+                              [ngClass]="{ 'is-invalid': submitted && opportunityfrm.entityStageId.errors }">
+                          </p-dropdown>
+                          <div *ngFor='let validation of opportunity_validation_messages.entityStageId' class='invalid-feedback'>
+                              <div id="errorStageIsRequired" 
+                              *ngIf='opportunityfrm.entityStageId.hasError(validation.type) && submitted && opportunityfrm.entityStageId.errors'>
+                                {{ validation.message | translate }}
+                              </div>
+                          </div>
+                      </div>
+                      <!-- <div *ngIf="isShowRelatedTo" class="col-xl-4 col-sm-6 form-group">
+                        <label>{{relatedToName}}</label>
+                          <div *ngIf="isReadOnly" class="disable-text pre-text"><i [class]="relatedToIcon" class="font-13 me-1" aria-hidden="true" [ngbTooltip] = "relatedToIconToolTip" container="body" placement="top auto"></i>{{ opportunityDetails.entityName != null
+                            && opportunityDetails.entityName != '' ? opportunityDetails.entityName : '' }}</div>
+                      
+                          <ngx-control-level-loading-bar *ngIf="showRelatedToLoader"></ngx-control-level-loading-bar>
+                      
+                          <p-dropdown *ngIf="!isReadOnly" id="drp-entityIDs" name="entityID" optionLabel="label" optionValue="value"
+                            formControlName="entityID" [(ngModel)]="opportunityDetails.entityID"
+                            [ngClass]="{ 'is-invalid': submitted && opportunityfrm.entityID.errors && (opportunityfrm.entityID.dirty || opportunityfrm.entityID.touched) }"
+                            class="form-control" [options]="relatedToList" placeholder="{{relatedToNamePlaceholder}}"
+                            (onFilter)="relatedToOnFilter($event)" (onChange)="relatedToOnChange($event)" [resetFilterOnHide]="false"
+                            [showClear]="false" [filter]="true" [group]="this.isRelatedToGroupDropDown" filterBy="label,entityTypeName">
+                            <ng-template pTemplate="selectedItem" let-selectedOption>
+                              <div class="flex align-items-center gap-2 text-truncate">
+                                  <i *ngIf="selectedOption.entityTypeID == null" [class]="relatedToIcon" class="font-13 mr-2" aria-hidden="true" container="body" placement="top auto" [ngbTooltip]="relatedToIconToolTip"></i> 
+                                  <i *ngIf="selectedOption.entityTypeID != null" [class]="_commonHelper.getEntityIconClass(selectedOption.entityTypeID)" class="font-13 mr-2" aria-hidden="true" container="body" placement="top auto" [ngbTooltip]="relatedToIconToolTip"></i>
+                                  <span>{{selectedOption.label}}</span>
+                                </div>
+                            </ng-template>
+                            <ng-container *ngIf="this.isRelatedToGroupDropDown">
+                              <ng-template let-group pTemplate="group">
+                                <i [class]="_commonHelper.getEntityIconClass(group.entityTypeId)" class="font-13 mr-2"
+                                    aria-hidden="true" container="body" placement="top auto"
+                                    [ngbTooltip]="group.iconTooltip"></i>
+                              <span>{{group.entityTypeName}}</span>
+                              </ng-template>
+                              <ng-template let-item pTemplate="item">
+                                <span>{{item.label}}</span>
+                              </ng-template>
+                            </ng-container>
+                          </p-dropdown>
+                          <div *ngFor='let validation of opportunity_validation_messages.entityID' class='invalid-feedback'>
+                            <div id="errorRelatedToIsRequired"
+                              *ngIf='opportunityfrm.entityID.hasError(validation.type) && opportunityfrm.entityID.errors && (opportunityfrm.entityID.dirty || opportunityfrm.entityID.touched)'>
+                              {{ validation.message | translate }}
+                            </div>
+                          </div>
+                      </div> -->
+                      <div class='col-xl-4 col-sm-6 form-group'>
+                        <label>{{ 'OPPORTUNITIES.DETAIL.DETAILS_TAB.DUE_DATE' | translate }}</label>
+                        <div *ngIf="isReadOnly" class="disable-text">
+                          {{
+                          opportunityDetails.dueDate != null && opportunityDetails.dueDate != '' ?
+                          (opportunityDetails.dueDate | dateFormatPipe: _commonHelper.globalDateFormate) : ''
+                          }}
+                        </div>
+                        <p-calendar *ngIf="!isReadOnly" id="dp-dueDates"
+                          [dateFormat]="_commonHelper.globalDatePickerFormate" [dateMask]="_commonHelper.globalDateMask"
+                          [readonlyInput]="false" icon="fas fa-calendar-alt dark-grey" [showIcon]="true"
+                          [monthNavigator]="true" [yearNavigator]="true" [yearRange]="currentYearRange"
+                          formControlName="dueDate" [selectOtherMonths]="true"
+                          [minDate]="getCurrentDate()" [maxDate]="_commonHelper.globalMaxDate"
+                          [readonlyInput]="false" [(ngModel)]="opportunityDetails.dueDate" [showTime]="false"
+                          [placeholder]="_commonHelper.globalDatePlaceholder" class="time-calendar"></p-calendar>
+                      </div>
+
+                      <div class='col-xl-4 col-sm-6 form-group'>
+                        <label>{{ 'OPPORTUNITIES.DETAIL.DETAILS_TAB.PRIORITY' | translate }}</label>
+                        <div *ngIf="isReadOnly" class="disable-text">
+                          {{
+                          opportunityDetails.priorityName != null && opportunityDetails.priorityName != '' ?
+                          opportunityDetails.priorityName : ''
+                          }}
+
+                        </div>
+
+                        <ngx-control-level-loading-bar *ngIf="showPriorityLoader"></ngx-control-level-loading-bar>
+                        <p-dropdown *ngIf="!isReadOnly" id="drp-priorityIDs"
+                          [placeholder]="('OPPORTUNITIES.DETAIL.DETAILS_TAB.FILTER_PLACEHOLDER_PRIORITY' | translate)"
+                          class="form-control" [options]="priorityList" formControlName="priority"
+                          [(ngModel)]="opportunityDetails.priority">
+                        </p-dropdown>
+                      </div>
+                      <div class='col-xl-4 col-sm-6 form-group'>
+                        <label>{{ 'OPPORTUNITIES.DETAIL.DETAILS_TAB.SEVERITY' | translate }}</label>
+                        <div *ngIf="isReadOnly" class="disable-text">
+                          {{
+                          opportunityDetails.severityName != null && opportunityDetails.severityName != '' ?
+                          opportunityDetails.severityName : ''
+                          }}
+                        </div>
+
+                        <ngx-control-level-loading-bar *ngIf="showSeverityLoader"></ngx-control-level-loading-bar>
+                        <p-dropdown *ngIf="!isReadOnly" id="drp-severityIDs"
+                          [placeholder]="('OPPORTUNITIES.DETAIL.DETAILS_TAB.FILTER_PLACEHOLDER_SEVERITY' | translate)"
+                          class="form-control" [options]="severityList" formControlName="severity"
+                          [(ngModel)]="opportunityDetails.severity">
+                        </p-dropdown>
+                      </div>
+                      <div class='col-xl-4 col-sm-6 form-group'>
+                        <label>{{'OPPORTUNITIES.DETAIL.DETAILS_TAB.AMOUNT' | translate}}</label>
+                        <div class="inner-addon left-addon">
+                          <div *ngIf="isReadOnly || !opportunityDetails.isTotalAmountEditable" class="disable-text">
+                            <div *ngIf="(opportunityDetails.totalAmount != null && opportunityDetails.totalAmount != undefined ) else amount">
+                              {{(currencySymbol)+(opportunityDetails?.totalAmount ?? 0 | number:'1.2-2') }}
+                            </div>
+                            <ng-template #amount>
+                              <div>&nbsp;</div>
+                            </ng-template>
+                          </div>
+                        </div>
+                        <div class="inner-addon left-addon" *ngIf="!isReadOnly && opportunityDetails.isTotalAmountEditable">
+                          <span>{{currencySymbol}}</span>
+                          <input id="txt-amount" type="text" class="form-control ht--40"
+                              name="totalAmount" formControlName="totalAmount" maxlength="18"
+                              mask="separator.2" thousandSeparator="," [(ngModel)]="opportunityDetails.totalAmount"
+                              [ngClass]="{ 'is-invalid': opportunityfrm.totalAmount.errors && (opportunityfrm.totalAmount.dirty || opportunityfrm.totalAmount.touched)}">
+                          <div *ngFor='let validation of opportunity_validation_messages.totalAmount'
+                              class='invalid-feedback '>
+                              <div *ngIf='opportunityfrm.totalAmount.hasError(validation.type) && opportunityfrm.totalAmount.errors && (opportunityfrm.totalAmount.dirty || opportunityfrm.totalAmount.touched)'
+                                  id="errortotalAmountMustBeValidNumber">
+                                  {{ validation.message | translate }}
+                              </div>
+                          </div>
+                      </div>
+                      </div>
+                      <div *ngIf="isEntityWorkflow" class='col-xl-4 col-sm-6 form-group'>
+                        <label>{{ 'OPPORTUNITIES.DETAIL.DETAILS_TAB.LEADSOURCE' | translate }}</label>
+                        <div *ngIf="isReadOnly" class="disable-text pre-text">{{ opportunityDetails.leadSourceName !=
+                          null &&
+                          opportunityDetails.leadSourceName != '' ? opportunityDetails.leadSourceName : '' }}</div>
+                        <p-dropdown *ngIf="!isReadOnly" id="drp-lead-source"
+                          [placeholder]="('OPPORTUNITIES.DETAIL.DETAILS_TAB.PLACEHOLDER_LEADSOURCE' | translate)"
+                          class="form-control" [options]="leadSources" formControlName="leadSourceId" optionLabel="name"
+                          optionValue="intValue1" [(ngModel)]="opportunityDetails.leadSourceID" [filter]="true"
+                          [resetFilterOnHide]="false">
+                        </p-dropdown>
+                      </div>
+                      <div *ngIf="isEntityWorkflow" class='col-xl-4 col-sm-6 form-group'>
+                        <label>{{ 'OPPORTUNITIES.DETAIL.DETAILS_TAB.CONFIDENCELEVEL' | translate }}</label>
+                        <div *ngIf="isReadOnly" class="disable-text pre-text">{{
+                          opportunityDetails.confidenceLevel || opportunityDetails.confidenceLevel == 0 ? opportunityDetails.confidenceLevel + '%' : '' }}</div>
+                        <div class="inner-addon right-addon" *ngIf="!isReadOnly">
+                          <span>%</span>
+                          <input id="txt-confidenceLevel" type="text" class="form-control"
+                            formControlName="confidenceLevel" mask="separator.2" thousandSeparator="," trimValue
+                            [(ngModel)]="opportunityDetails.confidenceLevel"
+                            [ngClass]="{ 'is-invalid': opportunityfrm.confidenceLevel.errors && (opportunityfrm.confidenceLevel.dirty || opportunityfrm.confidenceLevel.touched) }">
+                          <div *ngFor='let validation of opportunity_validation_messages.confidenceLevel'
+                            class='invalid-feedback'>
+                            <div
+                              *ngIf="opportunityfrm.confidenceLevel.hasError(validation.type) && opportunityfrm.confidenceLevel.errors && (opportunityfrm.confidenceLevel.dirty || opportunityfrm.confidenceLevel.touched)"
+                              id="errorConfidenceLevelValidation">
+                              {{ validation.message | translate}}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-xl-4 col-sm-6 form-group">
+                        <label>{{'OPPORTUNITIES.ADD_DIALOG.ACCOUNT_LABEL' | translate | configuredEntityName }} </label>
+                        <div *ngIf="isReadOnly" class="disable-text">
+                          {{opportunityDetails.accountName}}
+                        </div>
+                        <ngx-control-level-loading-bar *ngIf="showAccountLoader" [ngClass]="{'w-with-btn-loader': hasAddAccountPermission }"></ngx-control-level-loading-bar>
+                        <div class="d-flex flex-wrap align-items-center">
+                            <p-dropdown #drpAccount *ngIf="!isReadOnly" id="drp-account" optionLabel="label" optionValue="value" name="accountID"  formControlName="accountID"
+                                (onChange)="onChangeAccount($event)" (onFilter)="onFilterAccount($event)" class="form-control"
+                                [ngClass]="{'w-with-btn': hasAddAccountPermission}"  [(ngModel)]="opportunityDetails.accountID"
+                                [options]="accountTypeList" placeholder="{{accountTypePlaceholder | translate | configuredEntityName}}"
+                                [filter]="true" [resetFilterOnHide]="false" [showClear]="false">
+                            </p-dropdown>
+                            <ng-container *ngIf="hasAddAccountPermission">
+                                <button type="button" id="btn-add-related-to"
+                                    class="btn btn-outline-secondary btn-light-grey ml-3 rounded-circle d-flex align-items-center justify-content-center"
+                                    (click)="addNewAccount()"  triggers="hover" tooltipClass="tooltip-backward-small"
+                                    ngbTooltip="{{'ORDERS.ADD_DIALOG.TOOLTIP_ADD_ACCOUNT' | translate | configuredEntityName}}">
+                                    <i class="fas fa-plus" aria-hidden="true"></i>
+                                </button>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <!-- Account --> 
+                   
+                    <!-- Contact --> 
+                    <div class="col-xl-4 col-sm-6 form-group">
+                        <label>{{'ORDERS.ADD_DIALOG.CONTACT' | translate | configuredEntityName }} 
+                        </label>
+                        <div *ngIf="isReadOnly" class="disable-text">
+                          {{opportunityDetails.contactName}}
+                        </div>
+                        <!-- Contact Loading Bar -->
+                        <ngx-control-level-loading-bar *ngIf="showContactLoader" [ngClass]="{'w-with-btn-loader': hasAddContactPermission }"></ngx-control-level-loading-bar>
+                        <div class="d-flex flex-wrap align-items-center">
+                            <p-dropdown #drpContact *ngIf="!isReadOnly" id="drp-contact" class="form-control" formControlName="contactID"
+                                name="ContactID"
+                                [options]="customerContactList" optionLabel="label" optionValue="value" [filter]="true"
+                                placeholder="{{ ContactPlaceholder | translate | configuredEntityName}}"   
+                                [(ngModel)]="opportunityDetails.contactID"
+                                [resetFilterOnHide]="false" [showClear]="true"  (onFilter)="onFilterContact($event)">
+                            </p-dropdown>
+                            <!-- <ng-container *ngIf="hasAddContactPermission">
+                                <button type="button" id="btn-add-related-to"
+                                    class="btn btn-outline-secondary btn-light-grey ml-3 rounded-circle d-flex align-items-center justify-content-center"
+                                    (click)="addNewContact()"  triggers="hover" tooltipClass="tooltip-backward-small"
+                                    ngbTooltip="{{'ORDERS.ADD_DIALOG.TOOLTIP_ADD_CONTACT' | translate | configuredEntityName}}">
+                                    <i class="fas fa-plus" aria-hidden="true"></i>
+                                </button>
+                            </ng-container> -->
+                            <!-- <div *ngFor='let validation of validation_messages.billToContactID'   class='invalid-feedback invalid-text'>
+                                <div
+                                *ngIf="opportunityForm['controls'].billToContactID.hasError(validation.type) && opportunityForm['controls'].billToContactID.errors && (opportunityForm['controls'].billToContactID.dirty || orderForm['controls'].billToContactID.touched)">
+                                    {{ validation.message | translate | configuredEntityName }}
+                                </div>
+                            </div> -->
+                        </div>
+                    </div>
+                      <div *ngIf="isEntityWorkflow" class='col-xl-4 col-sm-6 form-group'>
+                        <label>{{ 'OPPORTUNITIES.DETAIL.DETAILS_TAB.ISPRIVATE' | translate }}</label>
+                        <div [style.pointer-events]="isReadOnly ? 'none': null">
+                          <label class="h-27px m-0">
+                            <div class="switch switch-label switch-pill switch-primary">
+                              <input type="checkbox" id="chk-is-private" class="switch-input" [(ngModel)]="opportunityDetails.isPrivate" formControlName="isPrivate">
+                              <div class="switch-slider switch--status" 
+                                [attr.data-checked]="'OPPORTUNITIES.ADD_DIALOG.LABEL_SWITCH_YES' | translate"
+                                [attr.data-unchecked]="'OPPORTUNITIES.ADD_DIALOG.LABEL_SWITCH_NO' | translate"></div>
+                            </div>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Associates Start-->
+                <div class="card border-0 m-0 pt-md-0 pt-3">
+                  <div class="card-header btn-card-edit py-0">
+                    <span class="vertical-center py-md-3 pt-0 pb-3 line-height-1">
+                      {{
+                      'OPPORTUNITIES.DETAIL.DETAILS_TAB.ASSOCIATE_LABEL' | translate
+                      }}
+                    </span>
+                  </div>
+                  <div class='card-body'>
+                    <div class='row'>
+                      <div class='col-xl-4 col-sm-6 form-group'>
+                        <label>{{ 'OPPORTUNITIES.DETAIL.DETAILS_TAB.OWNER' | translate }}<span
+                            class="mandatory"></span></label>
+                        <div *ngIf="isReadOnly" class="disable-text pre-text">{{ opportunityDetails.ownerName != null &&
+                          opportunityDetails.ownerName != '' ? opportunityDetails.ownerName : '' }}</div>
+
+                          <ngx-control-level-loading-bar *ngIf="showOwnerLoader"></ngx-control-level-loading-bar>
+                          <p-dropdown *ngIf="!isReadOnly" id="drp-owner"
+                            [placeholder]="('OPPORTUNITIES.DETAIL.DETAILS_TAB.FILTER_PLACEHOLDER_OWNER' | translate)" class="form-control"
+                            [options]="owners" formControlName="ownerID" [(ngModel)]="opportunityDetails.ownerID"
+                            (onFilter)="ownerOnFilter($event)" (onChange)="ownerOnChange($event)"
+                            [ngClass]="{ 'is-invalid': submitted && opportunityfrm.ownerID.errors && (opportunityfrm.ownerID.dirty || opportunityfrm.ownerID.touched) }"
+                            [filter]="true" [resetFilterOnHide]="false" [showClear]="true">
+                          </p-dropdown>
+                        <div *ngFor='let validation of opportunity_validation_messages.ownerID' class='invalid-feedback'>
+                          <div id="errorRelatedToIsRequired"
+                            *ngIf='opportunityfrm.ownerID.hasError(validation.type) && opportunityfrm.ownerID.errors && (opportunityfrm.ownerID.dirty || opportunityfrm.ownerID.touched)'>
+                            {{ validation.message | translate }}
+                          </div>
+                        </div>
+                      </div>
+                      <div class='col-xl-4 col-sm-6 form-group'>
+                        <label>{{ 'OPPORTUNITIES.DETAIL.DETAILS_TAB.ASSIGNED_TO' | translate }}</label>
+                        <ng-container *ngIf="(isReadOnly || currentStage?.isCompleted || currentStage?.isClosed) || !isAssignOpportunities; else templateDrpAssignedTo">
+                          <div  class="disable-text">
+                              {{
+                                opportunityDetails.assignedToName != null &&
+                                opportunityDetails.assignedToName != '' ?
+                                opportunityDetails.assignedToName : ''
+                              }} 
+                          </div>
+                      </ng-container>
+                      <ng-template #templateDrpAssignedTo>
+                        <!-- Assigned To Loading Bar -->
+                        <ngx-control-level-loading-bar *ngIf="showAssignedToLoader"></ngx-control-level-loading-bar>
+
+                        <p-dropdown *ngIf="!isReadOnly" id="drp-assignedToIDs"
+                          [placeholder]="('OPPORTUNITIES.DETAIL.DETAILS_TAB.FILTER_PLACEHOLDER_ASSIGNED_TO' | translate)" class="form-control"
+                          [options]="assignedToUsers" formControlName="assignedTo" (onFilter)="assignedToOnFilter($event)"
+                          (onChange)="assignedToOnChange($event)" [(ngModel)]="opportunityDetails.assignedTo" [filter]="true"
+                          [resetFilterOnHide]="false" [showClear]="true">
+                        </p-dropdown>
+                      </ng-template>
+                      </div>
+                      <div *ngIf="isEntityWorkflow" class='col-xl-4 col-sm-6 form-group'>
+                        <label>{{ 'OPPORTUNITIES.DETAIL.DETAILS_TAB.APPROVER' | translate }}</label>
+                        <div *ngIf="isReadOnly" class="disable-text pre-text">{{ opportunityDetails.approvedByName !=
+                          null &&
+                          opportunityDetails.approvedByName != '' ? opportunityDetails.approvedByName : '' }}</div>
+
+                        <ngx-control-level-loading-bar *ngIf="showApproverLoader"></ngx-control-level-loading-bar>
+                        <p-dropdown *ngIf="!isReadOnly" id="drp-approver"
+                          [placeholder]="('OPPORTUNITIES.DETAIL.DETAILS_TAB.FILTER_PLACEHOLDER_APPROVER' | translate)"
+                          class="form-control" [options]="approvers" formControlName="approvedBy" (onFilter)="approvedByOnFilter($event)"
+                          (onChange)="approvedByOnChange($event)" [(ngModel)]="opportunityDetails.approvedBy" [filter]="true" [resetFilterOnHide]="false" [showClear]="true">
+                        </p-dropdown>
+                      </div>
+                      <div *ngIf="isEntityWorkflow" class='col-xl-4 col-sm-6 form-group'>
+                        <label>{{ 'OPPORTUNITIES.DETAIL.DETAILS_TAB.COMPLETED_BY' | translate }}</label>
+                        <div *ngIf="isReadOnly" class="disable-text pre-text">{{ opportunityDetails.completedByName !=
+                          null &&
+                          opportunityDetails.completedByName != '' ? opportunityDetails.completedByName : '' }}</div>
+
+                        <ngx-control-level-loading-bar *ngIf="showCompletedByLoader"></ngx-control-level-loading-bar>
+                        <p-dropdown *ngIf="!isReadOnly" id="drp-completed-by"
+                          [placeholder]="('OPPORTUNITIES.DETAIL.DETAILS_TAB.FILTER_PLACEHOLDER_COMPLETED_BY' | translate)"
+                          class="form-control" [options]="completedByUsers" formControlName="completedBy" (onFilter)="completedByOnFilter($event)"
+                          (onChange)="completedByOnChange($event)" [(ngModel)]="opportunityDetails.completedBy" [filter]="true" [resetFilterOnHide]="false" [showClear]="true">
+                        </p-dropdown>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--Associates End-->
+                <!-- Description Start-->
+                <div class="card border-0 m-0 pt-md-0 pt-3">
+                  <div class="card-header btn-card-edit py-0">
+                    <span class="vertical-center py-md-3 pt-0 pb-3 line-height-1">
+                      {{
+                      'OPPORTUNITIES.DETAIL.DETAILS_TAB.DESCRIPTION_LABEL' | translate
+                      }}
+                    </span>
+                  </div>
+                  <div class="card-body">
+                    <div class='col-md-12 col-sm-12 form-group'>
+                      <div *ngIf="isReadOnly" class="disable-text h-100-box" style="align-items: normal;">
+                        <iframe width="100%" height="100%" [srcdoc]="opportunityDetails.description | safehtml"
+                          title="opportunityDetailsDescription"></iframe>
+                      </div>
+
+                      <editor apiKey="{{tinyMceApiKey}}" *ngIf="!isReadOnly"
+                        [(ngModel)]="opportunityDetails.description" formControlName="description" id="txt-description"
+                        class="editor-description-iframe"
+                        [ngClass]="{ 'is-invalid': opportunityfrm.description.errors && (opportunityfrm.description.dirty || opportunityfrm.description.touched) }"
+                        [ngModelOptions]="{standalone: true}" [init]="{ height: 500 }">
+                      </editor>
+                      <div *ngFor='let validation of opportunity_validation_messages.description'
+                        class='invalid-feedback'>
+                        <div id="errorNameIsRequired"
+                          *ngIf='opportunityfrm.description.hasError(validation.type) && opportunityfrm.description.errors && (opportunityfrm.description.dirty || opportunityfrm.description.touched)'>
+                          {{ validation.message | translate }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--Description End-->
+              </div>
+              <!-- Details End-->
+
+              <!-- Custom Start-->
+              <div class="tab-pane fade px-0 pt-0"
+                [ngClass]="selectedTab == ('nav' + tab.tabName | removeWhiteSpace) ? 'show active' : ''"
+                *ngFor="let tab of formDataJSON; let i = index" id="{{ 'nav' + tab.tabName | removeWhiteSpace }}"
+                name="navCustom" role="tabpanel" aria-labelledby="navCustom-tab">
+                <!-- Section Start-->
+                <div class='card border-0 m-0 pt-md-0 pt-3' *ngFor="let section of tab.sections; let j = index">
+                  <div class="card-header btn-card-edit py-0">
+                    <span *ngIf="section.sectionName"
+                      class="vertical-center py-md-3 pt-0 pb-3 line-height-1">{{section.sectionName}}</span>
+                  </div>
+                  <div class='card-body'>
+                    <div class='row'>
+                      <ngx-custom-field [formGroup]="opportunityDetailForm" [section]="section"
+                        [controls]="section.controls" [customFieldJSONData]="opportunityDetails.customFieldJSONData"
+                        [isReadOnly]="isReadOnly" [submitted]="submitted" [currencySymbol]="currencySymbol" [refreshTabularDataSource]="refreshCustomFieldDatasource"
+                        [entityID]="entityId" [entityTypeID]="entityTypeId" [entityRecordTypeID]="entityRecordTypeId">
+                      </ngx-custom-field>
+                    </div>
+                  </div>
+                </div>
+                <!-- Section End-->
+              </div>
+              <!-- Custom End-->
+
+              <!-- Opportunity Items Start-->
+              <div class="tab-pane fade p-3 search-wrapper" id="navOpportunityItems" role="tabpanel" [ngClass]="selectedTab == 'navOpportunityItems' ? 'show active' : ''"
+                  aria-labelledby="navOpportunityItems-tab" name="navOpportunityItems">
+                  <div class="mb-3 vertical-center justify-content-between dropdown-with-add flex-md-nowrap flex-wrap">
+                    <div class="static-dropdown-width filter-opportunity-item order-md-1 order-2">
+                      <div class="p-input-icon-right w-100">
+                        <i class="pi pi-search" aria-hidden="true"></i>
+                        <input #searchBoxInput pInputText type="text" id="txt-search-text" class="w-100 customInputText form-control"
+                          size="50" (keyup)="search($event.target.value)" />
+                      </div>
+                    </div>
+                    <div *ngIf="isEditOpportunity && !isCompleted && !isClosed"
+                      class="mb-md-0 mb-3 vertical-center filter-opportunity-price justify-content-end order-md-2 order-1 flex-md-nowrap ml-md-3">
+                      <ng-container *ngIf="!opportunityItemsEditable">
+                        
+                        <label class="me-2 me-sm-devices text-nowrap">{{ 'OPPORTUNITIES.DETAIL.OPPORTUNITY_ITEMS_TAB.LABEL_PRICEBOOK' | translate | configuredEntityName}}</label>
+                        <div class="filter-opp-pricebook mr-2">
+                          <ngx-control-level-loading-bar *ngIf="isShowLoaderForPriceBook"></ngx-control-level-loading-bar>
+                          <p-dropdown #opportunityItemsDrp id="drp-opportunityItems" [options]="priceBooks" [filter]="true"
+                            [resetFilterOnHide]="false" [(ngModel)]="selectedPriceBookId" [ngModelOptions]="{standalone: true}"
+                            class="form-control text-left mb-sm-0 mb-2"
+                            placeholder="{{'OPPORTUNITIES.DETAIL.OPPORTUNITY_ITEMS_TAB.PRICEBOOK_PLACEHOLDER' | translate | configuredEntityName}}"
+                            (onFilter)="priceBooksOnFilter($event)" (onChange)="priceBooksOnChange($event)">
+                          </p-dropdown>
+                        </div>
+                        <button *ngIf="opportunityDetails.priceBookID != null" type="button" id="btn-add-opportunityItems" class="btn btn-primary" (click)="addOpportunityItems()">
+                          <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                        </button>
+                        <button *ngIf="(opportunityItems && opportunityItems.length > 0)" id="btn-changePrices"
+                          class='btn btn-primary ml-2 text-nowrap' type='button' (click)="onOpportunityItemsEditToggle()">
+                          <i class="fas fa-exchange-alt me-1" aria-hidden="true"></i> {{ 'OPPORTUNITIES.DETAIL.OPPORTUNITY_ITEMS_TAB.BUTTON_TOGGLE_EDIT' | translate }}
+                        </button>
+                      </ng-container>
+                      <div class="w-auto ml-3" *ngIf="opportunityItemsEditable">
+                        <button id="btn-cancelPrices" class='btn btn-secondary mr-2' type='button' (click)="onOpportunityItemsEditCancle()">
+                          {{ 'OPPORTUNITIES.DETAIL.OPPORTUNITY_ITEMS_TAB.BUTTON_TOGGLE_CANCLE' | translate }}
+                        </button>
+                        <button id="btn-savePrices" class='btn btn-primary' type='button' (click)="saveEditedItems()">
+                          {{ 'OPPORTUNITIES.DETAIL.OPPORTUNITY_ITEMS_TAB.BUTTON_TOGGLE_SAVE' | translate }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tbl-opportunityItems-list tbl-entity">
+                    <ng-container *ngIf="onceOpportunityItemsClicked">
+                      <ngx-tab-level-loader *ngIf="isShowOpportunityItemsLoader;"></ngx-tab-level-loader>
+                      <p-table #pTable [responsive]="true" responsiveLayout="stack" [rows]="_commonHelper.DefaultPageSize"
+                        [rowsPerPageOptions]='_commonHelper.globalRowsPerPageOptions' [columns]="opportunityItemCols" paginatorDropdownAppendTo="body"
+                        [value]="opportunityItems" sortField="productName" class="tbl-opportunityItems-list" [sortOrder]="1" [lazy]="true"
+                        [totalRecords]="totalRecords" [autoLayout]="true" [scrollable]="true" [paginator]="totalRecords > 0"
+                        [ngClass]="totalRecords == 0 ? 'tbl-height-zero' : ''" [scrollHeight]="'calc(100vh - 248px)'"
+                        (onPage)="paginate($event)">
+                        <ng-template pTemplate="header" let-columns>
+                          <tr>
+                            <th *ngFor="let col of columns" [pSortableColumn]="col.field" id="tblColumnHeader" [ngClass]="col.header == '' ? 'hide-when-no-records' : ''"
+                              [pSortableColumnDisabled]="!col.sort" class="{{col.field}} {{col.class}}" scope="col"
+                              (click)="changeOrder(col)">
+                              {{ col.header | translate  | configuredEntityName}}
+                              <i *ngIf="col.field == 'uomName'" class="fas fa-info-circle dark-grey ml-1 info-tooltip"
+                                ngbTooltip="Unit Of Measurement" placement="top top-left" container="body" aria-hidden="true"></i>
+                              <p-sortIcon [field]="col.field" *ngIf="col.sort" id="iconSort"></p-sortIcon>
+                            </th>
+                          </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                          <tr>
+                            <td class="productName">
+                              <span class="p-column-title">
+                                {{columns[0].header | translate | configuredEntityName}}
+                              </span>
+                              <a [routerLink]="'/products/details/' + (rowData?.productID ?? '')"
+                                [ngClass]="this.isViewProduct ? 'dark-blue font-weight-bold no-underline cursor-pointer pre-text' : 'no-link'">
+                                {{rowData.productName}}
+                              </a>
+                            </td>
+                            <td class="productSkuName">
+                              <span class="p-column-title">
+                                {{columns[1].header | translate}}
+                              </span>
+                              <a [routerLink]="'/productskus/details/' + (rowData?.productSkuID ?? '')"
+                                [ngClass]="this.isViewProductSku ? 'dark-blue font-weight-bold no-underline cursor-pointer pre-text' : 'no-link'">
+                                {{rowData.productSkuName}}
+                              </a>
+                            </td>
+                            <td class="productSku">
+                              <span class="p-column-title">
+                                {{columns[2].header | translate}}
+                              </span>
+                              <span class="w-100 d-flex">{{rowData.productSku}}</span>
+                            </td>
+                            <td class="quantity pr-5">
+                              <span class="p-column-title">
+                                {{columns[3].header | translate}}
+                              </span>
+                              <span *ngIf="!opportunityItemsEditable"
+                                class="w-100 d-flex justify-content-end">{{(rowData.quantity | number:'1.2-2') }}</span>
+                              <ng-container *ngIf="opportunityItemsEditable">
+                                <div class="d-flex flex-wrap w-100">
+                                  <input type="text" id="txt-quantity" class="form-control ht--40 text-right" name="quantity"
+                                    [(ngModel)]="rowData.quantity" maxlength="18" mask="separator.2" thousandSeparator="," trimValue
+                                    [ngClass]="{ 'is-invalid': (rowData.quantity == null || rowData.quantity <= 0  || rowData.quantity > 99999999999999)}"
+                                    [ngModelOptions]="{standalone: true}" (change)="afterEditQuantity(rowData)" [disabled]="!rowData.isActive">
+                                  <div class='invalid-feedback'>
+                                    <div *ngIf="rowData.quantity == null  || rowData?.quantity <= 0" id="errorQuantityMinValidation">
+                                      {{ "OPPORTUNITIES.DETAIL.OPPORTUNITY_ITEMS_TAB.MESSAGE_QUANTITY_MIN" | translate}}
+                                    </div>
+                                    <div *ngIf="rowData.quantity == null && rowData.quantity > 99999999999999"
+                                      id="errorQuantityMaxValidation">
+                                      {{ "OPPORTUNITIES.DETAIL.OPPORTUNITY_ITEMS_TAB.MESSAGE_QUANTITY_MAX" | translate}}
+                                    </div>
+                                  </div>
+                                </div>
+                              </ng-container>
+                            </td>
+                            <td class="uomName pr-5">
+                              <span class="p-column-title">
+                                {{columns[4].header | translate}}
+                                <i class="fas fa-info-circle dark-grey ml-1 info-tooltip" ngbTooltip="Unit Of Measurement"
+                                  placement="top top-left" container="body" aria-hidden="true"></i>
+                              </span>
+                              <span>{{ rowData.uomName }}</span>
+                            </td>
+                            <td class="price pr-5">
+                              <span class="p-column-title">
+                                {{columns[5].header | translate}}
+                              </span>
+                              <span class="w-100 d-flex justify-content-end">{{(currencySymbol)+(rowData.price | number:'1.2-2') }}</span>
+                            </td>
+                            <td class="status">
+                              <span class="p-column-title">
+                                {{columns[6].header | translate}}
+                              </span>
+                              <span [ngClass]="rowData.isActive == true ? 'bg-primary' : 'bg-danger'" class="h-21 badge badge--status mr-2"
+                                id="badgeActiveInactive">
+                                {{ rowData.isActive | active }}
+                              </span>
+                            </td>
+                            <td class="id action">
+                              <div *ngIf="isEditOpportunity && rowData.isActive && !isCompleted && !isClosed" class="dropdown text-right">
+                                <button pButton icon="fas fa-wrench" class="p-button-rounded p-button-sm" type="button" id="drp-action"
+                                  data-bs-toggle="dropdown" aria-expanded="false">
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="drp-action">
+                                  <li>
+                                    <a id="link-Delete" class="dropdown-item" (click)="deleteOpportunityItem(rowData.id)">
+                                      <i class="far fa-trash-alt me-1" aria-hidden="true"></i>
+                                      {{ 'OPPORTUNITIES.DETAIL.OPPORTUNITY_ITEMS_TAB.BUTTON_REMOVE' | translate }}
+                                    </a>
+                                  </li>
+                                </ul>
+                              </div>
+                            </td>
+                          </tr>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorleft">
+                          <span id="startToEndOfTotalRecords">{{start}} - {{end}} of {{totalRecords}} records</span>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorright">
+                          <p-button type="button" icon="pi pi-chevron-left" styleClass="p-button-text" id="paginatorLeftPage"
+                            (click)="prev()" [disabled]="end == opportunityItemsPagingParams.pageSize">
+                          </p-button>
+                          <input type="number" min="1" [max]="totalPages" [(ngModel)]="opportunityItemsPagingParams.pageNo"
+                            [ngModelOptions]="{standalone: true}" id="paginatorInputPage" (change)="changePage()" class="pageNoInput"> /
+                          <span id="paginatorTotalPages" class="ml-1">{{totalPages}}</span>
+                          <p-button type="button" icon="pi pi-chevron-right" styleClass="p-button-text" id="paginatorRightPage"
+                            (click)="next()" [disabled]="end == totalRecords"></p-button>
+                          <p-button type="button" icon="pi pi-undo" styleClass="p-button-text" id="paginatorResetButton"
+                            (click)="resetPaginator()" [disabled]="end == opportunityItemsPagingParams.pageSize"></p-button>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage" let-columns>
+                          <tr>
+                            <td [attr.colspan]="columns.length" id="lbl-NoRecordsFound" class="table-no-record text-center">
+                              {{ 'OPPORTUNITIES.DETAIL.OPPORTUNITY_ITEMS_TAB.MESSAGE_NO_RECORDS_FOUND' | translate}}
+                            </td>
+                          </tr>
+                        </ng-template>
+                      </p-table>
+                    </ng-container>
+                </div>
+              </div>
+              <!-- Opportunity Items Items END-->
+
+              <!-- Work Tasks Start-->
+              <div class="tab-pane fade p-3 search-wrapper" id="navWorkTasks" role="tabpanel"
+              [ngClass]="selectedTab == 'navWorkTasks' ? 'show active' : ''" aria-labelledby="navWorkTasks-tab"
+              name="navWorkTasks">
+              <div class="mb-3 vertical-center justify-content-end dropdown-with-add" *ngIf="isEditOpportunity && isAddWorkTask && !isCompleted && !isClosed">
+                <button *ngIf="onceWorkTaskClicked" type="button" id="btn-add-workTask" class="btn btn-primary ml-3"
+                  (click)="addWorkTask(workTaskSubTypeDetails?.name)">
+                  <i *ngIf="workTaskSubTypeDetails?.iconClass" class="{{workTaskSubTypeDetails?.iconClass}} mr-1"
+                    aria-hidden="true"></i>
+                  {{('OPPORTUNITIES.DETAIL.OPPORTUNITY_WORKTASK_TAB.ADD_WORKTASK_PREFIX'| translate) + " " +
+                  workTaskSubTypeDetails?.name}}
+                </button>
+              </div>
+              <div class="expandable-card">
+                  <ng-container *ngIf="onceWorkTaskClicked">
+                      <ngx-work-task-expandable-table [entityID]="opportunityId" [entityTypeID]="entityTypeId" [refresh]="refreshWorkTaskTab"
+                        [isEntityActive]="!opportunityDetails.isPaused && !isCompleted && !isClosed"></ngx-work-task-expandable-table>
+                  </ng-container>
+              </div>
+          </div>
+          <!-- Work Tasks End-->
+
+              <!-- Stage/Pause history Start-->
+              <div class="tab-pane fade" id="navHistory" role="tabpanel"
+                [ngClass]="selectedTab == 'navHistory' ? 'show active' : ''" aria-labelledby="navHistory-tab"
+                name="navHistory">
+                <ng-container *ngIf="onceStageHistoryClicked">
+                  <ngx-history-tab [entityWorkflowId]="entityWorkflowId" [entityTypeId]="entityTypeId" [entityId]="opportunityId" [hoursInDay]="hoursInDay" [refreshStageHistory]="refreshStageHistory" [refreshActivityHistory]="refreshActivityHistory" [isListViewLayout]="isListViewLayout"></ngx-history-tab>                
+                </ng-container>
+              </div>
+              <!-- Stage/Pause history End-->
+
+              <!-- Document Start-->
+              <div class="tab-pane fade p-3 search-wrapper" id="navDocuments" role="tabpanel"
+                [ngClass]="selectedTab == 'navDocuments' ? 'show active' : ''" aria-labelledby="navDocuments-tab" name="navDocuments">
+                <ng-container *ngIf="onceDocumentClicked">
+                  <ngx-entity-documents [entityID]="entityId" class="entity-documents" [entityTypeID]="entityTypeId"
+                    [isDocumentDownloadPermission]="isDocumentDownloadPermission && !opportunityDetails.isPaused && !isCompleted && !isClosed"
+                    [isEditPermission]="isEditOpportunity && !opportunityDetails.isPaused && !isCompleted && !isClosed" 
+                    [refreshFromParent]="refreshActivityHistory"
+                    (refreshDocuments)="setRefreshDocument()">
+                  </ngx-entity-documents>
+                </ng-container>
+              </div>
+              <!-- Document End-->
+
+            </div>
+          </form>
+          <!-- Tab Content END -->
+          <div *ngIf="isAdditionalTab">
+            <!-- Tab Additional here -->
+            <ng-container>
+                <ngx-globle-nav-tab [isNativeTab]="isNativeTab" [isAdditionalTab]="isAdditionalTab" [navTabs]="navTabsMore" (setTab)="checkTabCall($event,0)"
+                    class="col-12 p-0"  (closeTab)="closeNavTab($event)"
+                    [ngClass]="{'edit-icon-section': isReadOnly && !(['navWorkTasks', 'navContacts', 'navAttachment', 'navProducts', 'navHistory', 'additionalTabs'] | showHidePencilButton: activeTab)}"></ngx-globle-nav-tab>
+            </ng-container>
+        </div>
+        <!-- Tab Other Tabs Link -->
+        </div>
+      </div>
+      <activity-section 
+        [entityTypeId]="entityTypeId" 
+        [entityId]="entityId" 
+        [isTagRequired]="true"
+        [isEditPermission]="isEditOpportunity"
+        [isClosedStage]="isCompleted"
+        [isCompletedStage]="isClosed" 
+        [isDocumentRequired]="true"
+        [refreshDocument]="refreshDocument"
+        [refreshActivity]="refreshActivity" 
+        [entityRecordTypeId]="entityRecordTypeId" 
+        [isDocumentDownloadPermission]="isDocumentDownloadPermission && !isCompleted && !isClosed"
+        (isTagListUpdated)="setRefreshEntityTag()" 
+        (isActivityListUpdated)="setRefreshActivityHistory()" 
+        class="col-xl-4 col-md-12 common-box pr-0"
+        [createdBy]="opportunityDetails?.createdBy"
+        [privacyLevel]="null">
+      </activity-section>
+    </div>
+  </div>
+  <!-- Body End-->

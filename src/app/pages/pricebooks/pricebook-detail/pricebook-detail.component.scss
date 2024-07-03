@@ -1,0 +1,58 @@
+@import '../../../../scss/entity_view.scss';
+
+.rounded-circle {
+    width: 24px;
+    height: 24px;
+}
+
+.disable-text.view-icon-alignment{ justify-content: space-between; }
+
+::ng-deep .detail-pricebook {
+    .details-box{ 
+        @media (max-width: 1199px){ height: auto; min-height: 1px !important; }
+    }
+    .bg-timeline .ht-card{ 
+        @media (max-width: 1199px){ height: auto !important; max-height: 400px; }
+    }
+    .col-header-label{
+        @media (max-width: 575px){ max-width: 122px; }
+    }
+}
+
+::ng-deep .static-dropdown-width{ width: 360px;
+    @media (max-width: 575px) { width: auto; max-width: 250px; min-width: 250px; }
+    
+    .h-14px{ height: 14px; display: flex; align-items: center; }
+    .p-dropdown .p-dropdown-panel{ max-width: 360px; }
+}
+
+.details-section{ 
+    @media (max-width: 1199px) and (min-width: 992px) { flex: 0 0 calc(100% - 41.66666667% - 115px); max-width: calc(100% - 41.66666667% - 115px); } 
+}
+
+::ng-deep .tbl-related-campaigns {
+    & .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr > td .p-column-title { min-width: 138px; }
+}
+
+::ng-deep .page-containted .tbl-priceBookItems-list{
+    @media (min-width: 641px) {
+        th.productName, td.productName { max-width: 180px; min-width: 180px; }
+        th.productSkuName, td.productSkuName { max-width: 180px; min-width: 180px; }
+        .p-datatable-wrapper th.price, .p-datatable-wrapper td.price { max-width: 210px; width: 210px !important; min-width: 210px;  }
+        th.productSku, td.productSku { max-width: 130px; width: 130px !important; min-width: 130px; }
+        th.uomName, td.uomName { max-width: 160px; width: 160px !important; min-width: 160px; }
+        th.productUOMName, td.productUOMName,th.productSkuUOMName, td.productSkuUOMName { max-width: 140px; width: 140px !important; min-width: 140px; }
+        th.status, td.status { max-width: 100px; width: 100px !important; min-width: 100px; }
+    }
+    @media (max-width: 640px) {
+        td.price .justify-content-end { justify-content: flex-start !important; }
+        td.price input.text-right{ text-align: left !important; }
+        .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr > td { align-items: center; }
+        td.pr-5 { padding-right: 12px !important; }
+        .p-datatable-wrapper tr .p-column-title { min-width: 90px !important; }
+    }
+}
+.static-dropdown-width.filter-price-book-item { width: 430px; }
+@media (max-width: 767px) {
+    .filter-price-book-item { flex:0 0 100%; max-width: 100%; width: 100%; }
+}

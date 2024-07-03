@@ -1,0 +1,351 @@
+<!-- if user dont have enough permission then display message -->
+<div class="flexlayout" *ngIf="!hasPermission">
+    <div class="form_wrapper">
+        <div id="no-access-form">
+            <div class="top">
+                <div class="subtitle m-0">
+                    {{'WORKTASK.MISCELINIOUSTASK.DETAIL.MESSAGE_WORKTASK_NOT_ACCESS' | translate}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- If id is not exists then display message -->
+<div class="flexlayout" *ngIf="!miscTaskForm && !isInitialLoading && hasPermission">
+    <div class="form_wrapper">
+        <div id="no-access-form">
+            <div class="top">
+                <img src="assets/images/default/NoAccessImage.png" class="mb-3" alt="">
+                <div class="subtitle mt-0">
+                    {{'WORKTASK.MISCELINIOUSTASK.DETAIL.MESSAGE_WORKTASK_NOT_EXISTS' | translate}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-containted detail-misctasks" *ngIf="miscTaskForm && hasPermission && isLoaded">
+
+    <!-- Header Start-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 mb-10px">
+                <div class="detail-header h-100">
+                    <div class="page-content card border-0 mb-0 h-100">
+                        <div class="card-body p-card">
+                            <div class="row align-items-start h-100">
+                                <div class="col-xl col-lg-4 col-md-12 mb-3 mb-lg-0 mb-sm-4 d-flex align-self-start">
+                                    <div class="float-left text-center">
+                                        <i class="fa-solid fa-square-check entity-icon-only" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="stage-details float-start">
+                                        <p class="m-0">
+                                            <span class="card-title mb-1">
+                                                <label id="headingEntity">{{
+                                                    'WORKTASK.MISCELINIOUSTASK.DETAIL.WORK_TASK_NAME_LABEL' | translate
+                                                    |
+                                                    configuredEntityName }}</label>
+                                                <div id="nameEntity" class="overflow-box">
+                                                    <strong id="numberEntity"
+                                                        class="pre-text">{{miscWorkTask.taskNumber}}</strong>
+                                                </div>
+                                                <div>
+                                                    <span class="mt-2 h-21 badge badge-primary badge--status mr-2"
+                                                        *ngIf="miscWorkTask.entityRecordTypeName"
+                                                        id="badgeEntityRecordType">
+                                                        {{miscWorkTask.entityRecordTypeName}}
+                                                    </span>
+                                                </div>
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div
+                                    class="col-xl-3 col-lg-3 col-md col-sm-6 mb-xl-0 mb-lg-3 mb-md-0 mb-sm-3 mb-1 header-value col-header w-195px">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-header-label col-created-label">
+                                            <label>{{ 'WORKTASK.MISCELINIOUSTASK.DETAIL.CREATED_LABEL' | translate
+                                                }}</label>
+                                        </div>
+                                        <div class="col-sm-12 col">
+                                            <p class="m-0" id="lblCreatedDate">
+                                                {{miscWorkTask.created | date:'medium' }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-1 mt-sm-2 col-header">
+                                        <div class="col-sm-12 col-header-label col-created-label">
+                                            <label>{{ 'WORKTASK.MISCELINIOUSTASK.DETAIL.UPDATED_LABEL' | translate
+                                                }}</label>
+                                        </div>
+                                        <div class="col-sm-12 col">
+                                            <p class="m-0">
+                                                {{miscWorkTask.modified | date:'medium' }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="col-xl-3 col-lg-3 col-md col-sm-6 mb-xl-0 mb-lg-3 mb-md-0 mb-sm-3 mb-1 header-value col-header w-155px">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-header-label">
+                                            <label>{{ 'WORKTASK.MISCELINIOUSTASK.DETAIL.TOTAL_SPENT_TIME' | translate
+                                                }}</label>
+                                            <i class="fas fa-info-circle dark-grey ml-1 info-tooltip"
+                                                tooltipClass="custom-tooltip-class"
+                                                [ngbTooltip]="('WORKTASK.DETAIL.TOLLTIP_DURATION' | translate).replace('[[hoursInDay]]','24')"
+                                                placement="right bottom" container="body" aria-hidden="true"></i>
+                                        </div>
+                                        <div class="col-sm-12 col">
+                                            <p class="m-0">
+                                                {{ duration }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="back-arrow col-lg">
+                                    <div class="col-12">
+                                        <button id="btn-back" class='btn btn-secondary mb-12px' type='button' (click)="onBack()">
+                                            {{ 'WORKTASK.MISCELINIOUSTASK.DETAIL.BACK_BUTTON' | translate }}
+                                        </button>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary dropdown-toggle btn-action" type="button" id="dropdownActionMenu"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                                {{ 'CRM.ACCOUNT.DETAIL.BUTTON_ACTION' | translate }}
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="drp-action">
+                                                <a *ngIf="isDeleteWorkTask" id="link-delete" class="dropdown-item menu--item" (click)="onDeleteWorkTaskClick(miscWorkTask.id)">
+                                                    <i class="far fa-trash-alt me-1" aria-hidden="true"></i>
+                                                    {{'WORKTASK.MISCELINIOUSTASK.DETAIL.ACTION_TITLE_DELETE' | translate }}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-9 col-lg-12 align-self-end align-tags top-margin-tags">
+                                    <entity-tags-view [refreshEntityTag]="refreshEntityTag" [entityId]="entityId"
+                                        [entityTypeId]="entityTypeId" [entityRecordTypeId]="entityRecordTypeId">
+                                    </entity-tags-view>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Header End-->
+
+    <!-- Body Start-->
+    <div class="page-content container-fluid pr-0">
+        <div class="row h---100vh w-100">
+            <div class="col col-xl-8 col-lg-12 mb-xl-0 mb-2 pr-0 details-box">
+                <!-- nav Tab Menu Start -->
+                <div class="navTabs card-bottom-border border-0 p-card">
+                    <div class="row width--100 border-bottom m-0 first-tabs">
+                        <div class="col tabs-mobile p-0">
+                            <ol class="nav nav-tabs font-12 border-bottom-0" id="workTaskDetailTab" role="tablist">
+
+                                <ng-container *ngFor="let tab of navTabs; let i = index">
+                                    <li *ngIf="tab.condition" class="nav-item">
+                                        <button class="nav-link" [ngClass]="selectedTab == tab.tabLink ? 'active' : ''"
+                                            id="btn_{{tab.tabLink}}" data-bs-toggle="tab" name="btn_{{tab.tabLink}}"
+                                            [attr.data-bs-target]="'#' + tab.tabLink" type="button" role="tab"
+                                            aria-controls="{{tab.tabLink}}-tab" aria-selected="true"
+                                            (click)="setTab(tab.tabLink)">{{tab.tabName | translate |
+                                            configuredEntityName }}</button>
+                                    </li>
+                                </ng-container>
+                            </ol>
+                        </div>
+                        <div class="col-auto edit-form-icon px-0">
+                            <div *ngIf="isEditWorkTask">
+                                <i class="fas fa-pencil-alt pencil-icon fa-lg clr-blue float-right cursor-pointer"
+                                    (click)="showHideDetailTab('EDIT')" id="btnEditTabDetail"
+                                    *ngIf="isReadOnly && !(['navStageHistory'] | showHidePencilButton: activeTab)"
+                                    aria-hidden="true"></i>
+                            </div>
+                            <!-- Global save and cancel start -->
+                            <div *ngIf="!isReadOnly && !(['navStageHistory'] | showHidePencilButton: activeTab)"
+                                class="form-update-icons">
+                                <i id="btn-cancel" class="fas fa-times fa-lg dark-grey float-right mr-3"
+                                    (click)="showHideDetailTab('CANCEL')" aria-hidden="true"></i>
+                                <i *ngIf="isEditWorkTask" id="btn-save"
+                                    class="fas fa-check fa-lg clr-blue float-right"
+                                    (click)="showHideDetailTab('SAVE', miscWorkTaskfrm.value)" aria-hidden="true"></i>
+                            </div>
+                            <!-- Global save and cancel end -->
+                        </div>
+                    </div>
+
+                    <!-- Tab Content Start -->
+                    <form [formGroup]="miscTaskForm">
+                        <div class="tab-content border-0 mt-0" id="workTaskDetailTabContent">
+                            <!-- Details Start-->
+                            <div class="tab-pane fade px-0 p-0" id="navDetails" role="tabpanel"
+                                [ngClass]="selectedTab == 'navDetails' ? 'show active' : ''"
+                                aria-labelledby="navDetails-tab" name="navDetails">
+
+                                <!-- Basic Information Start-->
+                                <div class="card border-0 m-0 pt-md-0 pt-3">
+                                    <div class="card-header btn-card-edit py-0">
+                                        <span class="vertical-center py-md-3 pt-0 pb-3 line-height-1">
+                                            {{
+                                            'WORKTASK.MISCELINIOUSTASK.DETAIL.DETAILS_TAB.BASIC_INFO_LABEL' | translate
+                                            }}
+                                        </span>
+                                    </div>
+                                    <div class='card-body'>
+                                        <div class='row'>
+                                            <div class='col-xxl-5 col-md-4 col-sm-12 form-group'>
+                                                <label>{{ 'WORKTASK.MISCELINIOUSTASK.DETAIL.DETAILS_TAB.REASON' |
+                                                    translate }}<span class="mandatory"></span></label>
+                                                <div *ngIf="isReadOnly" class="disable-text pre-text">{{
+                                                    miscWorkTask.name != null && miscWorkTask.name != '' ?
+                                                    miscWorkTask.name : '' }}</div>
+                                                <p-dropdown *ngIf="!isReadOnly" id="drp-reason"
+                                                    [placeholder]="('WORKTASK.MISCELINIOUSTASK.DETAIL.DETAILS_TAB.FILTER_PLACEHOLDER_REASON' | translate)"
+                                                    class="form-control" [options]="workTaskReason"
+                                                    formControlName="reasonId" [(ngModel)]="miscWorkTask.reasonId"
+                                                    optionLabel="name" optionValue="intValue1" [filter]="true"
+                                                    [resetFilterOnHide]="false"
+                                                    [ngClass]="{ 'is-invalid': submitted && miscWorkTaskfrm.reasonId.errors && (miscWorkTaskfrm.reasonId.dirty || miscWorkTaskfrm.reasonId.touched) }">
+                                                </p-dropdown>
+
+                                                <div *ngFor='let validation of validation_messages.reasonId'
+                                                    class='invalid-feedback'>
+                                                    <div id="errorNameIsRequired"
+                                                        *ngIf='miscWorkTaskfrm.reasonId.hasError(validation.type) && miscWorkTaskfrm.reasonId.errors && (miscWorkTaskfrm.reasonId.dirty || miscWorkTaskfrm.reasonId.touched)'>
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xxl col-md-4 col-sm-6 form-group">
+                                                <label>{{'WORKTASK.MISCELINIOUSTASK.DETAIL.DETAILS_TAB.STARTTIME' |
+                                                    translate}} <span class="mandatory"></span></label>
+                                                <div *ngIf="isReadOnly" class="disable-text">
+                                                    {{
+                                                    miscWorkTask.startTime != null && miscWorkTask.startTime != '' ?
+                                                    (miscWorkTask.startTime | date:"MM/dd/yyyy h:mm a") : ''
+                                                    }}
+                                                </div>
+                                                <p-calendar *ngIf="!isReadOnly" id="dp-startDateTime" [showTime]="true"
+                                                    [hourFormat]="12" formControlName="startTime" [maxDate]="dateTime" appendTo="body"
+                                                    [dateFormat]="_commonHelper.globalDatePickerFormate"
+                                                    [dateMask]="_commonHelper.globalDateMaskWithTime"
+                                                    icon="fas fa-calendar-alt dark-grey" [showIcon]="true"
+                                                    [monthNavigator]="true" [yearNavigator]="true" yearRange="1900:2100"
+                                                    [selectOtherMonths]="true" [minDate]="_commonHelper.globalMinDate"
+                                                    [placeholder]="_commonHelper.globalDatePlaceholderWithTime"
+                                                    [(ngModel)]="miscWorkTask.startTime"
+                                                    [ngClass]="{ 'is-invalid': submitted && miscWorkTaskfrm.startTime.errors && (miscWorkTaskfrm.startTime.dirty || miscWorkTaskfrm.startTime.touched) }">
+                                                </p-calendar>
+                                                <div *ngFor='let validation of validation_messages.startTime'
+                                                    class='invalid-feedback'>
+                                                    <div
+                                                        *ngIf="miscWorkTaskfrm.startTime.hasError(validation.type) && miscWorkTaskfrm.startTime.errors && (miscWorkTaskfrm.startTime.dirty || miscWorkTaskfrm.startTime.touched)">
+                                                        {{ validation.message | translate}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xxl col-md-4 col-sm-6 form-group">
+                                                <label>{{'WORKTASK.MISCELINIOUSTASK.DETAIL.DETAILS_TAB.ENDTIME' |
+                                                    translate}} <span class="mandatory"></span></label>
+                                                <div *ngIf="isReadOnly" class="disable-text">
+                                                    {{
+                                                    miscWorkTask.endTime != null && miscWorkTask.endTime != '' ?
+                                                    (miscWorkTask.endTime | date:"MM/dd/yyyy h:mm a") : ''
+                                                    }}
+                                                </div>
+                                                <p-calendar *ngIf="!isReadOnly" id="dp-endDateTime" [showTime]="true"
+                                                    [hourFormat]="12" formControlName="endTime" [maxDate]="dateTime"
+                                                    [dateFormat]="_commonHelper.globalDatePickerFormate"
+                                                    [dateMask]="_commonHelper.globalDateMaskWithTime" appendTo="body"
+                                                    [readonlyInput]="false" icon="fas fa-calendar-alt dark-grey"
+                                                    [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true"
+                                                    yearRange="1900:2100" [selectOtherMonths]="true"
+                                                    [minDate]="miscWorkTaskfrm.startTime.value != null ? miscWorkTaskfrm.startTime.value : _commonHelper.globalMinDate"
+                                                    [placeholder]="_commonHelper.globalDatePlaceholderWithTime"
+                                                    [(ngModel)]="miscWorkTask.endTime"
+                                                    [ngClass]="{ 'is-invalid': submitted && miscWorkTaskfrm.endTime.errors && (miscWorkTaskfrm.endTime.dirty || miscWorkTaskfrm.endTime.touched) }">
+                                                </p-calendar>
+                                                <div *ngFor='let validation of validation_messages.endTime'
+                                                    class='invalid-feedback'>
+                                                    <div
+                                                        *ngIf="miscWorkTaskfrm.endTime.hasError(validation.type) && miscWorkTaskfrm.endTime.errors && (miscWorkTaskfrm.endTime.dirty || miscWorkTaskfrm.endTime.touched)">
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                                <div *ngIf="miscWorkTaskfrm.endTime.errors" class="invalid-feedback">
+                                                    <div *ngIf="miscWorkTaskfrm.endTime.errors.minDateDiff">
+                                                        <ng-container *ngIf="minMinutes > 60; else elseMinHRTemplate">
+                                                            {{'WORKTASK.MISCELINIOUSTASK.DETAIL.DETAILS_TAB.MIN_TIME_VALIDATION_HOUR' | translate : { minMinute: minMinutesToHR } }}
+                                                        </ng-container>
+                                                        <ng-template #elseMinHRTemplate>
+                                                            {{'WORKTASK.MISCELINIOUSTASK.DETAIL.DETAILS_TAB.MIN_TIME_VALIDATION_MIN' | translate : { minMinute: minMinutes } }}
+                                                        </ng-template>
+                                                    </div>
+                                                    <div *ngIf="miscWorkTaskfrm.endTime.errors.maxDateDiff">
+                                                        <ng-container *ngIf="maxMinutes > 60; else elseMaxHRTemplate">
+                                                            {{'WORKTASK.MISCELINIOUSTASK.DETAIL.DETAILS_TAB.MAX_TIME_VALIDATION_HOUR' | translate : { maxMinute: maxMinutesToHR } }}
+                                                        </ng-container>
+                                                        <ng-template #elseMaxHRTemplate>
+                                                            {{'WORKTASK.MISCELINIOUSTASK.DETAIL.DETAILS_TAB.MAX_TIME_VALIDATION_MIN' | translate : { maxMinute: maxMinutes } }}
+                                                        </ng-template>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class='col-md-12 col-sm-12 form-group'>
+                                                <label>{{ 'WORKTASK.DETAIL.DETAILS_TAB.DESCRIPTION' | translate }}<span
+                                                        class="mandatory"></span></label>
+                                                <div *ngIf="isReadOnly" class="disable-text">
+                                                    {{
+                                                    miscWorkTask.description != null && miscWorkTask.description != '' ?
+                                                    (miscWorkTask.description) : ''
+                                                    }}
+                                                </div>
+                                                <textarea *ngIf="!isReadOnly" id="txt-description"
+                                                    class="form-control ht--40" rows="6" name="description"
+                                                    formControlName="description" trimValue
+                                                    [(ngModel)]="miscWorkTask.description"
+                                                    [ngClass]="{ 'is-invalid': submitted && miscWorkTaskfrm.description.errors && (miscWorkTaskfrm.description.dirty || miscWorkTaskfrm.description.touched) }">
+                        </textarea>
+                                                <div *ngFor='let validation of validation_messages.description'
+                                                    class='invalid-feedback'>
+                                                    <div id="errorNameIsRequired"
+                                                        *ngIf='miscWorkTaskfrm.description.hasError(validation.type) && miscWorkTaskfrm.description.errors && (miscWorkTaskfrm.description.dirty || miscWorkTaskfrm.description.touched)'>
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Details End-->
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <activity-section 
+                [entityTypeId]="entityTypeId" 
+                [entityId]="entityId" 
+                [isTagRequired]="true" 
+                [isHideEntityReviewsTab]="true" 
+                [isDocumentDownloadPermission]="isDocumentDownloadPermission"
+                [isEditPermission]="isEditWorkTask" 
+                [isDocumentRequired]="true" 
+                [refreshActivity]="refreshActivity"
+                [entityRecordTypeId]="entityRecordTypeId" 
+                (isTagListUpdated)="setRefreshEntityTag()"
+                class="col-xl-4 col-md-12 common-box pr-0"
+                [createdBy]="miscWorkTask?.createdBy"
+                [privacyLevel]="null">
+            </activity-section>
+        </div>
+    </div>
+    <!-- Body End-->
+</div>

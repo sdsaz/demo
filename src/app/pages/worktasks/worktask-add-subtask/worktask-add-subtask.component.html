@@ -1,0 +1,115 @@
+<!-- Model Header Start -->
+<div class="modal-header border-bottom-0 padding-32 pb-0">
+    <h4 class="modal-title font-weight-bold">{{ dialogTitle != '' ? dialogTitle :'WORKTASK.ADD_SUBTASK_DIALOG.TITLE' | translate | configuredEntityName }}</h4>
+    <button type="button" id="btn-close" class="close" (click)="onCloseForm(false)">
+        <span class="font-24 fonts-close"><i class="fas fa-times" aria-hidden="true"></i></span>
+    </button>
+</div>
+<!-- Model Header End -->
+
+<!-- Add Work Task Start -->
+<div class="modal-body padding-32 pt-3" *ngIf="workTaskForm">
+    <form *ngIf="isInitialLoaded" [formGroup]="workTaskForm">
+        <div class=" form-group">
+            <label>{{'WORKTASK.ADD_SUBTASK_DIALOG.NAME' | translate}} <span class="mandatory"></span></label>
+            <input type="text" #workTaskName id="txt-name" class="form-control ht--40"
+                name="name" formControlName="name" [ngClass]="{ 'is-invalid': submitted && workTaskForm['controls'].name.errors && (workTaskForm['controls'].name.dirty || workTaskForm['controls'].name.touched) }"
+                trimValue autofocus>
+            <div *ngFor='let validation of validation_messages.name' class='invalid-feedback'>
+                <div *ngIf="workTaskForm['controls'].name.hasError(validation.type) && workTaskForm['controls'].name.errors && (workTaskForm['controls'].name.dirty || workTaskForm['controls'].name.touched)" id="errorNameIsRequired">
+                    {{ validation.message | translate}}
+                </div>
+            </div>
+        </div>
+        <div class=" form-group">
+            <label>{{'WORKTASK.ADD_SUBTASK_DIALOG.DESCRIPTION' | translate}}</label>
+            <input type="text" id="txt-description" class="form-control "
+                name="description" formControlName="description" 
+                [ngClass]="{ 'is-invalid': workTaskForm['controls'].description.errors && (workTaskForm['controls'].description.dirty || workTaskForm['controls'].description.touched) }" trimValue>
+            <div *ngFor='let validation of validation_messages.description' class='invalid-feedback'>
+                <div *ngIf="workTaskForm['controls'].description.hasError(validation.type) && workTaskForm['controls'].description.errors && (workTaskForm['controls'].description.dirty || workTaskForm['controls'].description.touched)">
+                    {{ validation.message | translate}}
+                </div>
+            </div>
+        </div>
+        <div class=" form-group" *ngIf="isShowTypes">
+            <label> {{'WORKTASK.ADD_DIALOG.TYPE' | translate}} <span class="mandatory"></span></label>
+            <p-dropdown id="drp-type" name="typeId" appendTo="body"
+                panelStyleClass="maxWidthOverride-xxl" formControlName="typeId" filterBy="label"
+                class="form-control" [options]="entitySubTypes"
+                placeholder="{{ 'WORKTASK.ADD_DIALOG.TYPE_PLACEHOLDER' | translate}}" 
+                [resetFilterOnHide]="false" [filter]="true" [showHeader]="true" [showClear]="true"
+                [options]="entitySubTypes" optionLabel="name" optionValue="id" 
+                [ngClass]="{ 'is-invalid': submitted && workTaskForm['controls'].typeId.errors && (workTaskForm['controls'].typeId.dirty || workTaskForm['controls'].typeId.touched) }">
+            </p-dropdown>
+            <div *ngFor='let validation of validation_messages.typeId' class='invalid-feedback'>
+                <div *ngIf="workTaskForm['controls'].typeId.hasError(validation.type) && workTaskForm['controls'].typeId.errors && (workTaskForm['controls'].typeId.dirty || workTaskForm['controls'].typeId.touched)"
+                    id="errorTypeIdValidation">
+                    {{ validation.message | translate}}
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="isShowPrivacyLevels" class=" form-group">
+            <label>{{'WORKTASK.ADD_SUBTASK_DIALOG.PRIVACY_LEVEL' | translate}}</label>
+
+            <ngx-control-level-loading-bar *ngIf="showPrivacyLevelLoader"></ngx-control-level-loading-bar>
+            <p-dropdown id="drp-privacy-levels" name="privacyLevel" optionLabel="name" optionValue="intValue1"
+                formControlName="privacyLevel" class="form-control" [options]="privacyLevels"
+                placeholder="{{ 'WORKTASK.ADD_SUBTASK_DIALOG.PRIVACY_LEVEL_PLACEHOLDER'| translate}}">
+            </p-dropdown>
+        </div>
+
+        <!-- Record Type -->
+        <div class=" form-group" *ngIf="isShowRecordTypes">
+            <label> {{'WORKTASK.ADD_DIALOG.RECORD_TYPE' | translate}}</label>
+            <p-dropdown id="drp-entityRecordType" name="entityRecordTypeId" optionLabel="label" optionValue="value"  appendTo="body"
+                panelStyleClass="maxWidthOverride-xxl" formControlName="entityRecordTypeId" filterBy="label"
+                class="form-control" [options]="entityRecordTypes"
+                placeholder="{{ 'WORKTASK.ADD_DIALOG.RECORDTYPE_PLACEHOLDER' | translate}}" [filter]="true"
+                [resetFilterOnHide]="false"
+                [ngClass]="{ 'is-invalid': submitted && workTaskForm['controls'].entityRecordTypeId.errors && (workTaskForm['controls'].entityRecordTypeId.dirty || workTaskForm['controls'].entityRecordTypeId.touched) }"
+                [showClear]="true" (onChange)="onRecordTypeChange($event)" (onClear)="onRecordTypeClear($event)">
+            </p-dropdown>
+            <div *ngFor='let validation of validation_messages.entityRecordTypeId' class='invalid-feedback'>
+                <div *ngIf="workTaskForm['controls'].entityRecordTypeId.hasError(validation.type) && workTaskForm['controls'].entityRecordTypeId.errors && (workTaskForm['controls'].entityRecordTypeId.dirty || workTaskForm['controls'].entityRecordTypeId.touched)"
+                    id="errorEntityRecordTypeIdValidation">
+                    {{ validation.message | translate}}
+                </div>
+            </div>
+        </div>
+        <!-- Record Type -->
+
+        <div class=" form-group" *ngIf="isShowWorkFlow">
+            <label>{{'WORKTASK.ADD_SUBTASK_DIALOG.WORKFLOW' | translate}} <span class="mandatory"></span></label>
+            <p-dropdown id="drp-workflow" name="entityWorkflowId" optionLabel="label"
+                optionValue="value" formControlName="entityWorkflowId" [ngClass]="{ 'is-invalid': submitted && workTaskForm['controls'].entityWorkflowId.errors && (workTaskForm['controls'].entityWorkflowId.dirty || workTaskForm['controls'].entityWorkflowId.touched) }"
+                class="form-control" [options]="workflows" placeholder="{{'WORKTASK.ADD_SUBTASK_DIALOG.WORKFLOW_PLACEHOLDER' | translate}}"
+                (onChange)="workflowOnChange($event)" required>
+            </p-dropdown>
+            <div *ngFor='let validation of validation_messages.entityWorkflowId' class='invalid-feedback'>
+                <div *ngIf="workTaskForm['controls'].entityWorkflowId.errors && (workTaskForm['controls'].entityWorkflowId.dirty || workTaskForm['controls'].entityWorkflowId.touched)" id="errorworkflowIsRequired">
+                    {{ validation.message | translate}}
+                </div>
+            </div>
+        </div>
+
+        <ng-container *ngIf="isAssignWorkTask && !(entityHiddenFieldSettings | isEntityFieldHidden: workTaskEntityTypeID : sectionCodes : fieldNames?.AssignedTo)">
+            <div class=" form-group">
+                <label>{{'WORKTASK.ADD_SUBTASK_DIALOG.ASSIGNED_TO' | translate}}</label>
+                <p-dropdown id="drp-assigned-to" name="assignedTo" optionLabel="label" optionValue="value"
+                    formControlName="assignedTo" class="form-control" [options]="assignedToUsers"
+                    placeholder="{{assignedToPlaceholder | translate}}" [filter]="true" [resetFilterOnHide]="false"
+                    (onFilter)="assignedToOnFilter($event)" (onChange)="assignedToOnChange($event)" [showClear]="true">
+                </p-dropdown>
+            </div>
+        </ng-container>
+        
+        <div class="modal-footer border-top-0 px-0 pb-0">
+            <button type="button" class='btn btn-outline-secondary me-2' id="btn-cancel"
+                (click)="onCloseForm(false)">{{'WORKTASK.ADD_SUBTASK_DIALOG.BUTTON_CANCEL' | translate}}</button>
+            <button type="button" (click)="saveWorkTask(workTaskForm.value)" id="btn-save" class='btn btn-primary'>{{'WORKTASK.ADD_SUBTASK_DIALOG.BUTTON_ADD' | translate}}</button>
+        </div>
+    </form>
+</div>
+<!-- Add Work Task End -->

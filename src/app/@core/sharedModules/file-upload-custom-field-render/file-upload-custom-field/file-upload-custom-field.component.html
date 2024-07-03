@@ -1,0 +1,20 @@
+<div class="table-two">
+    <ng-container *ngIf="isShowAddFileButton">
+        <div class="mb-3 vertical-center justify-content-end dropdown-with-add">
+            <button id="btn-upload-{{documentType}}" class='btn btn-primary' type='button' (click)="openFileUploadDialog()">
+                {{
+                'COMMON.CUSTOM_FILE_UPLOAD.BUTTON_ADD_FILE' | translate
+                }}
+            </button>
+        </div>
+    </ng-container>
+    <div class="table-responsive mb-5">
+        <app-dynamic-table *ngIf="refreshFileList"
+         [code]="dynamicTableCode" [parameters]="dynamicTableParamList" (onDeleteClick)="deleteFile($event)"
+         (onDownloadClick)="downloadDocument($event)"
+         (onEditClick)="editDocument($event)"
+         (onPreviewClick)="viewDocument($event)"
+         (data)="bindDynamicComponentData($event)">
+        </app-dynamic-table>
+    </div>
+</div>

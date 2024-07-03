@@ -1,0 +1,7 @@
+<pdf-viewer [src]="src"
+    [render-text]="renderText"
+    [render-text-mode]="renderTextMode"
+    [original-size]="originalSize"
+    [style.width]="width"
+    [style.height]="height"
+    (after-load-complete)="pdfLoaded($event)"></pdf-viewer>

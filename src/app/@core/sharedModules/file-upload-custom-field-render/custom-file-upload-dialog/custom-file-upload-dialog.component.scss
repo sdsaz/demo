@@ -1,0 +1,78 @@
+@import '../../../../../scss/variables';
+
+.file-drop-zone {
+    border: dashed 2px $brdr-grey;
+    min-height: 20x;
+    padding: 30px;
+    border-radius: 4px;
+}
+
+.file-drop-zone-over {
+    border: dashed 2px #1D2D44;
+}
+
+.file-drop-zone .drop-zone-area {
+    display: flex;
+    justify-content: center;
+
+    .drop-text{min-width: 100px; text-align: right;}
+}
+
+.file-drop-zone .or-text {
+    padding: 0 10px;
+}
+
+.file-drop-zone .file-input-group {
+    position: relative; min-width: 90px; display: inline-block; text-align: left;
+}
+
+.file-drop-zone .file-input-group .anchor {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%
+}
+
+.file-drop-zone .file-input-group .file-input {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    left: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 21px;
+}
+
+.progress.file-upload-process {
+    height: 5px;
+    background-color: transparent;
+}
+
+.line-height-25px{ line-height: 25px; }
+
+input[type="file"].custom-file-without-input{ display: none; }
+.btn-custom-file { background-color: #e9ecef; padding: 6px 12px; height: 34px; display: flex; align-items: center; }
+::ng-deep.nb-theme-dark .btn-custom-file { background-color: #304562; color: #fff; }
+
+::ng-deep .tbl-popup-scroll {
+    .min-width-long { min-width: 62%; }
+    .p-datatable-wrapper{ max-height: calc(100vh - 530px);
+        @media (max-height: 800px) { max-height: 450px; }
+        @media (max-width: 400px) { max-height: 450px; }
+    }
+    @media (max-width: 640px) {
+        .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr > td.text-right{ justify-content: flex-end !important; text-align: right !important; }
+        .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr > td .p-column-title { min-width: 100px; }
+    }
+    .word-break-all{ word-break: break-all; }
+}
+
+.btnRemoveFiles {
+    font-size: 0.9rem;
+    font-weight: 600;
+}

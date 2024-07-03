@@ -1,0 +1,78 @@
+@import "../../../../scss/entity_kanban.scss";
+
+.btn-reset-filter.btn-mg{ margin: 0 20px 0 0; }
+
+.head-title-xs, .head-btn-xs{
+    @media (max-width: 410px){ flex: 0 0 100%; max-width: 100%; }
+}
+
+.head-title-xs{
+    @media (max-width: 410px){ margin-bottom: 15px; }
+}
+
+.tbl-tags-category-list{
+  @media (min-width: 641px){
+    th.name, td.name{ word-break: break-word; }
+    th.entityTypeName, td.entityTypeName, th.name, td.name, th.isPrivate, td.isPrivate, th.isSingular, td.isSingular{ min-width: 190px !important;width: 190px !important;}
+    th.entityRecordTypeName, td.entityRecordTypeName{ min-width: 210px !important; width: 210px !important; }
+    th.action, td.action { width: 0; min-width: 0; padding: 0 !important; 
+      .dropdown { margin-right: 12px; }
+    }
+  }
+  @media (max-width: 640px){
+    .p-column-title { min-width: 152px !important; }
+  }
+}
+
+::ng-deep .tbl-tags-category-list .p-datatable-wrapper {
+  @media (min-width: 1140px) and (min-height: 576px) { min-height: calc(100vh - 188px); }
+} 
+
+.check-group { font-size: 18px;
+  .custom-control-input{ margin-top: 3px; }
+}
+
+.col-xl-custom{
+  @media (min-width: 1200px){ flex: 0 0 100px; max-width: 100px; }
+}
+
+.col-xl-larger{
+  @media (min-width: 1900px){ flex: 0 0 16.66666667%; max-width: 16.66666667%; }
+}
+
+:host ::ng-deep .ui-table .ui-sortable-column .ui-sortable-column-icon.pi-fw {width: 16px;}
+
+// prime ng input override - start
+:host ::ng-deep{
+  .dropDownOverride.p-dropdown {
+      width: 100%;
+  }
+}
+// prime ng input override - end
+
+// table styling - start
+.action{
+  text-align: center !important;
+}
+.avatar {
+  position: relative;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+}
+.teal-500Bg{
+  background-color: var(--teal-500);
+  color: var(--surface-0) !important;
+  border: none;
+}
+// table styling - end
+// prime ng input override - end
+.customInputText{
+  height: 34px;
+}
+
+.pt-md-18px{
+  @media (min-width: 768px) { padding-top: 18px;
+    @media (min-width: 992px) and (max-width: 1199px) { padding-top: 0; }
+  }
+}

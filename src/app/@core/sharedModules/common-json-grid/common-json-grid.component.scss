@@ -1,0 +1,93 @@
+
+
+
+.fa-pencil {
+    font-size: 1.2rem;
+}
+
+.fa-trash {
+    font-size: 1.2rem;
+}
+
+::ng-deep .jsonGriTbl {
+    padding-top: 0.5rem; position: relative;
+
+    .add-btn { position: absolute; top: -20px; right: 0; }
+    .tbl-fixed.tbl-task .table tr td { vertical-align: top; }
+    .tbl-fixed.tbl-task .table tr td.action { max-width: 70px; min-width: 70px; padding-top: 20px; }
+
+    @media only screen and (max-width:40em) {
+        p-table {
+            .p-datatable.p-datatable-scrollable .p-datatable-thead > tr > th, .p-datatable.p-datatable-scrollable .p-datatable-tfoot > tr > td {
+                display: flex !important; flex-wrap: nowrap; align-items: center;
+                border-bottom: 1px;
+            }
+            .p-datatable.p-datatable-scrollable .p-datatable-thead > tr, .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr, .p-datatable.p-datatable-scrollable .p-datatable-tfoot > tr {
+                display: flex !important; flex-wrap: nowrap;
+                td {
+                    align-items: center !important;
+                }
+            }
+            .p-datatable .p-datatable-tbody > tr:nth-child(even) {
+                background: none !important;
+            }
+            .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr {
+                border-bottom: none;
+            }
+            .p-datatable.p-datatable-scrollable .p-datatable-thead > tr > th, .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr > td {
+                border-bottom: 1px solid #e9ecef;
+            }
+            .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr > td { float: none; width: auto !important; clear: none; max-width: initial !important; }
+            .p-datatable.p-datatable-scrollable .p-datatable-thead > tr > th.action, .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr > td.action { max-width: 70px !important; min-width: 70px !important; }
+            .p-datatable.p-datatable-scrollable .p-datatable-thead > tr > th, .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr > td { flex-grow: 1; flex-basis: 0; min-width: 180px !important; padding: 9px 12px !important; }
+        }
+    }
+
+    @media only screen and (max-width:767px) { 
+        .p-datatable.p-datatable-scrollable .p-datatable-thead > tr > th, .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr > td { min-width: 180px !important; }
+        .p-datatable.p-datatable-scrollable .p-datatable-thead > tr > th.action, .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr > td.action { max-width: 70px !important; min-width: 70px !important; }
+    }
+
+    .tbl-fixed.tbl-task { border-width: 0;
+        .table {
+            border-width: 0;
+            tr {
+                th,
+                td {
+                    border-right: none;
+                    border-color: #e9ecef;
+                }
+                th{ box-shadow: 0 1px 0 #e9ecef; }
+            }
+        }
+    }
+}
+
+
+::ng-deep .nb-theme-dark .jsonGriTbl {
+    @media only screen and (max-width:40em) {
+        p-table {
+            .p-datatable.p-datatable-scrollable .p-datatable-thead > tr > th, .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr > td {
+                border-bottom: 1px solid #304562;
+            }
+        }
+    }
+
+    .tbl-fixed.tbl-task {
+        .table {
+            tr {
+                th, td {
+                    border-color: #304562;
+
+                    @media (max-width: 640px) { min-width: 180px; }
+                }
+                th.action, td.action {
+                    @media (max-width: 640px) { min-width: 0; }
+                }
+                th{ box-shadow: 0 1px 0 #304562; }
+            }
+        }
+    }
+}
+
+::ng-deep .page-containted .page-content.container-fluid ~ .page-content.container-fluid .jsonGriTbl .p-datatable-wrapper { height: auto !important; max-height: 600px !important; }

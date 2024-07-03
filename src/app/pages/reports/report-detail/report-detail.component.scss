@@ -1,0 +1,213 @@
+@import "../../../../scss/variables";
+
+:host ::ng-deep .tbl-report-detail {
+  .p-calendar .p-datepicker {
+    min-width: 295px;
+  }
+
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+
+    @media (max-width: 640px){ border-collapse: collapse; }
+  }
+
+  .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr > td .p-column-title{ min-width: 150px; max-width: 150px; }
+
+  .p-datatable {
+    th, td {
+      word-break: break-word;
+      display: block;
+      min-height: auto;
+    }
+
+    th {
+      white-space: nowrap;
+      height: auto;
+    }
+
+    tr {
+      display: revert;
+
+      th:first-child:not(:last-child), td:first-child:not(:last-child) {
+        max-width: 60px;
+        min-width: 60px !important;
+      }
+    }
+  }
+  // To enable providing custom width to columns of primeNg table - start
+  .p-datatable-scrollable .p-datatable-thead {
+    top: -1px;
+  }
+
+  .p-datatable-scrollable .p-datatable-tbody,
+  .p-datatable-scrollable .p-datatable-tfoot,
+  .p-datatable-scrollable .p-datatable-thead {
+    display: revert;
+  }
+
+  .p-datatable-scrollable .p-datatable-tbody > tr > td,
+  .p-datatable-scrollable .p-datatable-tfoot > tr > td,
+  .p-datatable-scrollable .p-datatable-thead > tr > th {
+    display: revert;
+  }
+
+  .p-datatable-scrollable-both .p-datatable-thead > tr > th {
+    white-space: nowrap;
+  }
+
+  .p-datatable-scrollable .p-datatable-thead > tr > th {
+    white-space: nowrap;
+  }
+  // To enable providing custom width to columns of primeNg table - end
+
+  .report-filter {
+    .filter-item.textbox {
+      min-width: 200px;
+      max-width: 200px
+    }
+
+    .filter-item.date {
+      min-width: 150px;
+      max-width: 150px
+    }
+
+    .filter-item.daterange {
+      min-width: 240px;
+      max-width: 240px
+    }
+
+    .filter-item.dropdown {
+      min-width: 200px;
+      max-width: 200px;
+    }
+
+    .filter-item-button {
+      min-width: 200px;
+      max-width: 200px;
+
+      .button-label {
+        min-width: 100px;
+        max-width: 100px
+      }
+    }
+  }
+
+  .p-datatable-wrapper { height: calc(100vh - 130px) !important;
+    @media (max-width: 1199px) { height: calc(100vh - 150px) !important; }
+    @media (max-width: 575px) { height: 700px !important; }
+    @media (max-width: 1139px) and (max-height: 575px) { height: 700px !important; }
+  }
+}
+
+.fs-report-heading{ font-size: 21px;
+  @media (max-width: 767px) { font-size: 17px; }
+}
+
+:host ::ng-deep .tbl-tree-report .p-treetable tr > {
+  th:first-child:not(:last-child), td:first-child:not(:last-child) {
+    width: 140px !important;
+  }
+}
+
+label.label-mg-down {
+  margin-bottom: 5px;
+}
+
+// .datepickerforfilter .ui-inputtext{
+//     width: 270px !important;
+// }
+
+.ui-calendar .ui-datepicker {
+  min-width: 270px !important;
+}
+
+.ui-table-auto-layout > .ui-table-wrapper {
+  overflow: unset !important;
+}
+
+:host ::ng-deep .ui-table-scrollable-body {
+  color: red;
+}
+
+.custom-col-sm.col-sm {
+  @media (min-width: 576px) {
+    flex: 0 0 245px;
+    max-width: 245px;
+  }
+}
+
+.summary-table {
+  margin-top: 10px;
+  margin-bottom: 20px;
+
+  th {
+    height: auto;
+  }
+}
+
+.summary-table-header {
+  color: var(--blue-600);
+  font-size: 16px;
+}
+
+::ng-deep .nb-theme-dark .summary-table-header {
+  color: var(--blue-300);
+}
+
+.summary-table-column-style {
+  word-break: break-word;
+  text-align: left
+}
+
+th[scope="col"] > span {
+  width: 100%;
+}
+
+.width-88px {
+  width: 88px;
+}
+
+:host ::ng-deep :not(.tbl-report-detail) .tbl-height-zero .p-datatable-wrapper {
+  height: 100px !important;
+
+  th {
+    width: auto !important;
+    min-width: auto !important;
+  }
+}
+
+:host ::ng-deep .tbl-report-detail .tbl-height-zero .p-datatable-wrapper {
+  height: 132px !important;
+  margin-bottom: 140px;
+}
+
+:host ::ng-deep .tree-table {
+  .p-treetable .p-paginator-bottom { display:none!important}
+}
+
+:host ::ng-deep .summary-table {
+  .p-paginator .p-paginator-first, .p-paginator .p-paginator-prev, .p-paginator .p-paginator-pages, .p-paginator .p-paginator-next, .p-paginator .p-paginator-last, .p-paginator .p-paginator-current, .nb-theme-default .p-paginator .p-paginator-first, .nb-theme-default .p-paginator .p-paginator-prev, .nb-theme-default .p-paginator .p-paginator-pages, .nb-theme-default .p-paginator .p-paginator-next, .nb-theme-default .p-paginator .p-paginator-last, .nb-theme-default .p-paginator .p-paginator-current, .nb-theme-dark .p-paginator .p-paginator-first, .nb-theme-dark .p-paginator .p-paginator-prev, .nb-theme-dark .p-paginator .p-paginator-pages, .nb-theme-dark .p-paginator .p-paginator-next, .nb-theme-dark .p-paginator .p-paginator-last, .nb-theme-dark .p-paginator .p-paginator-current {
+    display: inline-flex !important;
+  }
+
+  .p-paginator .p-dropdown.p-paginator-rpp-options, .nb-theme-default .p-paginator .p-dropdown.p-paginator-rpp-options, .nb-theme-dark .p-paginator .p-dropdown.p-paginator-rpp-options {
+    min-width: auto !important; margin: 0; height: auto;
+  }
+}
+
+::ng-deep .tbl-report-generic .p-datatable-wrapper {
+  @media (min-width: 1140px) and (min-height: 576px) { min-height: calc(100vh - 130px); }
+} 
+
+::ng-deep .tbl-tree-report .p-datatable-wrapper {
+  @media (min-width: 1140px) and (min-height: 576px) { min-height: calc(100vh - 155px); }
+}
+
+::ng-deep .html-report-container {
+  min-width: 100%;
+  min-height: 100%;
+}
+::ng-deep .html-report-container > table {
+  width: 100%;
+}

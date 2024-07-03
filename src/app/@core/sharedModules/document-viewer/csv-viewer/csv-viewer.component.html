@@ -1,0 +1,20 @@
+<div class="csv-overlay" *ngIf="(headers && headers.length > 0) ||  (records && records.length > 0)">
+    <div class="col-12 table-responsive tbl-fixed tbl-task">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="text-center min-width-col" *ngFor="let header of headers">
+                        <b>{{header}}</b>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let row of records">
+                    <td class="text-center min-width-col" *ngFor="let col of row">
+                        <span *ngIf='col && col != "" '>{{col}}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

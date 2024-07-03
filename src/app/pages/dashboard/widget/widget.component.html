@@ -1,0 +1,198 @@
+<div id="widget-loader-{{widget?.widgetTitle | idGenerator}}" class="widget-loader hide-widget-loader">
+  <div class="bounce-spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>
+
+<p-card styleClass="customCard" class="dashboard-widget">
+
+  <ng-template pTemplate="header">
+    <span [innerHTML]="headerElement" class="widget-header" id="widget-header"></span>
+    <div class="dropdown text-right d-flex align-items-center mb-2px">
+      <button pButton icon="fas fa-refresh" class="p-button-rounded p-button-sm button-dropdown mr-2" type="button"
+        id="btn-refresh-{{widget?.widgetTitle | idGenerator}}" (click)="getQueryData(true);">
+      </button>
+      <button pButton icon="fas fa-ellipsis-v" class="p-button-rounded p-button-sm button-dropdown" type="button"
+        id="drp-{{widget?.widgetTitle | idGenerator}}" data-bs-toggle="dropdown" aria-expanded="false"
+        [hidden]="!titleHeaderFilter || !titleHeaderFilter.length"
+        (click)="isSizeMenuOpen = false; isTypeMenuOpen = false;">
+      </button>
+      <ul *ngIf="titleHeaderFilter && titleHeaderFilter.length"
+        class="dropdown-menu dropdown-menu-end dropdown-multiple">
+        <li *ngFor="let fltrs of titleHeaderFilter" class="menu-nested">
+          <ng-container [ngSwitch]="fltrs.filtername">
+            <ng-container *ngSwitchCase="filterNameList.sizeList">
+              <a class="dropdown-item menu--item" type="button" id="btn-size-{{widget?.widgetTitle | idGenerator}}"
+                (click)="$event.stopPropagation(); isSizeMenuOpen = !isSizeMenuOpen; isTypeMenuOpen = false;">
+                {{ 'DASHBOARD.WIDGET.FILTER_LABEL_SIZE' | translate }}
+                <i class="fas fa-caret-down pd-menu-icon" aria-hidden="true"></i>
+              </a>
+
+              <ul class="dropdown-menu dropdown-menu-end" [ngClass]="{'show': isSizeMenuOpen, 'size8-8': hasBigSize}" role="menu"
+                aria-labelledby="dropdownMenu">
+                <li *ngFor="let sizes of sizeList" ngbTooltip="{{(sizes.value | heightWidthThumbnail :'height': 1) + ' Rows x ' + (sizes.value | heightWidthThumbnail : 'width': 1) + ' Columns'}}" triggers="hover" tooltipClass="tooltip-sidemenu" container="body">
+                  <svg (click)="changeWidgetSize(sizes.value)" class="link-submenu"
+                    [ngClass]="size == sizes.value ? 'active' : ''"
+                    [attr.id]="'svg_' + sizes.value + '_' + (widget.widgetTitle | idGenerator)"
+                    [attr.width]="(sizes.value | heightWidthThumbnail : 'width' : globalSizeBoxMultiplier) + 10"
+                    [attr.height]="(sizes.value | heightWidthThumbnail : 'height' : globalSizeBoxMultiplier) + 10">
+                    <g>
+                      <rect class="rectThubnail" [attr.width]="sizes.value | heightWidthThumbnail : 'width' : globalSizeBoxMultiplier"
+                        [attr.height]="sizes.value | heightWidthThumbnail : 'height' : globalSizeBoxMultiplier" />
+                      {{
+                      getSizeDdDispTxt('svg_' + sizes.value + '_' +
+                      (widget.widgetTitle | idGenerator),
+                      sizes.value | heightWidthThumbnail :'width' : globalSizeBoxMultiplier,
+                      sizes.value | heightWidthThumbnail :'width' : 1,
+                      sizes.value | heightWidthThumbnail : 'height' : globalSizeBoxMultiplier,
+                      sizes.value | heightWidthThumbnail : 'height' : 1,
+                      'Open Sans','12')
+                      }}
+                    </g>
+                  </svg>
+                </li>
+              </ul>
+            </ng-container>
+            <ng-container *ngSwitchCase="filterNameList.ChartType">
+              <a class="dropdown-item menu--item" type="button" id="btn-chart-{{widget?.widgetTitle | idGenerator}}"
+                (click)="$event.stopPropagation(); isTypeMenuOpen = !isTypeMenuOpen; isSizeMenuOpen = false;">
+                {{ 'DASHBOARD.WIDGET.FILTER_LABEL_CHARTTYPE' | translate }}
+                <i class="fas fa-caret-down pd-menu-icon" aria-hidden="true"></i>
+              </a>
+
+              <ul class="dropdown-menu dropdown-menu-end" [ngClass]="{'show': isTypeMenuOpen}" role="menu"
+                aria-labelledby="dropdownMenu">
+                <li *ngFor="let type of viewList">
+                  <span class="link-submenu" id="btn-{{type.dValue | lowercase}}-chart-{{widget?.widgetTitle | idGenerator}}" [ngClass]="displayType == type.value ? 'active' : ''"
+                    (click)="changeView(type.value,type.displayTypeID)">{{type.dValue}}</span>
+                </li>
+              </ul>
+            </ng-container>
+            <ng-container *ngSwitchCase="filterNameList.Export">
+              <a type="button" (click)="exportToExcel()" class="dropdown-item menu--item" id="btn-export-to-excel-{{widget?.widgetTitle | idGenerator}}">
+                {{ 'DASHBOARD.WIDGET.FILTER_LABEL_EXPORT' | translate }}
+              </a>
+            </ng-container>
+          </ng-container>
+        </li>
+      </ul>
+    </div>
+  </ng-template>
+  <div class="widget-area height-chart-table">
+    <ng-container [ngSwitch]="widget.dashboardName">
+      <ng-container *ngSwitchDefault>
+        <ng-container [ngSwitch]="displayType">
+          <ng-container *ngSwitchCase="widgetDisplayType.ListDefault">
+            <ngx-list-default [dashboardName]='widget.dashboardName' [tableConfig]="selectedUIOptions"
+              [displayOrder]="widget.displayOrder" [indicatorData]="indicatorData" [widgetTitle]="widget?.widgetTitle">
+            </ngx-list-default>
+          </ng-container>
+          <ng-container *ngSwitchCase="widgetDisplayType.ChartPie">
+            <div *ngIf="selectedUIOptions && (indicatorData ? (indicatorData.length > 0) : false)"
+              style="padding: 0px;" class="height-chart">
+              <ngx-chart-selector [indId]="widget.widgetID" [selectedView]="displayType" [height]="height"
+                [indicatorName]="indicatorName" [dashboardName]="dashboardName" [indicatorData]="indicatorData"
+                [decreaseHeightBy]="totalHeaderHeight" [selectedUIOptions]="selectedUIOptions">
+              </ngx-chart-selector>
+            </div>
+            <div id="nodata-{{widget?.widgetTitle | idGenerator}}" class="col-12 pt-2 px-0 text-center"
+              *ngIf="selectedUIOptions && (indicatorData ? (indicatorData.length == 0) : false)">
+              {{'DASHBOARD.WIDGET.MESSAGE_NO_DATA_EXISTS' | translate}}
+            </div>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="widgetDisplayType.ChartDonut">
+            <!-- START: Donut Chart-->
+            <div *ngIf="selectedUIOptions && (indicatorData ? (indicatorData.length > 0) : false)"
+              style="padding: 0px;" class="height-chart">
+              <ngx-chart-selector [indId]="widget.widgetID" [selectedView]="displayType" [height]="height"
+                [indicatorData]="indicatorData" [decreaseHeightBy]="totalHeaderHeight"
+                [selectedUIOptions]="selectedUIOptions">
+              </ngx-chart-selector>
+            </div>
+            <div id="nodata-{{widget?.widgetTitle | idGenerator}}" class="col-12 pt-2 px-0 text-center"
+              *ngIf="selectedUIOptions && (indicatorData ? (indicatorData.length == 0) : false)">
+              {{'DASHBOARD.WIDGET.MESSAGE_NO_DATA_EXISTS' | translate}}
+            </div>
+            <!-- END: Donut Chart-->
+          </ng-container>
+
+          <ng-container *ngSwitchCase="widgetDisplayType.ChartGauge">
+            <div *ngIf="selectedUIOptions && (indicatorData ? (indicatorData.length > 0) : false)" 
+              style="padding: 0px;" class="height-chart">
+              <ngx-chart-selector [indId]="widget.widgetID" [selectedView]="displayType" [height]="height"
+                [indicatorName]="indicatorName" [dashboardName]="dashboardName"
+                [indicatorData]="indicatorData" [decreaseHeightBy]="totalHeaderHeight"
+                [selectedUIOptions]="selectedUIOptions">
+              </ngx-chart-selector>
+            </div>
+            <div id="nodata-{{widget?.widgetTitle | idGenerator}}" class="col-12 pt-2 px-0 text-center"
+              *ngIf="selectedUIOptions && (indicatorData ? (indicatorData.length == 0) : false)">
+              {{'DASHBOARD.WIDGET.MESSAGE_NO_DATA_EXISTS' | translate}}
+            </div>
+          </ng-container>
+          <ng-container *ngSwitchCase="widgetDisplayType.PBHalfCircle">
+            <div *ngIf="selectedUIOptions && (indicatorData ? (indicatorData.length > 0) : false)"
+              style="padding: 0px;" class="height-chart">
+              <ngx-chart-selector [indId]="widget.widgetID" [selectedView]="displayType" [height]="height"
+                [indicatorName]="indicatorName" [dashboardName]="dashboardName"
+                [indicatorData]="indicatorData" [decreaseHeightBy]="totalHeaderHeight"
+                [selectedUIOptions]="selectedUIOptions">
+              </ngx-chart-selector>
+            </div>
+            <div id="nodata-{{widget?.widgetTitle | idGenerator}}" class="col-12 pt-2 px-0 text-center"
+              *ngIf="selectedUIOptions && (indicatorData ? (indicatorData.length == 0) : false)">
+              {{'DASHBOARD.WIDGET.MESSAGE_NO_DATA_EXISTS' | translate}}
+            </div>
+          </ng-container>
+          <ng-container *ngSwitchCase="widgetDisplayType.ChartLine">
+            <div *ngIf="selectedUIOptions && (indicatorData ? (indicatorData.length > 0) : false)"
+              style="padding: 0px;" class="height-chart">
+              <ngx-chart-selector [indId]="widget.widgetID" [selectedView]="displayType" [height]="height"
+                [indicatorName]="indicatorName" [dashboardName]="dashboardName"
+                [indicatorData]="indicatorData" [decreaseHeightBy]="totalHeaderHeight"
+                [selectedUIOptions]="selectedUIOptions">
+              </ngx-chart-selector>
+            </div>
+            <div id="nodata-{{widget?.widgetTitle | idGenerator}}" class="col-12 pt-2 px-0 text-center"
+              *ngIf="selectedUIOptions && (indicatorData ? (indicatorData.length == 0) : false)">
+              {{'DASHBOARD.WIDGET.MESSAGE_NO_DATA_EXISTS' | translate}}
+            </div>
+          </ng-container>
+          <ng-container *ngSwitchCase="widgetDisplayType.ChartBar">
+            <div *ngIf="selectedUIOptions && (indicatorData ? (indicatorData.length > 0) : false)"
+              style="padding: 0px;" class="height-chart">
+              <ngx-chart-selector [indId]="widget.widgetID" [selectedView]="displayType" [height]="height"
+                [indicatorName]="indicatorName" [dashboardName]="dashboardName"
+                [indicatorData]="indicatorData" [decreaseHeightBy]="totalHeaderHeight"
+                [selectedUIOptions]="selectedUIOptions">
+              </ngx-chart-selector>
+            </div>
+            <div id="nodata-{{widget?.widgetTitle | idGenerator}}" class="col-12 pt-2 px-0 text-center"
+              *ngIf="selectedUIOptions && (indicatorData ? (indicatorData.length == 0) : false)">
+              {{'DASHBOARD.WIDGET.MESSAGE_NO_DATA_EXISTS' | translate}}
+            </div>
+          </ng-container>
+          <ng-container *ngSwitchCase="widgetDisplayType.CVDefault">
+            <div *ngIf="selectedUIOptions && (indicatorData ? (indicatorData.length > 0) : false)" style="padding: 0px;"
+              class="height-chart d-flex align-items-center justify-content-center">
+              <ngx-current-value-default [selectedUIOptions]="selectedUIOptions" [indicatorData]="indicatorData"></ngx-current-value-default>
+            </div>
+            <div id="nodata-{{widget?.widgetTitle | idGenerator}}" class="col-12 pt-2 px-0 text-center"
+              *ngIf="selectedUIOptions && (indicatorData ? (indicatorData.length == 0) : false)">
+              {{'DASHBOARD.WIDGET.MESSAGE_NO_DATA_EXISTS' | translate}}
+            </div>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </div>
+  <ng-template pTemplate="footer">
+    <div class="d-flex">
+      <i class="fa fa-refresh pr-2 pt-2px"></i>
+      <p>{{refreshTime | timeAgoPipe : refreshTime}}</p>
+    </div>
+  </ng-template>
+</p-card>

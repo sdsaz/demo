@@ -1,0 +1,17 @@
+{
+  "toaster_timeout": 10000,
+  "tinymce_api_key": "r08qbjcwru52zww8jj5gq6ylrwm6adj7nff8totvkjgzkxry",
+  "attachment_visibility_tenant": "6,7",
+  "app_client": "CRM",
+  "app_version":"v2.12.3",
+  "maxFileSizeInMb": 100,
+  "maxAllowedFiles": 10,
+  "defaultCountryId":236,
+  "maxNotification": 6,
+  "passwordPattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+  "passwordErrorMessage": "Password must be at least 8 characters long with 1 uppercase, 1 lowercase, 1 special character and 1 number.",
+  "localStorageHash":"5f79dee8-b690-450c-9d2c-c10c65de599b",
+  "expirationTimeInMins": 1440,
+  "waitForResponse": 2000,
+  "userPopOverDebounceTimeinMiliSeconds": 1000
+}

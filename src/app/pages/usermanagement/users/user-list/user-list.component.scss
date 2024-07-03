@@ -1,0 +1,96 @@
+@import '../../../../../scss/variables';
+
+::ng-deep .tbl-user-list{
+    @media (min-width: 641px){
+        th.user-img, td.user-img { min-width:50px; width: 50px; text-align: center; vertical-align: middle; }
+
+        .ui-table-responsive .ui-table-tbody>tr>td.user-img {
+            @media screen and (max-width: 640px){ text-align: center; }
+        }
+
+        th.phone, td.phone { min-width: 170px; width: 170px; }
+        th.fullName, td.fullName, th.email, td.email, th.roleName, td.roleName {min-width:200px; width: 200px; word-break: break-word; }
+        th.impersonate, td.impersonate{ min-width: 160px; width: 160px; max-width: 160px; }
+
+        th.status, td.status { min-width: 130px; max-width: 130px; width: 130px; }
+        td.impersonate > button { padding: 2px 9px; height: 26px; font-weight: 600; width: 100%;
+            @media (max-width: 640px) { padding: 2px 20px; width: auto; }
+        }
+        .badge.badge--status{ font-size: 12px; font-weight: 600; }
+        th.action, td.action { width: 0; min-width: 0; padding: 0 !important; 
+		    .dropdown { margin-right: 12px; }
+        }
+    }
+    @media (max-width: 640px){
+        .d-responsive-none{ display: none; }
+        td.impersonate { justify-content: flex-end !important; }
+    }
+    .p-datatable-wrapper {
+        @media (min-width: 1140px) and (min-height: 576px) { min-height: calc(100vh - 190px); }
+    }
+}
+:host ::ng-deep {
+    @media (max-width: 640px){
+        .tbl-user-list .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr > td .p-column-title { min-width: 70px; }
+    }
+}
+
+.grey-400bg, .btn-check:checked+.btn.grey-400bg, .btn.active.grey-400bg, .btn.show.grey-400bg, .btn.grey-400bg:first-child:active, :not(.btn-check)+.btn.grey-400bg:active{
+    background-color: #88a5bc;
+    color: $clr-white;
+    border: none;
+    min-width: 120px;
+    max-width: 120px;
+}
+.badge.bg-danger{
+    background-color: #f86c6b !important;
+}
+.badge.bg-primary, .badge.bg-danger{
+    font-size: 12px;
+    font-weight: 600;
+}
+
+:host ::ng-deep{
+    // prime ng input override - start
+    .multiSelectOverride.p-multiselect
+    {
+        width: 100%;
+    }
+    .customTable.p-datatable .p-datatable-wrapper table tbody tr:last-child{
+        padding-bottom: 90px !important;
+    }
+    // prime ng input override - end
+    // To enable providing custom width to columns of primeNg table - start
+    .p-datatable-scrollable .p-datatable-thead{
+        top: -1px;
+    }
+    // .p-datatable-scrollable .p-datatable-tbody, 
+    // .p-datatable-scrollable .p-datatable-tfoot, 
+    // .p-datatable-scrollable .p-datatable-thead{
+    //     display: revert;
+    // }
+    // .p-datatable-scrollable .p-datatable-tbody>tr, 
+    // .p-datatable-scrollable .p-datatable-tfoot>tr, 
+    // .p-datatable-scrollable .p-datatable-thead>tr{
+    //     display: revert;
+    // }
+    // .p-datatable-scrollable .p-datatable-tbody>tr>td, 
+    // .p-datatable-scrollable .p-datatable-tfoot>tr>td,
+    // .p-datatable-scrollable .p-datatable-thead>tr>th{
+    //     display: revert;
+    // }
+    // To enable providing custom width to columns of primeNg table - end
+}
+.customInputText{
+    height: 34px;
+}
+// table styling - start
+.avatar {
+    position: relative;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+}
+
+::ng-deep .tbl-user-list .p-datatable-wrapper .action .dropdown { float: right; }
+// table styling - end

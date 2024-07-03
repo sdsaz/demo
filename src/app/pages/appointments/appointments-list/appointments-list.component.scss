@@ -1,0 +1,91 @@
+@import '../../../../scss/entity_kanban.scss';
+@import "../../../../scss/variables";
+ 
+::ng-deep .tbl-appointment-list{
+    @media (min-width: 641px){
+        .checkbox-col{ width: 50px; max-width: 50px; }
+        .p-datatable-wrapper th.bookmark, .p-datatable-wrapper td.bookmark {text-align: left;padding-left: 12px !important;}
+        th.user-img, td.user-img { width:50px; text-align: center; }
+        th.subject, td.subject{ width: 220px; min-width: 220px; }
+        th.name, td.name {width: 200px; min-width: 200px; }
+        th.activityDate, td.activityDate {width: 160px; min-width: 160px; }
+        th.description, td.description{ width: 300px; min-width: 300px; }
+        th.activityStartDate, td.activityStartDate, th.activityEndDate, td.activityEndDate, th.createdBy, td.createdBy{ width: 180px; min-width: 180px; }
+        th.statusName, td.statusName{width: 170px; min-width: 170px;}
+        th.entityName, td.entityName, th.location, td.location{ width: 200px; min-width: 200px; }
+        th.stageName, td.stageName{ width: 160px; min-width: 160px; }
+        th.priority, td.priority{ width: 60px; min-width: 60px; max-width: 60px; }
+        th.severity, td.severity { width: 60px; min-width: 60px; max-width: 60px;}
+        th.dueDate, td.dueDate{ width: 120px; min-width: 120px;}
+        th.ownerUserName, td.ownerUserName { width: 60px; min-width: 60px; }
+        th.attendees, td.attendees { width: 100px; min-width: 100px; }
+        th.icon-dropdown, td.icon-dropdown { width:60px; min-width: 60px; max-width: 60px; }
+        th.isPaused, td.isPaused{ width: 60px; min-width: 60px; max-width: 60px; }
+        th.isHandRaised, td.isHandRaised{ width: 60px; min-width: 60px; max-width: 60px; }
+        th.id.action, td.action{ justify-content: flex-end; }
+        // th.action, td.action{width: 50px;}
+    }
+ 
+    @media (max-width: 640px){
+        &.tbl-case-mobile tr { display: flex; flex-wrap: wrap;
+            td { min-width: 100%; }
+            td.isPaused, td.action, td.isHandRaised { float: left; clear: none; min-width: auto; }
+            td.isHandRaised { padding-right: 0; max-width: initial !important; flex: 0 0; order: 13; }
+            td.isPaused { padding: 4px 0 4px 12px; order: 12; width: auto !important; margin-left: auto; }
+            td.action, td.isHandRaised { padding-left: 0; }
+            td.action { order: 14; max-width: 36px !important; }
+        }
+    }
+ 
+    td.attendees {
+        .more-attendees { width: 24px; height: 24px; background: var(--surface-200); color: var(--surface-900); border-radius: 50%; cursor: pointer; border: 1px solid var(--surface-400);
+            .p-button-rounded{ color: var(--surface-900);
+                .p-button-icon { font-size: 14px; }
+            }
+        }
+        .attendees-user .avatar.rounded-circle.me-2, .more-attendees{ margin-right: 0 !important; margin-left: -6px; }
+        .attendees-user:first-child .avatar.rounded-circle.me-2{ margin-left: 0; }
+        .dropdown .attendees-user:first-child .avatar.rounded-circle.me-2, .dropdown .attendees-user:nth-child(5n+1) .avatar.rounded-circle.me-2{ margin-left: 0; }
+        .dropdown-menu { min-width: 111px; }
+    }
+}
+ 
+::ng-deep .nb-theme-default .tbl-appointment-list i.fa-bell.text-yellow-star { color: #efb627; }
+ 
+::ng-deep .left-align-tooltip .tooltip-inner { text-align: left; }
+
+::ng-deep .filters-five .appointment-listing-filters .filter-width, ::ng-deep nb-sidebar.expanded + .content .entity-main.filters-five .appointment-listing-filters .filter-width {
+    @media (min-width: 1200px) { max-width: 250px; min-width: 92px;
+        &.checkbox-column { max-width: initial; }
+        @media (max-width: 1279px) {
+            .fs13px { font-size: 10px; }
+        }
+    }
+    @media (min-width: 1560px) { min-width: 170px; }
+    @media (max-width: 1360px) and (min-width: 1280px) {
+        .fs13px { font-size: 11px; }
+    }
+    @media (max-width: 1559px) and (min-width: 1400px) {
+        &.small-filter { min-width: 121px !important; }
+    }
+    @media (max-width: 1399px) and (min-width: 1280px) {
+        &.small-filter { min-width: 101px !important; }
+    }
+    @media (max-width: 1279px) and (min-width: 1200px) {
+        &.small-filter { min-width: 78px !important; }
+    }
+    @media (max-width: 1399px) and (min-width: 1200px) {
+        &.small-filter .p-dropdown .p-dropdown-clear-icon { right: 22px }
+        p-dropdown .p-dropdown.p-dropdown-clearable .p-dropdown-label { padding-right: 0.5rem !important; }
+        p-dropdown .p-dropdown.p-dropdown-clearable .p-dropdown-label.p-placeholder { padding-right: 0 !important; }
+        .p-dropdown .p-dropdown-label.p-placeholder + .p-dropdown-trigger { padding-left: 0; }
+        &.date-range-filter input { font-size: 0.8em; }
+    }
+}
+.appointment-listing-filters .pt-30px{ padding-top: 24px;
+    @media (max-width: 1279px) and (min-width: 1200px) { padding-top: 13px; }
+    @media (max-width: 991px) and (min-width: 576px) { padding-top: 9px; }
+}
+::ng-deep .expanded .appointment-listing-filters .pt-30px{
+    @media (max-width: 1439px) and (min-width: 1200px) { padding-top: 13px !important; }
+}

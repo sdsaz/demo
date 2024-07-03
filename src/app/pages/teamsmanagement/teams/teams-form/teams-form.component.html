@@ -1,0 +1,345 @@
+<div class="flexlayout" *ngIf="!isListTeam">
+    <div class="form_wrapper">
+        <div id="no-access-form">
+            <div class="top">
+                <img class="mb-3" src="assets/images/default/NoAccessImage.png" alt="">
+                <div class="subtitle mt-0">{{'TEAMS.MESSAGE_TEAM_NOT_EXISTS' | translate}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- If id is not exists then display message -->
+<div class="flexlayout" *ngIf="!teamForm && !isInitialLoading && isListTeam">
+    <div class="form_wrapper">
+        <div id="no-access-form">
+            <div class="top">
+                <img class="mb-3" src="assets/images/default/NoAccessImage.png" alt="">
+                <div class="subtitle mt-0">{{'TEAMS.MESSAGE_TEAM_NOT_EXISTS' | translate}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="isListTeam && teamForm" class="entity-main filters-three pb-5 pb-xl-0">
+    <div class="container-fluid lineheight35 mb-3">
+        <div class='row align-items-end'>
+            <div class="col-sm text-right">
+                <button type="button" id="btn-back" class="btn btn-secondary" (click)="onBack()">
+                    {{ 'TEAMS.FORM.BACK' | translate }}
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="update-entity-section container-fluid mb-3">
+        <div class="row">
+            <div class='col-12 page-content'>
+                <div class='p-card rounded'>
+                    <div class="card-header">
+                        <span class="fw-600 fs-5" id="headingAddEntity" *ngIf="isAddforTeam">{{'TEAMS.ADD.TITLE_ADD' | translate}}</span>
+                        <span class="fw-600 fs-5" id="headingEditEntity" *ngIf="isEditforTeam">{{'TEAMS.ADD.TITLE_DETAIL' | translate}}</span>
+                    </div>
+                    <div class='card-body'>
+                        <form [formGroup]="teamForm" *ngIf="teamForm">
+                            <div class='row'>
+                                <div class='col-xl-3 col-lg-4 col-sm-6 form-group mb-lg-0'>
+                                    <label>{{'TEAMS.ADD.BASIC_INFORMATION.NAME'|translate}}<span class="mandatory" ></span></label>
+                                    <input type='text' id="txt-name" formControlName='name' class='form-control'
+                                        trimValue
+                                        [ngClass]="{ 'is-invalid': tf.name.errors && (tf.name.dirty || tf.name.touched)}" />
+                                    <div *ngFor='let validation of teams_validation_messages.name'
+                                        class='invalid-feedback'>
+                                        <div id="errorNameIsRequired"
+                                            *ngIf='tf.name.hasError(validation.type) && tf.name.errors && (tf.name.dirty || tf.name.touched)'>
+                                            {{ validation.message |translate }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='col-xl-3 col-lg-4 col-sm-6 form-group mb-xl-0' *ngIf="isAddforTeam">
+                                    <label>{{'TEAMS.ADD.BASIC_INFORMATION.OWNER' | translate}}<span
+                                            class="mandatory"></span></label>
+
+                                    <p-dropdown class="form-control" [options]="owner" id="drp-owner"
+                                        formControlName="ownerId" optionLabel="label" optionValue="value"
+                                        placeholder="{{'TEAMS.ADD.SELECT_OWNERNAME'| translate}}" [filter]="true"
+                                        [resetFilterOnHide]="false" filterBy="label"
+                                        [ngClass]="{'is-invalid': isEntitySelected && tf.ownerId.errors }">
+                                    </p-dropdown>
+
+                                    <div *ngFor='let validation of teams_validation_messages.ownerName'
+                                        class='invalid-feedback'>
+                                        <div id="errorOwnerIsRequired"
+                                            *ngIf='tf.ownerId.hasError(validation.type) && isEntitySelected && tf.ownerId.errors'>
+                                            {{ validation.message | translate }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='col-xl-3 col-lg-4 col-sm-6 form-group mb-lg-0'>
+                                    <label>{{'TEAMS.ADD.BASIC_INFORMATION.PARENT_TEAM'|translate}}</label>
+                                    <p-dropdown class="form-control" [options]="parentteam" id="drp-parent-team"
+                                        formControlName="parentId" optionLabel="label" optionValue="value"
+                                        placeholder="{{'TEAMS.ADD.SELECT_PARENT_TEAM'| translate}}" [filter]="true"
+                                        [resetFilterOnHide]="false" filterBy="label" [showClear]="true"
+                                        [ngClass]="{'is-invalid': isEntitySelected && tf.parentId.errors }">
+                                    </p-dropdown>
+                                </div>
+
+                                <div class='col-xl col-lg pt-xl-18px'>
+                                    <div class="width--100 text-right">
+                                        <button class='btn btn-primary' type='button' *ngIf="isEditforTeam" id="btn-save-teamDetail"
+                                            (click)="saveTeamForm('EDIT', teamForm.value)">
+                                            {{'TEAMS.ADD.BUTTON_SAVE' | translate}}</button>
+                                        <button class='btn btn-secondary mr-2' type='button' *ngIf="isAddforTeam" id="btn-cancel-teamDetail"
+                                            (click)="showHideEditTeamDiv('CANCEL', 0)">
+                                            {{'TEAMS.ADD.BUTTON_CANCEL' | translate}}</button>
+                                        <button type='button' class='btn btn-primary' *ngIf="isAddforTeam" id="btn-save-teamDetail"
+                                            (click)="saveTeamForm('ADD', teamForm.value)" [disabled]="submitted">
+                                            {{'TEAMS.ADD.BUTTON_ADD' | translate}}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="!isAddforTeam" class="container-fluid">
+        <div class="row lineheight35 mb-4"> 
+            <div *ngIf="isAddTeam" class="col-sm">
+                <button class="btn btn-primary" type="button" id="btn-add-entity" (click)="showHideAddEditTeamDiv('ADD', 0)">
+                    <i class="fa fa-plus-circle me-1" aria-hidden="true"></i>
+                    {{'TEAMS.TEAM_MEMBERS.BUTTON_ADD' | translate}}
+                </button>
+            </div>
+        </div>
+        <div class="update-entity-section row mb-4" *ngIf="addEditTeamMemberDiv"> 
+            <div class='col-12 page-content'>
+                <div class='p-card rounded'>
+                    <div class="card-header fw-semibold">
+                        <!-- Title -->
+                        <span *ngIf="isEdit == true" id="headingEditTeamMember">{{'TEAMS.TEAM_MEMBERS.ADD.TITLE_EDIT' | translate}}</span>
+                        <span *ngIf="isEdit == false" id="headingAddTeamMember">{{'TEAMS.TEAM_MEMBERS.ADD.TITLE_ADD' | translate}}</span>
+                    </div>
+                    <div class='card-body'>
+                        <form [formGroup]="teamMemberForm" *ngIf="teamMemberForm">
+                            <div class='row'>
+                                <div class='col-xl-3 col-lg-4 col-sm-6 form-group mb-lg-0'>
+                                    <label>{{'TEAMS.TEAM_MEMBERS.BASIC_INFORMATION.MEMBER' | translate}}<span class="mandatory"></span></label>
+                                    <!-- <p-dropdown class="form-control" *ngIf="!isEdit"
+                                        [options]="members" formControlName="memberId"
+                                        placeholder="{{'TEAMS.TEAM_MEMBERS.ADD.SELECTMEMBERNAME'| translate}}"
+                                        optionLabel="label" optionValue="value" [filter]="true"
+                                        [resetFilterOnHide]="false" filterBy="label"
+                                        [ngClass]="{'is-invalid': isEntitySelected && f.memberId.errors }">
+                                    </p-dropdown> -->
+                                    <p-multiSelect *ngIf="!isEdit" [options]="members" formControlName="memberIds" id="mlt_members"
+                                        class="entity-multiSelect"
+                                        styleClass="multiSelectOverride" [maxSelectedLabels]="_commonHelper.globalMultiselectMaxSelectedLabels" 
+                                        [filter]="true" [showHeader]="true" [resetFilterOnHide]="false" [displaySelectedLabel]='true' [showToggleAll]="true"
+                                        optionLabel="label" optionValue="value" defaultLabel="{{'TEAMS.TEAM_MEMBERS.ADD.SELECTMEMBERNAME'| translate}}"
+                                        [ngClass]="{'is-invalid': isEntitySelected && f.memberIds.errors }">
+                                    </p-multiSelect>
+                                    <label class="form-control" *ngIf="isEdit" id="txt-member-name">{{ this.teamMember.memberName }}</label>
+                                    <div *ngFor='let validation of teammembers_validation_messages.memberIds'
+                                        class='invalid-feedback'>
+                                        <div id="errorSelectMemberName"
+                                            *ngIf='f.memberIds.hasError(validation.type) && isEntitySelected && f.memberIds.errors'>
+                                            {{ validation.message | translate }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='col-xl-3 col-lg-4 col-sm-6 form-group mb-lg-0'>
+                                    <label>{{'TEAMS.TEAM_MEMBERS.BASIC_INFORMATION.MEMBER_ROLE' | translate}}<span class="mandatory"></span></label>
+                                    <p-dropdown class="form-control" [options]="memberRoles"
+                                        formControlName="teamMemberRoleId" id="drp-member-role"
+                                        placeholder="{{'TEAMS.TEAM_MEMBERS.ADD.SELECTROLENAME'| translate}}"
+                                        optionLabel="name" optionValue="intValue1" [filter]="true"
+                                        [resetFilterOnHide]="false" filterBy="name" [showClear]="false"
+                                        [ngClass]="{'is-invalid': isEntitySelected && f.teamMemberRoleId.errors }">
+                                    </p-dropdown>
+                                    <div *ngFor='let validation of teammembers_validation_messages.teamMemberRoleId'
+                                        class='invalid-feedback'>
+                                        <div id="errorSelectTeamMemberRole"
+                                            *ngIf='f.teamMemberRoleId.hasError(validation.type) && isEntitySelected && f.teamMemberRoleId.errors'>
+                                            {{ validation.message | translate }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='col-xl col-lg pt-xl-18px'>
+                                    <div class="width--100 text-right">
+                                        <button class='btn btn-secondary mr-2' type='button' id="btn-cancel-teamMemberDetail"
+                                            (click)="showHideAddEditTeamDiv('CANCEL', 0)">
+                                            {{'TEAMS.ADD.BUTTON_CANCEL' | translate}}</button>
+                                        <button type='button' class='btn btn-primary' *ngIf="isEdit" id="btn-save-teamMemberDetail"
+                                            (click)="saveTeamMemberForm('EDIT', teamMemberForm.value)"
+                                            [disabled]="submitted">
+                                            {{'TEAMS.ADD.BUTTON_SAVE' | translate}}</button>
+                                        <button type='button' class='btn btn-primary' *ngIf="!isEdit" id="btn-save-teamMemberDetail"
+                                            (click)="saveTeamMemberForm('ADD', teamMemberForm.value)"
+                                            [disabled]="submitted">
+                                            {{'TEAMS.ADD.BUTTON_ADD' | translate}}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row align-items-end lineheight35 mb-4 tbl-teams-form">
+            <div class="col-12 mb-1 d-flex flex-wrap justify-content-between">
+                <div class="fw-600 fs-5 mb-1 mr-2" id="headingOwners">{{'TEAMS.FORM.TITLE_OWNER' | translate}} ({{owners.length}})</div>
+            </div>
+            <div class="col-12">
+                <div class="p-card">
+                    <p-table #pTableOwners [responsive]="true" responsiveLayout="stack" [rows]="10" [columns]="column" [value]="owners"
+                        sortField="memberName" class="tbl-owners tbl-max-height" [sortOrder]="1" paginatorDropdownAppendTo="body"
+                        [totalRecords]="totalRecordsOwners" [autoLayout]="true" [scrollable]="true"
+                        [ngClass]="totalRecordsOwners == 0 || showActiveOwnersRecords == 0 && !totalRecordsOwners || showInActiveOwnersRecordsLength == 0 ? 'tbl-height-zero' : ''" [lazy]="false"
+                        [scrollHeight]="'calc(100vh - 248px)'" [globalFilterFields]="['teamMemberRoleName']">
+                        <ng-template pTemplate="caption">
+                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-sm-start justify-content-end mb-1">
+                                <input class="custom-control-input mt-0 w-20-size" type="checkbox" id="chk-showTeamOwnersInActiveRecords"
+                                [(ngModel)]="showInActiveOwnersRecords" (change)="onFilterOwners()"> 
+                                <label for="chk-showTeamOwnersInActiveRecords" class="custom-control-label pl-2">{{ 'TEAMS.LIST.FILTER_ACTIVE_RECORDS' | translate}}</label>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th id="tblColumnHeader" *ngFor="let col of columns" [pSortableColumn]="col.field" [ngClass]="col.header == '' ? 'hide-when-no-records' : ''"
+                                    [pSortableColumnDisabled]="!col.sort" class="{{col.field}} {{col.class}}" scope="col">
+                                    {{ col.header | translate }}
+                                    <p-sortIcon [field]="col.field" *ngIf="col.sort"></p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                            <tr *ngIf="rowData.memberIsActive || !rowData.memberIsActive && showInActiveOwnersRecords">
+                                <td class="ownerName">
+                                    <span class="p-column-title">{{columns[0].header | translate}}</span>
+                                    <span class="pre-text">{{rowData.memberName}}</span>
+                                </td>
+                                <td class="teammemberRolename">
+                                    <span class="p-column-title">{{columns[1].header | translate}}</span>
+                                    <span class="pre-text">{{rowData.teamMemberRoleName}}</span>
+                                </td>
+                                <!-- <td class="memberIsActive">
+                                    <span class="p-column-title">{{columns[2].header | translate}}</span>
+                                    <label class="font-12 fw-regular">
+                                        {{rowData.memberIsActive ? ('TEAMS.TEAM_MEMBERS.LABEL_ACTIVE' | translate) : ('TEAMS.TEAM_MEMBERS.LABEL_INACTIVE' | translate)}}
+                                    </label>
+                                </td> -->
+                                <td class="grid-dropdown action">
+                                    <div *ngIf="isShowActionColumn" class="dropdown drop-no-arrow">
+                                        <button pButton icon="fas fa-wrench" class="p-button-rounded p-button-sm"
+                                            type="button" id="drp-action-owners" data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="drp-action-owners">
+                                            <li *ngIf="isEditTeam">
+                                                <a (click)="showHideAddEditTeamDiv('EDIT', rowData.id)" id="link-Edit-owners"
+                                                    class="dropdown-item menu--item">
+                                                    <i class="fas fa-pencil-alt pd-menu-icon" aria-hidden="true"></i>
+                                                    <span>{{'TEAMS.LIST.BUTTON_EDIT'|translate}}</span>
+                                                </a>
+                                            </li>
+                                            <li *ngIf="isDeleteTeam">
+                                                <a id="link-Delete-owners" (click)="deleteMember(rowData.id)"
+                                                    class="dropdown-item menu--item">
+                                                    <i class="far fa-trash-alt pd-menu-icon" aria-hidden="true"></i>
+                                                    <span>{{'TEAMS.LIST.BUTTON_REMOVE'|translate}}</span>
+                                                </a>
+                                            </li>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <div *ngIf="totalRecordsOwners == 0 || showActiveOwnersRecords == 0 && !totalRecordsOwners || showInActiveOwnersRecordsLength == 0" id="lbl-NoRecordsFound" class="table-no-record text-center">
+                        <div>{{ 'TEAMS.LIST.MESSAGE_NO_RECORDS_FOUND' | translate }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row align-items-end lineheight35 mb-4 tbl-teams-form">
+            <div class="col-12 mb-1 d-flex flex-wrap justify-content-between">
+                <div class="fw-600 fs-5 mb-1 mr-2" id="headingTeamMembers">{{'TEAMS.FORM.TITLE' | translate}} ({{teamMembers.length}})</div>
+            </div>
+            <div class="col-12">
+                <div class="p-card">
+                    <p-table #pTableTeamMemners [responsive]="true" responsiveLayout="stack" [rows]="10" [columns]="cols" [value]="teamMembers"
+                        sortField="memberName" class="tbl-team-members tbl-max-height" [sortOrder]="1" paginatorDropdownAppendTo="body"
+                        [totalRecords]="totalRecordsteamMembers" [autoLayout]="true" [scrollable]="true"
+                        [ngClass]="totalRecordsteamMembers == 0 || showActiveTeamMembersRecords == 0 && !showInActiveTeamMembersRecords || showInActiveTeamMembersRecordsLength == 0 ? 'tbl-height-zero' : ''"
+                        [scrollHeight]="'calc(100vh - 248px)'"
+                        [globalFilterFields]="['teamMemberRoleName']">
+                        <ng-template pTemplate="caption">
+                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-sm-start justify-content-end mb-1">
+                                <input class="custom-control-input mt-0 w-20-size" type="checkbox" id="chk-showTeamMembersInActiveRecords"
+                                [(ngModel)]="showInActiveTeamMembersRecords" (change)="onFilterTeamMemebers()" > 
+                                <label for="chk-showTeamMembersInActiveRecords" class="custom-control-label pl-2">{{ 'TEAMS.LIST.FILTER_ACTIVE_RECORDS' | translate}}</label>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th id="tblColumnHeader" *ngFor="let col of columns" [pSortableColumn]="col.field" [ngClass]="col.header == '' ? 'hide-when-no-records' : ''"
+                                    [pSortableColumnDisabled]="!col.sort" class="{{col.field}} {{col.class}}" scope="col">
+                                    {{ col.header | translate }}
+                                    <p-sortIcon [field]="col.field" *ngIf="col.sort"></p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                            <tr *ngIf="rowData.memberIsActive || !rowData.memberIsActive && showInActiveTeamMembersRecords">
+                                <td class="memberName">
+                                    <span class="p-column-title">{{columns[0].header | translate}}</span>
+                                    <span class="pre-text">{{rowData.memberName}}</span>
+                                </td>
+                                <td class="teammemberRolename" >
+                                    <span class="p-column-title">{{columns[1].header | translate}}</span>
+                                    <span class="pre-text">{{rowData.teamMemberRoleName}}</span>
+                                </td>
+                                <!-- <td class="memberIsActive">
+                                    <span class="p-column-title">{{columns[2].header | translate}}</span>
+                                    <label class="font-12 fw-regular">
+                                        {{rowData.memberIsActive ? ('TEAMS.TEAM_MEMBERS.LABEL_ACTIVE' | translate) : ('TEAMS.TEAM_MEMBERS.LABEL_INACTIVE' | translate)}}
+                                    </label>
+                                </td> -->
+                                <td class="grid-dropdown action">
+                                    <div *ngIf="isShowActionColumn" class="dropdown drop-no-arrow">
+                                        <button pButton icon="fas fa-wrench" class="p-button-rounded p-button-sm"
+                                            type="button" id="drp-action-team-members" data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="drp-action-team-members">
+                                            <li *ngIf="isEditTeam">
+                                                <a (click)="showHideAddEditTeamDiv('EDIT', rowData.id)" id="link-Edit-team-members"
+                                                    class="dropdown-item menu--item">
+                                                    <i class="fas fa-pencil-alt pd-menu-icon" aria-hidden="true"></i>
+                                                    <span>{{'TEAMS.LIST.BUTTON_EDIT'|translate}}</span>
+                                                </a>
+                                            </li>
+                                            <li *ngIf="isDeleteTeam">
+                                                <a (click)="deleteMember(rowData.id)" id="link-Delete-team-members"
+                                                    class="dropdown-item menu--item">
+                                                    <i class="far fa-trash-alt pd-menu-icon" aria-hidden="true"></i>
+                                                    <span>{{'TEAMS.LIST.BUTTON_REMOVE'|translate}}</span>
+                                                </a>
+                                            </li>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <div *ngIf="totalRecordsteamMembers == 0 || showActiveTeamMembersRecords == 0 && !showInActiveTeamMembersRecords || showInActiveTeamMembersRecordsLength == 0" id="lbl-NoRecordsFound" class="table-no-record text-center">
+                        <div>{{ 'TEAMS.LIST.MESSAGE_NO_RECORDS_FOUND' | translate }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

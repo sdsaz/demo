@@ -1,0 +1,27 @@
+<div class="modal-header border-bottom-0 padding-32 pb-3">
+    <h4 class="modal-title font-weight-bold" id="heading-select-image">{{ dialogTitle }}</h4>
+    <button type="button" id="btn-close" class="close" aria-label="Close" (click)="closeForm()">
+      <span class="font-24 fonts-close" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i></span>
+    </button>
+  </div>
+<div class="modal-body padding-32 pt-3 pb-3">
+    <div class="custom-file mb-3">
+        <input type="file" id="file-upload" (change)="fileChangeEvent($event)" class="custom-file-input" capture accept="image/*">
+        <label class="custom-file-label" for="customFile">{{selectedFileName}}</label>
+    </div>
+
+    <image-cropper id="img-cropper"
+                   [imageChangedEvent]="imageChangedEvent"
+                   [maintainAspectRatio]="true"
+                   [aspectRatio]="1 / 1"
+                   [cropperMinWidth]="200"
+                   [cropperMinHeight]="200"
+                   format="png"
+                   (imageCropped)="imageCropped($event.base64)"
+                   (imageLoaded)="imageLoaded()"
+                   (loadImageFailed)="loadImageFailed()"></image-cropper>
+    <img id="img-cropper-display" [src]="croppedImage" class="avatar contact-avatar huge m-0" style="display: none;" alt="" />
+</div>
+  <div class="modal-footer border-top-0 padding-32 pt-0">
+    <button type="button" id="btn-save" class="btn btn-primary" (click)="saveImage(params)">OK</button>
+  </div>

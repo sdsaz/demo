@@ -1,0 +1,333 @@
+<div class="entity-page entity-main filters-five">
+    <!-- Header Start -->
+    <div class="page-header">
+        <div class="container-fluid lineheight35 heading-page mb-2">
+            <div class="row">
+                <div class="col-sm-8">
+                    <h4 class="m-0">
+                        <span id="headingEntity" class="header-text">{{ 'CRM.APPOINTMENT.LIST.TITLE' | translate |
+                            configuredEntityName }}</span>
+                    </h4>
+                </div>
+                <div class="col-sm-4">
+                    <div class="btn-view">
+                        <button *ngIf="isAddAppointment" type="button" id="btn-add-entity"
+                            class="btn btn-primary ml-3 mb-xl-0 mb-3" (click)="addAppointment()">
+                            <i class="fa fa-plus-circle me-1" aria-hidden="true"></i>
+                            {{'CRM.APPOINTMENT.LIST.BUTTON_ADD' | translate | configuredEntityName }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Header End -->
+
+    <!-- Page Content Start -->
+    <div class="page-content one-row-filters">
+        <div class="entity-search-area pt-2 mb-2">
+            <div class="container-fluid">
+                <div class="row appointment-listing-filters flex-xl-nowrap">
+                    <div class="col-xl col-lg-3 col-md-4 col-sm-6 mb-xl-0 mb-3 pe-xxl-2 pe-xl-0">
+                        <div class="mb-1 fs13px">{{ 'CRM.APPOINTMENT.LIST.SEARCH' | translate }}</div>
+                        <div class="p-input-icon-right w-100">
+                            <i class="pi pi-search" aria-hidden="true"></i>
+                            <input #searchTextInput pInputText type="text" id="txt-search-text"
+                                class="w-100 customInputText form-control" size="50"
+                                [(ngModel)]="pagingParams.searchString" />
+                        </div>
+                    </div>
+                    <div class="col-xl col-lg-3 col-md-4 col-6 filter-width small-filter mb-xl-0 mb-3 pe-xxl-2 pe-xl-0">
+                        <label class="mb-1 fs13px">{{ 'CRM.APPOINTMENT.LIST.FILTER_RECENT_ACTIVITY' | translate }}</label>
+                        <p-dropdown [options]="entityTimespansoptions" [showClear]="true"
+                            [placeholder]="'CRM.APPOINTMENT.LIST.FILTER_OPTION_PLACEHOLDER_RECENT_ACTIVITY' | translate"
+                            optionLabel="name" optionValue="name" [(ngModel)]="pagingParams.entityTimespan"
+                             [filter]="false" [resetFilterOnHide]="false" (onChange)="onFilterRecentActivity($event)">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-xl col-xxl-2 col-lg col-md-4 col-6 mb-lg-0 mb-3 filter-width pe-xxl-2 pe-xl-0 date-range-filter">
+                        <div class="mb-1 fs13px">{{ 'CRM.APPOINTMENT.LIST.FILTER_LABEL_ACTIVITY_DATERANGE' | translate }}</div>
+                        <ngx-custom-calender [(ngModel)]="rangeDates" [rangeDates]="rangeDates" [dateFormat]="_commonHelper.globalDatePickerFormate" [numberOfMonths]='2' id="dp-activitydate"
+                            class="date-range-calendar" selectionMode="range" [readonlyInput]="false" inputId="range" appendTo="body"
+                            [placeholder]="_commonHelper.globalDateRangePlaceholder" [ngxMask]="_commonHelper.globalDateRangeMaskWithTime"
+                            [minDate]="_commonHelper.globalMinDate" [maxDate]="_commonHelper.globalMaxDate" [selectOtherMonths]="true"
+                            [showTime]="false" [showRangeButtonBar]="true" [firstDayOfWeek]="1" [dateSelectOptionsButtonBar]="dateSelectOptionsButtonBar" 
+                            (ngModelChange)="onFilterCreated($event)">
+                        </ngx-custom-calender>
+                    </div>
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-6 filter-width mb-xl-0 mb-3 pe-xxl-2 pe-xl-0" *ngIf="eventStatusOptions">
+                        <label class="mb-1 fs13px">{{'CRM.APPOINTMENT.LIST.FILTER_STATUS' | translate }}</label>
+                        <p-multiSelect class="entity-multiSelect" id="drp-status" [filter]="true"
+                            [resetFilterOnHide]="false" [showHeader]="true" [displaySelectedLabel]='true'
+                            [showToggleAll]="true" appendTo="body" panelStyleClass="maxWidthOverride-sm"
+                            [maxSelectedLabels]="_commonHelper.globalMultiselectMaxSelectedLabels" [options]="eventStatusOptions"
+                            [placeholder]="'CRM.APPOINTMENT.LIST.FILTER_STATUS_SELECT' | translate" optionLabel="name"
+                            optionValue="intValue1" [(ngModel)]="selectedStatus" (onChange)="onFilterStatus($event)">
+                        </p-multiSelect>
+                    </div>
+                    <div class="col-xl col-lg-3 col-md-4 col-6 mb-xl-0 mb-3 pe-xxl-2 pe-xl-0 filter-width pe-xxl-2 pe-xl-0">
+                        <div class="mb-1 fs13px">{{'CRM.APPOINTMENT.LIST.FILTER_OPTION_TEXT_OWNER'| translate }}</div>
+                        <p-multiSelect class="entity-multiSelect" id="drp-ownerIDs" [filter]="true"
+                            [resetFilterOnHide]="false" [showHeader]="true" [displaySelectedLabel]='true'
+                            [showToggleAll]="true" appendTo="body" panelStyleClass="maxWidthOverride-sm"
+                            [maxSelectedLabels]="_commonHelper.globalMultiselectMaxSelectedLabels" [options]="userList"
+                            [placeholder]="'CRM.APPOINTMENT.LIST.FILTER_OPTION_PLACEHOLDER_OWNER' | translate" optionLabel="label"
+                            optionValue="value" [(ngModel)]="selectedUser" (onChange)="OnChangeowner($event)"
+                            (onFilter)="OnFilterownere($event,  selectedUser)">
+                        </p-multiSelect>
+                    </div>
+                    <div class="col-xl col-lg-3 col-md-4 col-6 mb-xl-0 mb-3 pe-xxl-2 pe-xl-0 filter-width">
+                        <div class="mb-1 fs13px">{{'CRM.APPOINTMENT.LIST.FILTER_OPTION_TEXT_ATTENDEE'| translate }}</div>
+                        <p-multiSelect class="entity-multiSelect" id="drp-attendeeIDs" [filter]="true"
+                            [resetFilterOnHide]="false" [showHeader]="true" [displaySelectedLabel]='true'
+                            [showToggleAll]="true" appendTo="body" panelStyleClass="maxWidthOverride-sm"
+                            [maxSelectedLabels]="_commonHelper.globalMultiselectMaxSelectedLabels" [options]="attendeesList"
+                            [placeholder]="'CRM.APPOINTMENT.LIST.FILTER_OPTION_PLACEHOLDER_ATTENDEE' | translate" optionLabel="label"
+                            optionValue="value" [(ngModel)]="selectedAttendees" (onChange)="OnChangeattendee($event)"
+                            (onFilter)="OnFilterattendee($event,selectedAttendees)">
+                        </p-multiSelect>
+                    </div>
+                    <div class="col-xl-auto col-sm col-6 mb-xl-0 mb-3 checkbox-column d-flex flex-wrap align-items-end pe-xxl-2 pe-xl-0 two-checkboxes">
+                        <div class="custom-control custom-checkbox d-flex align-items-center w-100">
+                            <input class="custom-control-input mt-0 w-20-size" type="checkbox" id="chk-showMyEntities"
+                                [(ngModel)]="IsShowOnlyMyEvents" (change)="onFilterShowonlymyEventsRecords()">
+                            <label for="chk-showMyEntities" class="custom-control-label pl-2">{{
+                                'CRM.APPOINTMENT.LIST.FILTER_MY_APPOINTMENTS' | translate}}</label>
+                        </div>
+                        <div class="custom-control custom-checkbox d-flex align-items-center mt-2 w-100">
+                            <input class="custom-control-input mt-0 w-20-size" type="checkbox" id="chk-showStarred" [checked]="IsStarred"
+                                [(ngModel)]="IsStarred" (change)="onChangeIsStarred()">
+                            <label for="chk-showStarred" class="custom-control-label pl-2 text-nowrap">{{'CRM.APPOINTMENT.LIST.FILTER_STARRED' | translate }}</label>
+                        </div>
+                    </div>
+                    <div class="col-xxl col-xl-auto col-auto mb-xl-0 mb-3 d-flex align-items-end pe-xxl-1 pe-xl-0 ps-xl-1 ps-xxl-2">
+                        <button id="btn-reset" class="btn btn-outline-secondary" type="button"
+                            (click)="onResetAllFilters()"
+                            [disabled]="(appointmentSearchFilter.searchText == '' && !appointmentSearchFilter.entityTimespan && !appointmentSearchFilter.activityStartDate
+                                        && !appointmentSearchFilter.activityEndDate && !appointmentSearchFilter.statusIds && !appointmentSearchFilter.ownerIDs 
+                                        && !appointmentSearchFilter.attendeeIDs && !appointmentSearchFilter.isShowOnlyMyEvents && !appointmentSearchFilter.isStarred )">
+                            {{'CRM.APPOINTMENT.LIST.BUTTON_RESET' | translate}}
+                        </button>
+                    </div>
+                    <div class="col-auto mb-xl-0 mb-3 d-flex align-items-end ps-xl-2">
+                        <div class="height-38px d-flex align-items-center justify-content-xl-end">
+                            <button *ngIf="isExportAppointment" type="button" id="btn-export-to-excel"
+                                class="btn btn-exp p-0 btn-small" (click)="exportExcel()" placement="top auto"
+                                container="body" ngbTooltip="Export To Excel" triggers="hover"
+                                tooltipClass="tooltip-backward-small">
+                                <i class="fas fa-2x fa-file-excel" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Content End -->
+
+    <!-- Table Start -->
+    <div class="container-fluid pb-5 pb-xl-0" [ngClass]="isShowActivityCenter ? 'list-move-scroll-activity' : ''">
+        <div class="row mb-2">
+            <div class="mt-1 col-12">
+                <div class="tbl-appointment-list tbl-entity p-card">
+                    <p-table #pTable [responsive]="true" responsiveLayout="stack" [rows]="_commonHelper.DefaultPageSize"
+                        [rowsPerPageOptions]='_commonHelper.globalRowsPerPageOptions' [columns]="cols"
+                        [value]="appointments" sortField="created" class="tbl-appointment-list" [sortOrder]="-1" [lazy]="true"
+                        [totalRecords]="totalRecords" [autoLayout]="true" [scrollable]="true"
+                        paginatorDropdownAppendTo="body" [paginator]="totalRecords > 0"
+                        [ngClass]="totalRecords == 0 ? 'tbl-height-zero' : ''" [scrollHeight]="'calc(100vh - 248px)'"
+                        (onPage)="paginate($event)">
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th *ngFor="let col of columns" [pSortableColumn]="col.field" id="tblColumnHeader"
+                                    [pSortableColumnDisabled]="!col.sort" class="{{col.field}} {{col.class}}" [hidden]="!col.visible"
+                                    scope="col" (click)="changeOrder(col)"
+                                    [ngClass]="col.header == '' ? 'hide-when-no-records' : ''">
+                                    {{ col.header | translate }}
+                                    <p-sortIcon [field]="col.field" *ngIf="col.sort" id="iconSort"></p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                            <tr [ngClass]="selectedRowId == rowData.id ? 'selected-row' : ''" 
+                            (click)="onRowClick(rowData, true)">
+                                <td class="bookmark">
+                                    <ngx-bookmark [entityTypeId]="entityTypeId" [entityId]="rowData.id" [isStarred]="rowData?.isStarred"
+                                        [isEditPermission]="isEditAppointment" [isFromKanbanOrListView]="true"></ngx-bookmark>
+                                </td>
+                                <td class="subject">
+                                    <span class="p-column-title">
+                                        {{columns[1].header | translate}}
+                                    </span>
+                                     <a id="link-headingRecord" [routerLink]="'/appointments/details/' + rowData.id" (click)="stopPropagation($event)" class="float-left me-2"
+                                        [ngClass]="isViewAppointment ? 'dark-blue font-weight-bold no-underline cursor-pointer pre-text' : 'no-link'">{{rowData.subject}}
+                                    </a>
+                                    <span *ngIf="rowData?.isShowBellIcon" [ngbTooltip]="rowData.bellIconToolTip" container="body" placement="top auto" tooltipClass="left-align-tooltip" class="float-left me-2"><i class="fa-solid fa-bell text-yellow-star font-14"></i></span>
+                                    <span *ngIf="rowData.rating != 0" class="float-left me-2">
+                                        <entity-review-display [entityTypeId]="entityTypeId" [entityId]="rowData.id" [rating]="rowData.rating" id="btn-rating"
+                                            [review]="rowData.totalReviews" [entityReviewID]="rowData.entityReviewID" [isFromKanbanOrListView]="true"
+                                            [isEditPermission]="isEditAppointment">
+                                        </entity-review-display>
+                                    </span>
+                                </td>
+                                <td class="activityDate">
+                                    <span class="p-column-title">
+                                        {{columns[2].header | translate}}
+                                    </span>
+                                    {{rowData.activityDate | date }}
+                                </td>
+                                <td class="activityStartDate">
+                                    <span class="p-column-title">
+                                        {{columns[3].header | translate}}
+                                    </span>
+                                    {{(rowData.activityStartDate | dateFormatPipe: _commonHelper.globalTimeFormate)}}
+                                </td>
+                                <td class="activityEndDate">
+                                    <span class="p-column-title">
+                                        {{columns[4].header | translate}}
+                                    </span>
+                                    {{(rowData.activityEndDate | dateFormatPipe: _commonHelper.globalTimeFormate)}}
+                                </td>
+                                <td class="entityName">
+                                    <span class="p-column-title">
+                                        {{columns[5].header | translate}}
+                                    </span>
+                                    <span class="w-100 d-block">
+                                        <i *ngIf="rowData?.entityName != null" [class]="_commonHelper.getEntityIconClass(rowData?.entityTypeID)" class="font-15 dark-grey fa-fw float-left me-1" aria-hidden="true" container="body" placement="top auto" [ngbTooltip]="rowData.relatedToIconToolTip"></i>
+                                        <a [routerLink]="'/' + _commonHelper.getRouteNameByEntityTypeId(rowData?.entityTypeID).toLowerCase() + '/details/' + (rowData?.entityID ?? '')" id="link-relatedTo" (click)="stopPropagation($event)"
+                                            [ngClass]="_commonHelper.isUserHaveViewPermissionOfRelatedEntity(rowData?.entityTypeID) ? 'dark-blue font-weight-bold no-underline cursor-pointer pre-text' : 'no-link'">{{rowData.entityName}}</a>
+                                    </span>
+                                </td>
+                                <td class="location">
+                                    <span class="p-column-title">
+                                        {{columns[6].header | translate}}
+                                    </span>
+                                    {{rowData.location}}
+                                </td>
+                                <td class="statusName">
+                                    <span class="p-column-title">
+                                        {{columns[7].header | translate}}
+                                    </span>
+                                    {{rowData.statusName}}
+                                </td>
+                                <td class="ownerUserName">
+                                    <span class="p-column-title">
+                                        {{columns[8].header | translate}}
+                                    </span>
+                                    <span class="w-100 d-flex">
+                                        <ngx-common-user-profile [userId]="rowData?.ownerUserID"
+                                            [userTypeId]="userTypeID.Owner" [privacyLevel]="null" [isItemDisable]="true"
+                                            [isShowName]="false" class="my-1"
+                                            userLabel="{{'COMMON.COMMON_USER_PROFILE.LABEL_OWNERBY' | translate | configuredEntityName}}">
+                                        </ngx-common-user-profile>
+                                    </span>
+                                </td>
+                                <td class="attendees">
+                                    <span class="p-column-title">
+                                        {{columns[9].header | translate}}
+                                    </span>
+                                    <span class="d-flex float-left attendees-user" *ngFor="let attendeeid of rowData?.attendeeIDsArray">
+                                        <ngx-common-user-profile [userId]="attendeeid"
+                                            [userTypeId]="userTypeID.Owner" [privacyLevel]="null" [isItemDisable]="true"
+                                            [isShowName]="false" class="my-1"
+                                            userLabel="{{'COMMON.COMMON_USER_PROFILE.LABEL_ATTENDEE' | translate | configuredEntityName}}">
+                                        </ngx-common-user-profile>
+                                    </span>
+                                    <span *ngIf="rowData?.isShowMoreButton" class="d-flex align-items-center justify-content-center float-left more-attendees my-1">
+                                        <div class="dropdown text-right cursor-default">
+                                            <button pButton icon="fas fa-ellipsis-h" class="p-button-rounded p-button-sm" 
+                                                type="button" id="drp-ellipsis" data-bs-toggle="dropdown" aria-expanded="false" (mouseenter)="onRowActionButtonMouseEnter()" 
+                                                (mouseleave)="onRowActionButtonMouseLeave()">
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end attendees p-2" aria-labelledby="drp-ellipsis" (mouseenter)="onRowActionButtonMouseEnter()"
+                                            (mouseleave)="onRowActionButtonMouseLeave()">
+                                                <li *ngFor="let attendeeid of rowData?.attendeeIDsArrayMoreButton" class="attendees-user float-left my-1">
+                                                    <ngx-common-user-profile [userId]="attendeeid"
+                                                        [userTypeId]="userTypeID.Owner" [privacyLevel]="null" [isItemDisable]="true"
+                                                        [isShowName]="false" class="my-1"
+                                                        userLabel="{{'COMMON.COMMON_USER_PROFILE.LABEL_ATTENDEE' | translate | configuredEntityName}}">
+                                                    </ngx-common-user-profile>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </span>
+                                </td>
+                                <td class="id action">
+                                    <div class="dropdown text-right" *ngIf="isDeleteAppointment && !rowData.isCompleted && !rowData.isCanceled">
+                                        <button pButton icon="fas fa-wrench" class="p-button-rounded p-button-sm" (mouseenter)="onRowActionButtonMouseEnter()" (mouseleave)="onRowActionButtonMouseLeave()"
+                                            type="button" id="drp-action" data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="drp-action">
+                                            <li>
+                                                <a id="link-Delete" class="dropdown-item"
+                                                    (click)="onDeleteAppointmentClick(rowData.id);stopPropagation($event);">
+                                                    <i class="far fa-trash-alt me-1" aria-hidden="true"></i>
+                                                    {{ 'URAM.USER.LIST.BUTTON_REMOVE' | translate }}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorleft">
+                            <span id="startToEndOfTotalRecords">{{start}} - {{end}} of {{totalRecords}} records</span>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorright">
+                            <p-button type="button" icon="pi pi-chevron-left" styleClass="p-button-text"
+                                id="paginatorLeftPage" (click)="prev()" [disabled]="end == pagingParams.pageSize">
+                            </p-button>
+                            <input type="number" min="1" [max]="totalPages" [(ngModel)]="pagingParams.pageNo"
+                                id="paginatorInputPage" (change)="changePage()" class="pageNoInput"> /
+                            <span id="paginatorTotalPages" class="ml-1">{{totalPages}}</span>
+                            <p-button type="button" icon="pi pi-chevron-right" styleClass="p-button-text"
+                                id="paginatorRightPage" (click)="next()" [disabled]="end == totalRecords"></p-button>
+                            <p-button type="button" icon="pi pi-undo" styleClass="p-button-text"
+                                id="paginatorResetButton" (click)="resetPaginator()"
+                                [disabled]="end == pagingParams.pageSize"></p-button>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage" let-columns>
+                            <tr>
+                                <td [attr.colspan]="columns.length" id="lbl-NoRecordsFound"
+                                    class="table-no-record text-center">
+                                    {{ 'CRM.APPOINTMENT.LIST.MESSAGE_NO_RECORDS_FOUND' | translate}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Table End -->
+     <!-- Right side activity menu start -->
+     <div>
+        <activity-section 
+            #activitySection
+            *ngIf="isShowActivityCenter" 
+            [entityTypeId]="entityTypeId"
+            [isEditPermission]="isEditAppointment"
+            [isHideAppointmentsTab]="true"
+            [isClosedStage]="selectedAppointmentIsCanceledForActivityCenter"
+            [isCompletedStage]="selectedAppointmentIsCompletedForActivityCenter"
+            [entityId]="selectedAppointmentIdForActivityCenter" 
+            [entityRecordTypeId]="entityDetails?.entityRecordTypeId"
+            [isDocumentDownloadPermission]="isDocumentDownloadPermission"
+            [hideExpandButton]="true" 
+            [isTagRequired]="true" 
+            [entityDetailsData]="entityDetails" 
+            [isDocumentRequired]="true"
+            [refreshActivity]="refreshActivityCenter" 
+            class="entity-right-panel" 
+            [isHideDetailsTab]="false"
+            [keyfieldResponseData]="keyfieldResponseData" 
+            [currencySymbol]="currencySymbol" 
+            [hoursInDay]="hoursInDay"
+            (saveKeyFieldEvent)="onSaveKeyFieldEvent($event)"
+            (onCloseActivitySection)="onMoreDetailsClick(false)"
+            [privacyLevel]="null">
+        </activity-section>
+    </div>
+    <!-- Right side activity menu end -->
+</div>

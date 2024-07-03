@@ -1,0 +1,19 @@
+:host ::ng-deep {
+    .badge-info {
+        color: #fff;
+        background-color: #17a2b8;
+    }
+
+    .badge-success {
+        color: #fff;
+        background-color: #28a745;
+    }
+
+    .builder-sidebar .form-builder-group-header .btn {
+        width: 100%;
+    }
+}
+
+.jsonviewer {
+    border: 1px solid;
+}

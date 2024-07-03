@@ -1,0 +1,26 @@
+.dashboard {
+  width: calc(100% - 1px);
+  float: left;
+
+  @media (max-width: 767px) { width: calc(100% - 10px); }
+
+  .dashboard-global-filter {
+    float: left;
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .dashboard-sections {
+    float: left;
+    width: 100%;
+    margin: 0 0 450px 0;
+  }
+}
+
+@media (min-width: 320px){
+  .col-sm-duration{ flex: 0 0 220px; max-width: 220px; }
+}
+
+::ng-deep .position-custom-calender .p-datepicker.p-component.p-datepicker-multiple-month { 
+  @media (min-width: 768px){ right: 0; left: auto !important; }
+}

@@ -1,0 +1,92 @@
+<div (click)="dismissGlobalSearch();overlayClose()" class="search-backdrop" *ngIf="searchResult"></div>
+<div class="container-fluid h-100 header-section">
+  <div class="row h-100 nav-header justify-content-md-start justify-content-end">
+    <div class="col-md col-auto d-flex align-items-center ps-0">
+      <div class="layout-topbar-left">
+        <div class="layout-topbar-logo">
+          <div class="logo-container">
+            <div class="logo-section" id="sectionLogo">
+              <div class="d-flex align-items-center">
+                <img src="{{loggedInUserTenantImagePath}}" class="logoStyle" id="logo-image">
+                <a class="logo-title cursor-default" id="logo-title">{{loggedInUserTenantName}}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="float-middle" id="topHeaderBar">
+        <span *ngIf="environmentInstance !== null" class="env-instance mb-0" [ngClass]="environmentInstance !== null ? (environmentInstance == 'QA' ? 'bg-dark-cyan' : 'bg-dark-grey') : ''"></span>
+      </div>
+    </div>
+    <!-- Global search starts -->
+    <div class="col-md col search-col d-flex align-items-center justify-content-end order-md-2 order-3" >
+      <div class="searchbar">
+        <input #txtGlobalSearch type="text" [(ngModel)]="searchText" (keypress)="globalSearch($event);" (keydown)="onGlobalSearchKeydown($event);" class="form-control" (focusout)="onGlobalSearchFocusOut($event);"
+          placeholder="{{ 'COMMON.GLOBAL_SEARCH_PLACEHOLDER' | translate}}" maxlength="250">
+        <div class="icon">
+          <button *ngIf="!showSearchbarSpinner" (mousedown)="preventSearchbarCollapse($event)" type="button" class="search-button p-0 btn bg-transparent border-0" (click)="globalSearch($event);"><i class="fa-solid fa-magnifying-glass"></i></button>
+          <div *ngIf="showSearchbarSpinner"  class="search-button p-0 btn bg-transparent border-0"> <i class="pi pi-spin pi-spinner"></i></div>
+        </div>
+        <div class="p-card global-search-result"  (mouseover)="setMouseOverOutFlag(true)"  (mouseout)="setMouseOverOutFlag(false)">
+          <div class="cards-search">
+            <div class="results-border" *ngIf="searchResult && searchResult.length > 0">
+              <div class="card-result" *ngFor="let item of searchResult">
+                <div class="card">
+                  <div class="card-body">
+                    <a class="result-link w-100" (click)="navigateToSearchUrl(item.hyperlink);overlayClose()">
+                      <div class="float-left text-center">
+                        <div class="entity-icon border-0">
+                          <i class="{{item.iconClass}}" aria-hidden="true"></i>
+                        </div>
+                      </div>
+                      <div class="float-start">
+                        <p class="m-0">
+                          <span class="card-title mb-1">
+                            <div><strong class="pre-text">{{item.entityName}} </strong></div>
+                            <label class="cursor-pointer">{{item.entityTypeName}}</label>
+                          </span>
+                        </p>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="results-border" *ngIf="searchResult && searchResult.length == 0" (click)="dismissGlobalSearch()">
+              <div class="card-result">
+                <div class="card">
+                  <div class="card-body text-center font-12 py-4">
+                    {{'COMMON.GLOBAL_SEARCH_EMPTY_RESULT' | translate }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Global search ends -->
+    <div class="col-md-auto col d-flex align-items-center justify-content-end header-container pl-0 order-md-3 order-2">
+      <select [(ngModel)]="selectedLanguage" name="selectedLanguage" class="form-group col-md-pull-1 col-md-push-1 d-none " (change)="changeLanguage()">
+        <option value="fr"> French</option>
+        <option value="en"> English</option>
+      </select>
+      <p-toggleButton (onChange)="changeTheme($event)" styleClass="iconButton" [offIcon]="'fa-lg pi pi-sun'" id="toggle-light-dark-mode"
+        [onIcon]="'fa-lg pi pi-moon'" [(ngModel)]="enableDarkMode">
+      </p-toggleButton>
+      <div class="ps-2 pr-sm-0 pr-1 userNameBrder d-flex align-items-center">
+        <ng-container *ngIf="loggedInUserProfile; else avatar">
+          <img class="rounded-circle avatar me-2 img-user"
+            src="{{ loggedInUserProfile }}"
+            onerror="this.src='assets/images/default/users/no-image.jpg';" alt="" />
+        </ng-container>
+        <ng-template #avatar>
+          <ngx-avatar size="24" [bgColor]="loggedInUserAvatarBGColor" class="rounded-circle avatar me-2 avatar-multi"
+            name="{{ loggedInUserShortName }}">
+          </ngx-avatar>
+        </ng-template>
+        <div class="login-username">{{loggedInUserName}}</div>
+      </div>
+    </div>
+  </div>
+</div>

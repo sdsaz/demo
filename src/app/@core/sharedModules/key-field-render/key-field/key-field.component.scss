@@ -1,0 +1,109 @@
+@import "../../../../../scss/variables";
+
+::ng-deep .keyfiledSection{
+
+    .col-form-label{ padding: 0 0 0 0.375rem; font-size: 12px; color: var(--surface-700); }
+    p-dropdown .p-dropdown, p-dropdown.form-control .p-dropdown, p-calendar .p-calendar .p-inputtext, p-multiselect .p-multiselect { padding: 4px 0 4px 8px; height: 28px }
+    .p-multiselect .p-multiselect-label { padding: 0; }
+    .p-dropdown .p-dropdown-clear-icon, p-multiselect.p-multiselect-clearable .p-multiselect-clear-icon { top: 14px; }
+    p-multiselect.p-multiselect-clearable .p-multiselect-clear-icon { font-size: 10px; height: 12px; right: 32px; font-weight: 700; }
+    .form-control-plaintext {
+
+        color: var(--surface-900); padding: 4px 0 3px; font-size: 12px; border-bottom: 1px solid $brdr-grey; min-height: 26.5px; height: 26.5px; overflow: hidden;
+
+    }
+    .form-control-plaintext.pre-text { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+    .form-control-plaintext.dark-grey{
+        color: var(--surface-600);
+    }
+
+    p-dropdown .p-dropdown.p-dropdown-clearable .p-dropdown-label, p-dropdown.form-control .p-dropdown.p-dropdown-clearable .p-dropdown-label, .form-control { font-size: 12px; line-height: 1.7; }
+
+    .form-control-plaintext:hover {
+
+        background-color: rgba(161, 189, 217, 0.08); cursor: pointer;
+
+    }
+    .custom-checkbox .custom-control-input + .form-control-plaintext { border-bottom: none; }
+    .custom-checkbox .custom-control-input + .form-control-plaintext:hover {
+
+        background-color: transparent;
+
+    }
+
+    .edit-key-field{ position: relative; 
+
+        .form-control { height: 28px; padding: 3px 6px; line-height: 28px; }
+        .ht-field-textarea textarea.form-control { height: auto; line-height: 1; }
+
+        .icon-error-key { display: none; }
+
+        .right-addon .form-control.is-invalid + .icon-error-key { display: flex; padding: 7px 8px !important; top: 0; right: 0; position: absolute; bottom: 0px;
+
+            i { font-size: 16px; color: #c99e1d; }
+
+        }
+
+        .right-addon input.form-control { padding-right: 6px !important; }
+
+        .right-addon input.form-control.is-invalid { padding-right: 28px !important; }
+        .right-addon input.form-control.pr-26px { padding-right: 26px !important; }
+        .pl-edit-fields { padding-left: 0.375rem; }
+
+        .edit-key-buttons { position: absolute; right: 0; top: 53px; display: flex; z-index: 1;
+
+            .btn-outline-secondary { border-color: $brdr-grey; background-color: var(--surface-50); color: var(--surface-800) !important; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important; width: 30px !important; height: 30px !important; padding: initial !important; }
+
+            .btn-outline-secondary:hover { background-color: var(--surface-100); }
+
+            .btn-outline-secondary:focus { border-color: var(--surface-200); background-color: var(--surface-200); color: var(--surface-900) !important; }
+
+        }
+
+        .ht-field-textarea .edit-key-buttons { top: 70px; }
+
+    }
+
+    .mb-12px { margin-bottom: 12px; }
+    .left-addon .fa, .left-addon .fas, .left-addon span:not(.text-danger), .right-addon .fa, .right-addon .fas, .right-addon span:not(.text-danger) {
+        top: 0;
+        bottom: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        display: flex;
+        align-items: center;
+        font-size: 12px !important;
+    }
+    .phone-prefix.left-addon .fa, .phone-prefix.left-addon .fas, .phone-prefix.left-addon span:not(.text-danger){ bottom: -1px; }
+    .left-addon.phone-prefix input.form-control { padding-left: 25px !important; }
+    .flex-radio { float: left;
+        p-radiobutton { float: left;
+            .p-radiobutton, .p-radiobutton .p-radiobutton-box { width: 16px; height: 16px; }
+        }
+        .radio-label { display: flex; font-size: 12px; padding-left: 5px; }
+    }
+    .right-addon span:not(.text-danger).invalid-suffix { right: 25px; }
+    .right-addon .invalid-suffix ~ input.form-control.pr-26px { padding-right: 46px !important; }
+}
+
+::ng-deep .keyfiledSection .edit-key-field ngx-phone-control{
+    .w-flag + .p-inputtext { height: 28px; padding: 3px 6px; line-height: 28px; }
+    .w-flag.form-control { height: 100%; padding: 0; line-height: normal; }
+}
+
+::ng-deep .maxWidth-key-field { max-width: 186px; }
+
+::ng-deep .tooltip-key-field{
+    &.bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before, &.bs-tooltip-top .tooltip-arrow::before { right: 12px; }
+    .tooltip-inner { max-width: 300px !important;
+        @media (max-width: 767px) { max-width: 150px !important; }
+    }
+}
+
+::ng-deep .tooltip-key-icon .tooltip-inner {
+    max-width: 350px !important;
+}
+
+::ng-deep .edit-key-field { 
+    .control-loader-wrapper{ top: -5px !important; }
+}

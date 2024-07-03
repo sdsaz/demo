@@ -1,0 +1,85 @@
+@import '../../../../scss/entity_view.scss';
+
+
+::ng-deep .detail-opportunity {
+    .details-box{ 
+        @media (max-width: 1199px){ height: auto; min-height: 1px !important; }
+    }
+    .bg-timeline .ht-card{ 
+        @media (max-width: 1199px){ height: auto !important; max-height: 400px; }
+    }
+}
+
+::ng-deep .opportunity-dropdowns .static-dropdown-width{ width: 360px;
+    @media (max-width: 1280px) { width: 300px; }
+
+    @media (max-width: 575px) { width: auto; max-width: 250px; min-width: 250px; }
+
+    .h-14px{ height: 14px; display: flex; align-items: center; }
+    .p-dropdown .p-dropdown-panel{ max-width: 360px; }
+}
+
+
+::ng-deep .details-box.col-xl-8 .opportunity-dropdowns .static-dropdown-width{ 
+    @media (max-width: 1720px) { width: 300px; }
+}
+
+::ng-deep .static-dropdown-width{ width: 360px;
+    @media (max-width: 575px) { width: auto; max-width: 250px; min-width: 250px; }
+    
+    .h-14px{ height: 14px; display: flex; align-items: center; }
+    .p-dropdown .p-dropdown-panel{ max-width: 360px; }
+}
+
+::ng-deep .page-containted .tbl-opportunityItems-list {
+    .p-datatable-wrapper {
+        @media (min-width: 641px) {
+            th.productName, td.productName, th.productSkuName, td.productSkuName { min-width: 175px; }
+            th.quantity, td.quantity { max-width: 200px; width: 200px !important; min-width: 200px;  }
+            th.price, td.price { max-width: 210px; width: 210px !important; min-width: 210px;  }
+            th.productSku, td.productSku { max-width: 120px; width: 120px !important; min-width: 120px; }  
+            th.uomName,td.uomName { max-width: 160px; min-width: 160px; }
+            th.status, td.status { max-width: 100px; width: 100px !important; min-width: 100px; }
+        }
+    }
+
+    @media (max-width: 640px) {
+        td.quantity .justify-content-end, td.price .justify-content-end { justify-content: flex-start !important; }
+        td.quantity input.text-right{ text-align: left !important; }
+        .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr > td { align-items: center; }
+        td.pr-5 { padding-right: 12px !important; }
+    }
+}
+.static-dropdown-width.filter-opportunity-item { 
+    @media (min-width: 768px) { flex: 1; max-width: 430px; } 
+}
+.filter-opportunity-price { 
+    @media (min-width: 768px) { flex: 1; }
+}
+@media (max-width: 767px) {
+    .filter-opportunity-item { flex:0 0 100%; max-width: 100%; width: 100%; }
+    .filter-opportunity-price { width: 100%; }
+}
+.filter-opp-pricebook { max-width: 300px; width: 100%; min-width: 200px;
+    @media (max-width: 1139px) and (min-width: 880px) { max-width: 250px; min-width: 250px; }
+    @media (max-width: 799px) and (min-width: 768px) { max-width: 150px; min-width: 150px; }
+    @media (max-width: 767px) { max-width: calc(100% - 270px); }
+    @media (max-width: 640px) { max-width: 100%; margin: 0 0 0.5rem 0 !important; }
+}
+.me-sm-devices{
+    @media (max-width: 640px) { margin-right: auto !important; margin-left: 0 !important; margin-bottom: 0.25em !important; }
+}
+::ng-deep .details-box.col-xl-8 .filter-opp-pricebook { 
+    @media (max-width: 1359px) and (min-width: 1200px) { max-width: 150px; min-width: 150px; }
+}
+.detail-opportunity {
+    .stage-details{
+        @media (max-width: 1199px) and (min-width: 576px){ width: calc(100% - 180px); }
+    }
+}
+
+.xl-min-col-2{
+    @media (min-width: 1200px) { min-width: 16.67%; }
+}
+
+.icon-relatedTo { width: 27px; height: 26px; }

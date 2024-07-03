@@ -1,0 +1,9 @@
+.btn-light-grey.btn-outline-secondary, .btn-light-grey.btn-outline-secondary:hover { padding: 0 !important; height: 30px; width: 30px; font-weight: 600; border-color: #c2c9cf; color: var(--surface-700) !important; }
+
+::ng-deep .nb-theme-dark {
+    .btn-light-grey.btn-outline-secondary, .btn-light-grey.btn-outline-secondary:hover { border-color: #566881; }
+}
+
+.min-w-30px { min-width: 30px; }
+
+::ng-deep .loader-related .control-loader-wrapper { margin-left: 65px !important; width: calc(100% - 65px) !important; }

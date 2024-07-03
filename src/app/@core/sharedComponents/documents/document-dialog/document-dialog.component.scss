@@ -1,0 +1,15 @@
+@import "../../../../../scss/variables";
+
+.switch-slider.switch--status{ width: 60px; }
+
+.custom-input-group{
+    .input-group-text { font-size: 12px; border-color: #ced4da; border-top-right-radius: 5px !important; border-bottom-right-radius: 5px !important; }
+}
+
+::ng-deep .nb-theme-dark .custom-input-group{
+    .input-group-text { border-color: #304562 !important; color: $clr-white; background: #17212f; }
+}
+
+::ng-deep .nb-theme-default .custom-input-group{
+    .input-group-text { background: #fff; }
+}

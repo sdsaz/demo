@@ -1,0 +1,63 @@
+@import "../../../../scss/entity_kanban.scss";
+
+.btn-reset-filter.btn-mg{ margin: 0 20px 0 0; }
+
+.head-title-xs, .head-btn-xs{
+    @media (max-width: 374px){ flex: 0 0 100%; max-width: 100%; }
+}
+
+.head-title-xs{
+    @media (max-width: 374px){ margin-bottom: 15px; }
+}
+
+.entity-tags-list{
+    @media (min-width: 641px){
+        th.entityTypeName, td.entityTypeName{ min-width: 180px !important; width: 180px !important;}
+        th.entityRecordTypeName, td.entityRecordTypeName{ min-width: 210px !important; width: 210px !important; }
+        th.tagCategoryName, td.tagCategoryName{ min-width: 165px !important; width: 165px !important; word-break: break-word; }
+        th.name, td.name{ min-width: 170px !important; width: 170px !important; word-break: break-word;}
+        th.displayOrder, td.displayOrder{ min-width: 180px !important; width: 180px !important; text-align: right; }
+        th.isActive, td.isActive{ width: 120px; min-width: 120px; }
+        th.action, td.action { width: 0; min-width: 0; padding: 0 !important; 
+            .dropdown { margin-right: 12px; }
+        }
+    }
+    
+    @media screen and (max-width: 640px){
+        th.tagCategoryName, td.tagCategoryName{ word-break: break-word; }
+        td:first-child { padding-top: 12px; }
+        .p-column-title { min-width: 152px !important; }
+    }
+}
+
+
+
+:host ::ng-deep .ui-table .ui-sortable-column .ui-sortable-column-icon.pi-fw {width: 16px;}
+
+.badge.badge--status{ font-size: 12px; font-weight: 400; }
+
+.badge.bg-primary{
+    background-color: #34a6cf !important;
+}
+.badge.bg-danger{
+    background-color: #f86c6b !important;
+}
+.badge.bg-primary, .badge.bg-danger{
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.customInputText{
+    height: 34px;
+}
+
+// prime ng input override - start
+:host ::ng-deep{
+    .dropDownOverride.p-dropdown {
+        width: 100%;
+    }
+}
+
+::ng-deep .entity-tags-list .p-datatable-wrapper {
+    @media (min-width: 1140px) and (min-height: 576px) { min-height: calc(100vh - 188px); }
+} 

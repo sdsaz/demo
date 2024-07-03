@@ -1,0 +1,33 @@
+<div class="dashboard">
+  <div class="dashboard-global-filter">
+    <div class="col-12 lineheight35" *ngIf="isDashboardExists">
+      <div class="row">
+        <div class="col-xl-8 col-md-6 mb-10px">
+          <span id="headingEntity" class="fw-600 fs-4">{{ dashboardName | translate}}</span>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-10px">
+          <div class="row">
+            <label class="col col-form-label pr-0 d-flex align-items-center justify-content-end">Duration:</label>
+            <div class="col-sm-duration col pl-2">
+              <ngx-custom-calender [(ngModel)]="rangeDates" [dateFormat]="_commonHelper.globalDatePickerFormate" id="dp-duration" appendTo="body"
+                [numberOfMonths]='2' selectionMode="range" class="date-range-calendar position-custom-calender" [readonlyInput]="true"
+                inputId="range" [showTime]="false" [showRangeButtonBar]="true" [firstDayOfWeek]="1"
+                [minDate]="_commonHelper.globalMinDate" [maxDate]="_commonHelper.globalMaxDate"
+                [yearRange]="_commonHelper.globalYearRange" [selectOtherMonths]="true"
+                [dateSelectOptionsButtonBar]="dateSelectOptionsButtonBar" (ngModelChange)="onDateRangeChange($event)"
+                [placeholder]="'DASHBOARD.WIDGET.FILTER_PLACEHOLDER_DATERANGE' | translate">
+              </ngx-custom-calender>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="dashboard-sections" (resized)="onResized($event)">
+    <ng-container *ngFor="let section of widgetData">
+      <ngx-section [section]="section" [widgetSizes]="widgetSizes"
+        (UpdateSectionWidgetSize)="UpdateSectionWidgetSize($event)" [rangeDates]="rangeDates">
+      </ngx-section>
+    </ng-container>
+  </div>
+</div>

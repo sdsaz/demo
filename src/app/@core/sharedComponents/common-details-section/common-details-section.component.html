@@ -1,0 +1,176 @@
+<div class="container-fluid common-details-section">
+    <div class=" common-details-inner ">
+        <div class="d-flex align-self-start common-details-header">
+            <div class="float-left text-center">               
+                <i class="{{entityDetailsData?.entityIcon}} entity-icon-only" ></i>
+            </div>
+            <div class="icons-quickview d-flex align-items-center">
+                <ngx-bookmark [entityTypeId]="entityTypeId" [entityId]="entityId" [isEditPermission]="isEditPermission && !isPaused" [isFromKanbanOrListView]="isFromKanbanOrListView" class="font-18 bookmark-quick-view"></ngx-bookmark>
+                <div *ngIf="!entityDetailsData.isCompletedStage && !entityDetailsData.isClosedStage && entityDetailsData.showRaiseHandButtons"
+                    class="vertical-center worktask-icon cursor-pointer height-22px" container="body">
+                    <i *ngIf="entityDetailsData.isHandRaised"
+                        class="clr-remove-raise-hand fas fa-hand-paper font-18 cursor-pointer ms-3"
+                        (click)="onRaiseHandChangeEvent(entityDetailsData, false)" aria-hidden="true" id="removeRaiseHandButton"
+                        tooltipClass="tooltip-backward-small" [ngbTooltip]="'COMMON_DETAILS_TAB.LABEL_HAND_UNRAISED'| translate"
+                        container="body">
+                    </i>
+                    <i *ngIf="!entityDetailsData.isHandRaised" class="clr-raise-hand far fa-hand-paper font-18 cursor-pointer ms-3"
+                        (click)="onRaiseHandChangeEvent(entityDetailsData, true)" aria-hidden="true" id="raiseHandButton"
+                        tooltipClass="tooltip-backward-small" [ngbTooltip]="'COMMON_DETAILS_TAB.LABEL_HAND_RAISED'| translate"
+                        container="body">
+                    </i>
+                </div>
+                <div *ngIf="entityDetailsData.isShowPauseOrResume" class="ms-3">
+                    <i *ngIf="isPaused && (entityDetailsData.loggedInUser == entityDetailsData.owner1Id || entityDetailsData.isResumeRecord)"
+                        class="far fa-play-circle font-18 dark-grey cursor-pointer" tooltipClass="tooltip-backward-small"
+                        [ngbTooltip]="'COMMON_DETAILS_TAB.TOOLTIP_RESUME'| translate"
+                        (click)="onPauseOrResumeChangesEvent(entityDetailsData, false)" id="resumeButton" container="body"></i>
+                    <i *ngIf="!isEditPermission && isPaused && (entityDetailsData.loggedInUser != entityDetailsData.owner1Id && !entityDetailsData.isResumeRecord)"
+                        class="far fa-play-circle font-18 dark-grey cursor-pointer" tooltipClass="tooltip-backward-small"
+                        [ngbTooltip]="'COMMON_DETAILS_TAB.MESSAGE_RESUME_NOT_ACCESS'| translate" id="resumeButtonNotAccess"></i>
+                    <i *ngIf="isEditPermission && !isPaused && (entityDetailsData.loggedInUser == entityDetailsData.owner1Id || entityDetailsData.isResumeRecord)"
+                        class="far fa-pause-circle font-18 dark-grey cursor-pointer" tooltipClass="tooltip-backward-small"
+                        [ngbTooltip]="'COMMON_DETAILS_TAB.TOOLTIP_PAUSE'| translate"
+                        (click)="onPauseOrResumeChangesEvent(entityDetailsData, true)" id="pauseButton" container="body"></i>
+                </div>
+                <i class="{{entityDetailsData?.privacyIcon}} font-18 dark-grey ms-3"  *ngIf="entityDetailsData?.privacyIcon" ngbTooltip="{{entityDetailsData?.privacyToolTip | translate | configuredEntityName}}" placement="top auto" container="body"></i>
+            </div>
+            <div class="float-start">
+                <label>{{ entityDetailsData?.entityName | translate | configuredEntityName}}</label>
+                <div class="label1 font-12 mb-2">
+                    <ng-container *ngIf="entityDetailsData?.labelType1 == _kanbanBoardTokenTypes.Link;else textlabel1">
+                        <a class="relatedToClick fw-semibold dark-blue font-12" [routerLink]="entityDetailsData?.label1RedirectURL">{{
+                            entityDetailsData?.label1 && entityDetailsData?.label1 != null ? entityDetailsData?.label1 : " " }}</a>
+                    </ng-container>
+                    <ng-template #textlabel1>
+                           <strong>{{ entityDetailsData?.label1 && entityDetailsData?.label1 != null ? entityDetailsData?.label1 : " " }}</strong>                     
+                    </ng-template>
+                </div>
+                <span id="entityRating" class="mb-2 h-21 mr-2 vertical-center">
+                    <entity-review-display [entityTypeId]="entityTypeId" [entityId]="entityId" [isEditPermission]="isEditPermission && !isPaused"></entity-review-display>
+                </span>
+                <div class="label2 font-12 mb-2">
+                    <ng-container *ngIf="entityDetailsData?.labelType2 == _kanbanBoardTokenTypes.Link;else textlabel2">
+                        <a class="relatedToClick fw-semibold dark-blue font-12" [routerLink]="entityDetailsData?.label2RedirectURL">{{
+                            entityDetailsData?.label2 && entityDetailsData?.label2 != null ? entityDetailsData?.label2 : " " }}</a>
+                    </ng-container>
+                    <ng-template #textlabel2>
+                          <strong>{{ entityDetailsData?.label2 && entityDetailsData?.label2 != null ? entityDetailsData?.label2 : " " }}</strong>
+                    </ng-template>
+                </div>
+                <div class="label3 font-12 mb-2">
+                    <ng-container *ngIf="entityDetailsData?.labelType3 == _kanbanBoardTokenTypes.Link;else textlabel3">
+                        <a class="relatedToClick fw-semibold dark-blue font-12" [routerLink]="entityDetailsData?.label3RedirectURL">{{
+                            entityDetailsData?.label3 && entityDetailsData?.label3 != null ? entityDetailsData?.label3 : " " }}</a>
+                    </ng-container>
+                    <ng-template #textlabel3>
+                        {{ entityDetailsData?.label3 && entityDetailsData?.label3 != null ? entityDetailsData?.label3 : " " }}
+                    </ng-template>
+                </div>
+                <div class="mb-2 h-21 badge badge-primary badge--status mr-2">
+                    <ng-container *ngIf="entityDetailsData?.entityRecordTypeName">
+                        {{ entityDetailsData?.entityRecordTypeName && entityDetailsData?.entityRecordTypeName != null ? entityDetailsData?.entityRecordTypeName : " " }}
+                    </ng-container>
+                </div>
+                <div class="entityrecordtypename mb-2 d-flex" *ngIf="entityDetailsData?.relatedToLabel">
+                    <i  [class]="_commonHelper.getEntityIconClass(entityDetailsData?.entityTypeId)" class="font-13 me-1 dark-grey" aria-hidden="true" container="body" placement="top auto" [ngbTooltip]="entityDetailsData?.relatedToIconToolTip"></i>
+                    <a class="relatedToClick fw-semibold dark-blue font-12" [routerLink]="entityDetailsData?.relatedToRedirectURL">{{ entityDetailsData?.relatedToLabel && entityDetailsData?.relatedToLabel != null ? entityDetailsData?.relatedToLabel : " " }}</a>
+                </div>
+                <div>
+                    <span id="badgeActiveInactive" *ngIf="entityDetailsData?.isActive != null && entityDetailsData?.isActive == false" class=" mb-2 h-21 badge badge--status badge-danger mr-2">
+                        {{ entityDetailsData?.isActive == false ? 'Inactive' : '' }}
+                    </span>
+                    <span id="badgePaused" *ngIf="entityDetailsData?.isPaused" class="mb-2 h-21 badge badge-danger badge--status">
+                        {{ entityDetailsData?.isPaused == true ? 'Paused' : '' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center">
+            <div class="entitiesTags">
+                <entity-tags-view [entityId]="entityId" [entityTypeId]="entityTypeId" [entityRecordTypeId]="entityRecordTypeId"></entity-tags-view>
+            </div>
+        </div>
+        <div class="d-flex align-items-center">
+            <ng-container *ngIf="entityDetailsData?.stagesTasks && entityDetailsData?.stagesTasks.length > 0">
+                <div class="mt-2 font-semibold mr-2 text-nowrap">{{ "COMMON_DETAILS_TAB.STAGES_TAKS_TITLE" | translate }}</div>
+                <div class="mt-2 w-100">
+                    <ng-template #disableTaskText>
+                        <div class="disable-text">
+                            {{
+                            entityDetailsData?.stagesTasks && entityDetailsData?.stagesTasks.length > 0 ?
+                            (entityDetailsData?.selectedTasks?.length ?? 0) + ' of ' + entityDetailsData?.stagesTasks.length + ' completed'
+                            :
+                            ('COMMON_DETAILS_TAB.NO_TASKS' | translate)
+                            }}
+                        </div>
+                    </ng-template>
+                    <div *ngIf="(isEditPermission && isActive && !isPaused && !isClosedStage && !isCompletedStage && !isDefault) else disableTaskText" class="selectedTasks w-100">
+                        <p-multiSelect [options]="entityDetailsData?.stagesTasks" class="entity-multiSelect maxwidth-stage stage-task-cd w-100"
+                            optionLabel="name" (onChange)="onEntityStageTasksSelectClick()"
+                            [disabled]="entityDetailsData?.isFrozen || entityDetailsData?.selectedTasksDisabled || entityDetailsData?.disabled || entityDetailsData?.isCompleted || entityDetailsData?.isClosed"
+                            [maxSelectedLabels]="500" [showToggleAll]="false" [(ngModel)]="entityDetailsData.selectedTasks"
+                            [defaultLabel]="entityDetailsData?.stagesTasks && entityDetailsData?.stagesTasks?.length > 0 ? (entityDetailsData?.selectedTasks?.length ?? 0) + ' of ' + entityDetailsData?.stagesTasks.length + ' completed' : ''"
+                            [filter]="false" [showHeader]="false" [displaySelectedLabel]='false' (onChange)="onCardTaskChangeEvent()">
+                        </p-multiSelect>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+        <div class="keyfiledSection mt-2">
+            <div class="keyfield-title font-semibold border-bottom p-2">{{ 'COMMON_DETAILS_TAB.KEY_FIELDS_TITLE' | translate }}</div> 
+            <ngx-key-field [entityID]="entityId" [entityTypeID]="entityTypeId" [entityRecordTypeID]="entityRecordTypeId" [isEditPermission]="isEditPermission && isActive && !isPaused && !isClosedStage && !isCompletedStage && !isDefault" [keyfieldResponseData]="keyfieldResponseData"
+                (saveKeyFieldEvent)="onSaveKeyFieldEvent($event)" [currencySymbol]="currencySymbol" [hoursInDay]="hoursInDay" (onShowLoader)="showLoader()" (onHideLoader)="hideLoader()">
+            </ngx-key-field> 
+        </div>
+    </div>
+    <div>
+        <button type="button" class="btn btn-outline-secondary btn-quick-view btn-sm h-auto mt-3"
+            *ngIf="showLinkWorkTaskCreateOption"
+            id="btn-linkWorkTask" ngbTooltip="{{'ACTIVITY.LINK_WORKTASK_TOOLTIP' | translate| configuredEntityName}}" placement="top auto"
+            container="body" triggers="hover" tooltipClass="tooltip-backward-small" (click)="onLinkWorkTaskClick()">
+            <i class="fas fa-link fa-lg" aria-hidden="true"></i>
+        </button>
+        <ng-container *ngIf="showSubTaskCreateOption && entityDetailsData?.showAddSubWorkTaskButton 
+                            && !entityDetailsData?.isClosedStage && !entityDetailsData?.isCompletedStage && !entityDetailsData?.isPaused 
+                            && entityDetailsData?.entityWorkflowId && entityDetailsData?.availableSubWorkTaskTypeDetails?.length > 0 && !(entityDetailsData?.relatedToId == null && entityRecordTypeId == null)">
+            <ng-container *ngFor="let subTaskType of entityDetailsData?.availableSubWorkTaskTypeDetails">
+                <button *ngIf="subTaskType?.addPermissionHash | hasPermission" type="button" class="btn btn-outline-secondary btn-quick-view btn-sm h-auto mt-3"
+                    [id]="'btn-add-' + subTaskType.name" [ngbTooltip]="entityDetailsData?.subWorkTaskToolTipPrefix + ' ' + subTaskType.name" placement="top auto"
+                    container="body" triggers="hover" tooltipClass="tooltip-backward-small" (click)="onSubTaskClick(subTaskType.id, subTaskType.name)">
+                    <i [class]="subTaskType.iconClass + ' ' + 'fa-lg'" aria-hidden="true"></i>
+                </button>
+            </ng-container>
+        </ng-container>
+
+        <button type="button" class="btn btn-outline-secondary btn-quick-view btn-sm h-auto mt-3 btn-add-worktasks"
+            *ngIf="addWorkTaskCreateOption && isEditPermission && isActive && !isPaused && !isClosedStage && !isCompletedStage && !isDefault && isAddWorkTask && !entityDetailsData?.isClosedStage && !entityDetailsData?.isCompletedStage && !entityDetailsData?.isPaused"
+            id="btn-addWorktask" [ngbTooltip]="entityDetailsData?.workTaskTypeName" triggers="hover"
+            tooltipClass="tooltip-backward-small" placement="top auto" container="body" (click)="onAddWorkTaskClick()">
+            <i [class]="entityDetailsData?.workTaskTypeIconClass + ' ' + 'fa-lg'" aria-hidden="true"></i>
+            <i class="fa-solid fa-circle-plus icon-plus-worktasks" aria-hidden="true"></i>
+        </button>
+
+        <button type="button" class="btn btn-outline-secondary btn-quick-view btn-sm h-auto mt-3 btn-add-worktasks"
+         *ngIf="isEditPermission && isActive && !isPaused && !isClosedStage && !isCompletedStage && !isDefault && isAddOpportunity && !entityDetailsData?.isClosedStage && !entityDetailsData?.isCompletedStage && !entityDetailsData?.isPaused" 
+            id="btn-opporunity" ngbTooltip="{{ 'OPPORTUNITIES.ADD_DIALOG.TITLE' | translate | configuredEntityName }}" triggers="hover" tooltipClass="tooltip-backward-small"
+            placement="top auto" container="body" (click)="addOpportunity()">
+            <i class="fas fa-hand-holding-usd fa-lg" aria-hidden="true"></i>
+        </button>
+
+        <button type="button" class="btn btn-outline-secondary btn-quick-view btn-sm h-auto mt-3 btn-add-worktasks"
+         *ngIf="isEditPermission && isActive && !isPaused && !isClosedStage && !isCompletedStage && !isDefault && isAddCase && !entityDetailsData?.isClosedStage && !entityDetailsData?.isCompletedStage && !entityDetailsData?.isPaused" 
+            id="btn-case" ngbTooltip="{{ 'CASES.ADD_DIALOG.TITLE' | translate | configuredEntityName }}" triggers="hover" tooltipClass="tooltip-backward-small"
+            placement="top auto" container="body" (click)="addCase()">
+            <i class="fa-solid fa-file-invoice fa-lg" aria-hidden="true"></i>
+        </button>
+
+        <button *ngIf="entityDetailsData?.isShowMoreDetailButton ?? true"  
+            type="button" class="btn btn-outline-secondary btn-quick-view btn-sm h-auto mt-3"
+            [routerLink]="entityDetailsData?.label1RedirectURL" id="btn-showMoreDetail" ngbTooltip="Show more details" triggers="hover" tooltipClass="tooltip-backward-small"
+            placement="top auto" container="body">
+            <i class="fa-solid fa-ellipsis fa-lg" aria-hidden="true"></i>
+        </button>    
+    </div>
+</div>

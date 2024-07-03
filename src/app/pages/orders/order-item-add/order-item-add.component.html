@@ -1,0 +1,198 @@
+<!-- Model Header Start -->
+<div class="modal-header border-bottom-0 padding-32 pb-0">
+    <h4 class="modal-title font-weight-bold">{{ title | translate | configuredEntityName}}</h4>
+    <button type="button" id="btn-close" class="close" (click)="onCloseForm(false)">
+        <span class="font-24 fonts-close"><i class="fas fa-times" aria-hidden="true"></i></span>
+    </button>
+</div>
+<!-- Model Header End -->
+
+<!-- Add Order Start -->
+<div class="modal-body padding-32 pt-3" *ngIf="orderItemForm">
+    <form [formGroup]='orderItemForm'>
+        <div class=" form-group">
+            <label>{{'ORDERS.DETAIL.TAB_ITEMS.ADD_DIALOG.ORDER_ITEM_NO' | translate | configuredEntityName}} <span
+                    class="mandatory"></span></label>
+            <input type="text" formControlName="orderItemNumber" id="txt-orderItemNumber" class="form-control ht--40" name="code"
+                trimValue
+                [ngClass]="{ 'is-invalid': orderItemfrm.orderItemNumber.errors && (orderItemfrm.orderItemNumber.dirty || orderItemfrm.orderItemNumber.touched)}">
+            <div *ngFor='let validation of validation_messages.orderItemNumber' class='invalid-feedback'>
+                <div
+                    *ngIf="orderItemfrm.orderItemNumber.hasError(validation.type) && orderItemfrm.orderItemNumber.errors && (orderItemfrm.orderItemNumber.dirty || orderItemfrm.orderItemNumber.touched)">
+                    {{ validation.message | translate | configuredEntityName}}
+                </div>
+            </div>
+        </div>
+        {{orderItemfrm.value | json}}
+
+        <div class=" form-group">
+            <label>{{'ORDERS.DETAIL.TAB_ITEMS.ADD_DIALOG.PRODUCT' | translate | configuredEntityName}}
+                <span class="mandatory"></span></label>
+            <p-dropdown *ngIf="productList" id="drp-product" formControlName="productID" [options]="productList"
+                [filter]="true" [resetFilterOnHide]="false" [showClear]="true" name="productID"
+                (onChange)="relatedProductsOnChange($event)" class="form-control ht--40"
+                [ngClass]="{ 'is-invalid': orderItemfrm.productID.errors && (orderItemfrm.productID.dirty || orderItemfrm.productID.touched)}"
+                placeholder="{{'ORDERS.DETAIL.TAB_ITEMS.ADD_DIALOG.ADD_PRODUCT_PLACEHOLDER' | translate | configuredEntityName}}"
+                (onFilter)="relatedProductsOnFilter($event)" optionLabel="label" optionValue="value">
+                <ng-template let-entity pTemplate="item">
+                    <div class="entity-pad pl-0">
+                        {{entity?.code ? (entity.label + ' ('+ entity?.code+')') : entity.label}}
+                    </div>
+                </ng-template>
+            </p-dropdown>
+            <div *ngFor='let validation of validation_messages.productID' class='invalid-feedback invalid-text'>
+                <div
+                    *ngIf="orderItemfrm.productID.hasError(validation.type) && orderItemfrm.productID.errors && (orderItemfrm.productID.dirty || orderItemfrm.productID.touched)">
+                    {{ validation.message | translate | configuredEntityName}}
+                </div>
+            </div>
+        </div>
+
+
+        <div class=" form-group">
+            <label>{{'ORDERS.DETAIL.TAB_ITEMS.ADD_DIALOG.QUANTITY' | translate}} </label>
+            <input type="text" formControlName="quantity" id="txt-quantity" class="form-control ht--40"
+                name="quantity" trimValue
+                [ngClass]="{ 'is-invalid': orderItemfrm.quantity.errors && (orderItemfrm.quantity.dirty || orderItemfrm.quantity.touched)}"
+                mask="separator.0" thousandSeparator=",">
+            <div *ngFor='let validation of validation_messages.quantity' class='invalid-feedback'>
+                <div
+                    *ngIf="orderItemfrm.quantity.hasError(validation.type) && orderItemfrm.quantity.errors && (orderItemfrm.quantity.dirty || orderItemfrm.quantity.touched)">
+                    {{ validation.message | translate}}
+                </div>
+            </div>
+        </div>
+
+        <div class=" form-group">
+            <label>{{'ORDERS.DETAIL.TAB_ITEMS.ADD_DIALOG.PRICE' | translate}} <span class="mandatory"></span></label>
+            <div class="inner-addon left-addon">
+                <span>{{currencySymbol}}</span>
+                <input type="text" formControlName="price" id="txt-price" class="form-control ht--40" name="price"
+                    trimValue  [readonly]="true"
+                    [ngClass]="{ 'is-invalid': orderItemfrm.price.errors && (orderItemfrm.price.dirty || orderItemfrm.price.touched)}"
+                    mask="separator.2" thousandSeparator=",">
+                <div *ngFor='let validation of validation_messages.price' class='invalid-feedback'>
+                    <div
+                        *ngIf="orderItemfrm.price.hasError(validation.type) && orderItemfrm.price.errors && (orderItemfrm.price.dirty || orderItemfrm.price.touched)">
+                        {{ validation.message | translate}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class='form-group'>
+            <label>{{'ORDERS.DETAIL.TAB_ITEMS.ADD_DIALOG.DISCOUNT_TYPE' | translate}}</label>
+            <p-dropdown id="drp-discountType" class="form-control" formControlName="discountType" [filter]="true"
+                [resetFilterOnHide]="false" [showClear]="true" [options]="discountTypeList"
+                placeholder="{{'ORDERS.DETAIL.TAB_ITEMS.ADD_DIALOG.DISCOUNT_TYPE_PLACEHOLDER' | translate}}"
+                optionLabel="name" optionValue="intValue1" (onChange)="changeDiscountType($event)">
+            </p-dropdown>
+            <div *ngFor='let validation of validation_messages.discountType' class='invalid-feedback'>
+                <div *ngIf='orderItemfrm.discountType.hasError(validation.type) &&   orderItemfrm.discountType.errors'
+                    id="errorDiscountTypeMustBeValidDiscountType">
+                    {{ validation.message | translate }}
+                </div>
+            </div>
+        </div>
+
+        <div class='form-group' *ngIf="selectedDiscountType == 'Percentage'">
+            <label>
+                {{ 'ORDERS.DETAIL.TAB_ITEMS.ADD_DIALOG.DISCOUNT_PERCENTAGE' | translate }}
+            </label>
+            <div class="inner-addon right-addon">
+                <span>%</span>
+                <input id="txt-discountPercentage" type="text" class="form-control" formControlName="discountRate" trimValue
+                    mask="separator.2" thousandSeparator=","
+                    [ngClass]="{ 'is-invalid': orderItemfrm.discountRate.errors && (orderItemfrm.discountRate.dirty || orderItemfrm.discountRate.touched)}">
+            </div>
+            <div *ngFor='let validation of validation_messages.discountRate' class='invalid-feedback  invalid-text'>
+                <div *ngIf='orderItemfrm.discountRate.hasError(validation.type) && orderItemfrm.discountRate.errors && (orderItemfrm.discountRate.dirty || orderItemfrm.discountRate.touched)'
+                    id="errordiscountRateIsRequired">
+                    {{ validation.message | translate }}
+                </div>
+            </div>
+        </div>
+
+
+        <div class='form-group' *ngIf="selectedDiscountType == 'Amount'">
+            <label>
+                {{ 'ORDERS.DETAIL.TAB_ITEMS.ADD_DIALOG.DISCOUNT_AMOUNT' | translate }}
+            </label>
+            <div class="inner-addon left-addon">
+                <span>{{currencySymbol}}</span>
+                <input id="txt-discountAmount" type="text" class="form-control ht--40" name="discountAmount"
+                    formControlName="discountAmount" mask="separator.2" thousandSeparator=","
+                    [ngClass]="{ 'is-invalid': orderItemfrm.discountAmount.errors && (orderItemfrm.discountAmount.dirty || orderItemfrm.discountAmount.touched)}">
+                <div *ngFor='let validation of validation_messages.discountAmount' class='invalid-feedback'>
+                    <div *ngIf='orderItemfrm.discountAmount.hasError(validation.type) && orderItemfrm.discountAmount.errors && (orderItemfrm.discountAmount.dirty || orderItemfrm.discountAmount.touched)'
+                        id="errorPriceMustBeValidNumber">
+                        {{ validation.message | translate }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class='form-group' *ngIf="selectedDiscountType == 'Percentage'">
+            <label>
+                {{ 'ORDERS.DETAIL.TAB_ITEMS.ADD_DIALOG.TAX_RATE' | translate }}
+            </label>
+            <div class="inner-addon right-addon">
+                <span>%</span>
+                <input id="txt-taxRate" type="text" class="form-control" formControlName="taxRate" trimValue
+                    mask="separator.2" thousandSeparator=","
+                    [ngClass]="{ 'is-invalid': orderItemfrm.taxRate.errors && (orderItemfrm.taxRate.dirty || orderItemfrm.taxRate.touched)}">
+            </div>
+            <div *ngFor='let validation of validation_messages.taxRate' class='invalid-feedback  invalid-text'>
+                <div *ngIf='orderItemfrm.taxRate.hasError(validation.type) && orderItemfrm.taxRate.errors && (orderItemfrm.taxRate.dirty || orderItemfrm.taxRate.touched)'
+                    id="errorTaxRateIsRequired">
+                    {{ validation.message | translate }}
+                </div>
+            </div>
+        </div>
+
+        <div class='form-group' *ngIf="selectedDiscountType == 'Amount'">
+            <label>
+                {{ 'ORDERS.DETAIL.TAB_ITEMS.ADD_DIALOG.TAX_AMOUNT' | translate }}
+            </label>
+            <div class="inner-addon left-addon">
+                <span>{{currencySymbol}}</span>
+                <input id="txt-taxAmount" type="text" class="form-control ht--40" name="taxAmount"
+                    formControlName="taxAmount" mask="separator.2" thousandSeparator=","
+                    [ngClass]="{ 'is-invalid': orderItemfrm.taxAmount.errors && (orderItemfrm.taxAmount.dirty || orderItemfrm.taxAmount.touched)}">
+                <div *ngFor='let validation of validation_messages.taxAmount' class='invalid-feedback'>
+                    <div *ngIf='orderItemfrm.taxAmount.hasError(validation.type) && orderItemfrm.taxAmount.errors && (orderItemfrm.taxAmount.dirty || orderItemfrm.taxAmount.touched)'
+                        id="errorTaxPriceMustBeValidNumber">
+                        {{ validation.message | translate }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class=" form-group">
+            <label>{{'ORDERS.DETAIL.TAB_ITEMS.ADD_DIALOG.AMOUNT' | translate}}
+            </label>
+            <div class="inner-addon left-addon">
+                <span>{{currencySymbol}}</span>
+                <input type="text" formControlName="totalPrice" id="txt-totalAmount" class="form-control ht--40"
+                    name="totalPrice" trimValue
+                    [ngClass]="{ 'is-invalid': orderItemfrm.totalPrice.errors && (orderItemfrm.totalPrice.dirty || orderItemfrm.totalPrice.touched)}"
+                    mask="separator.2" thousandSeparator=",">
+                <div *ngFor='let validation of validation_messages.totalPrice' class='invalid-feedback'>
+                    <div
+                        *ngIf="orderItemfrm.totalPrice.hasError(validation.type) && orderItemfrm.totalPrice.errors && (orderItemfrm.totalPrice.dirty || orderItemfrm.totalPrice.touched)">
+                        {{ validation.message | translate}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal-footer border-top-0 px-0 pb-0">
+            <button type="button" class='btn btn-outline-secondary me-2' id="btn-cancel"
+                (click)="onCloseForm(false)">{{'ORDERS.ADD_DIALOG.BUTTON_CANCEL' | translate}}</button>
+            <button type="button" (click)="saveOrderItem(orderItemForm.value)" id="btn-save"
+                class='btn btn-primary'>{{'ORDERS.ADD_DIALOG.BUTTON_ADD' | translate}}</button>
+        </div>
+    </form>
+</div>
+<!-- Add ORDER End -->

@@ -1,0 +1,97 @@
+<!-- Model Header Start -->
+<div class="modal-header border-bottom-0 padding-32 pb-0">
+    <h4 class="modal-title font-weight-bold" id="headingPopupEntity">
+        {{'CRM.ENTITY_NOTIFICATION_COMPONENT.TITLE' | translate }}
+    </h4>
+    <button type="button" id="btn-close" class="close" (click)="onCloseForm()">
+        <span class="font-24 fonts-close"><i class="fas fa-times" aria-hidden="true"></i></span>
+    </button>
+</div>
+<!-- Model Header End -->
+
+
+<div class="modal-body padding-32 pt-3">
+    <div class="text-right">
+        <button (click)="addRow()" class="addItem btn btn-outline-secondary btn-dark-color mb-3"><i
+                class="fa-solid fa-plus mr-1"></i>
+            {{'CRM.ENTITY_NOTIFICATION_COMPONENT.BUTTON_ADD_REMINDER' | translate }}
+        </button>
+    </div>
+    <ng-container *ngIf="entityNotificationForm">
+        <form [formGroup]="entityNotificationForm">
+            <table class="w-100 tbl-reminder">
+                <tbody formArrayName="notificationArray">
+                    <tr [formGroupName]="i" *ngFor="let item of entityNotificationForm.get('notificationArray')['controls']; let i = index;">
+                        <td class="td-small">
+                            <div class="form-group method-dropdown">
+                                <p-dropdown class="form-control" [options]="notificationTypes" placeholder="Method"
+                                    formControlName="typeID" optionLabel="name" optionValue="intValue1"
+                                    [ngClass]="{ 'is-invalid': item.get('typeID').errors && (item.get('typeID').dirty || item.get('typeID').touched) }"></p-dropdown>
+
+                                <div *ngFor='let validation of validation_messages.typeID' class='invalid-feedback'>
+                                    <div
+                                        *ngIf="item.get('typeID').hasError(validation.type) && item.get('typeID').errors && (item.get('typeID').dirty || item.get('typeID').touched)">
+                                        {{ validation.message | translate}}
+                                    </div>
+                                </div>
+                            </div>
+
+                        </td>
+                        <td class="px-2 text-nowrap pt-11px">
+                            {{'CRM.ENTITY_NOTIFICATION_COMPONENT.LABEL_BEFORE' | translate}}
+                        </td>
+                        <td class="td-long">
+                            <div class="form-group icon-position duration-textbox">
+                                <ng-template #estimatedMinsToolTip>
+                                    <div class="d-flex flex-column" style="text-align:left;">
+                                        {{'CRM.ENTITY_NOTIFICATION_COMPONENT.DURATION_TOOLTIP_HEADER' |translate
+                                        }}<br />
+                                        {{'CRM.ENTITY_NOTIFICATION_COMPONENT.DURATION_TOOLTIP_LINE1' | translate
+                                        }}<br />
+                                        {{'CRM.ENTITY_NOTIFICATION_COMPONENT.DURATION_TOOLTIP_LINE2' | translate
+                                        }}<br />
+                                        {{'CRM.ENTITY_NOTIFICATION_COMPONENT.DURATION_TOOLTIP_LINE3' | translate
+                                        }}<br />
+                                        {{'CRM.ENTITY_NOTIFICATION_COMPONENT.DURATION_TOOLTIP_LINE4' | translate
+                                        }}<br />
+                                    </div>
+                                </ng-template>
+                                <input class="form-control" formControlName="remindBeforeMins" maxlength="10"
+                                placeholder="{{'CRM.ENTITY_NOTIFICATION_COMPONENT.DURATION_PLACEHOLDER' | translate}}"
+                                    [ngClass]="{ 'is-invalid': item.get('remindBeforeMins').errors && (item.get('remindBeforeMins').dirty || item.get('remindBeforeMins').touched) }">
+                                <i class="fas fa-info-circle dark-grey ml-1 info-tooltip"
+                                    tooltipClass="custom-tooltip-class" [ngbTooltip]="estimatedMinsToolTip"
+                                    placement="top bottom" container="body" aria-hidden="true"></i>
+                                <div *ngFor='let validation of validation_messages.remindBeforeMins' class='invalid-feedback'>
+                                    <div
+                                        *ngIf="item.get('remindBeforeMins').hasError(validation.type) && item.get('remindBeforeMins').errors && (item.get('remindBeforeMins').dirty || item.get('remindBeforeMins').touched)">
+                                        {{ validation.message | translate}}
+                                    </div>
+                                </div>
+                            </div>
+
+                        </td>
+                        <td class="action pt-11px pl-1">
+                            <span>
+                                <div class="listOfActions text-center">
+                                    <span> <i class="fas fa-close cursor-pointer dark-grey" (click)="removeRow(i)"
+                                            container="body" placement="top auto"></i> </span>
+                                </div>
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </ng-container>
+</div>
+
+<div class="modal-footer border-top-0 px-3 padding-32">
+    <button type="button" class='btn btn-outline-secondary me-2' id="btn-cancel"
+        (click)="onCloseForm()">
+        {{'CRM.ENTITY_NOTIFICATION_COMPONENT.BUTTON_CANCEL' | translate}}
+    </button>
+    <button type="button" id="btn-save" class='btn btn-primary' (click)="saveData()">
+        {{'CRM.ENTITY_NOTIFICATION_COMPONENT.BUTTON_SAVE' | translate}}
+    </button>
+</div>

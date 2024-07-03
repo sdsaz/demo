@@ -1,7 +1,0 @@
-D:\sampleproject\HelloworldApp\HelloworldApp.web\bin\Release\net7.0\publish\HelloworldApp.web.exe
-D:\sampleproject\HelloworldApp\HelloworldApp.web\bin\Release\net7.0\publish\appsettings.Development.json
-D:\sampleproject\HelloworldApp\HelloworldApp.web\bin\Release\net7.0\publish\appsettings.json
-D:\sampleproject\HelloworldApp\HelloworldApp.web\bin\Release\net7.0\publish\HelloworldApp.web.dll
-D:\sampleproject\HelloworldApp\HelloworldApp.web\bin\Release\net7.0\publish\HelloworldApp.web.deps.json
-D:\sampleproject\HelloworldApp\HelloworldApp.web\bin\Release\net7.0\publish\HelloworldApp.web.runtimeconfig.json
-D:\sampleproject\HelloworldApp\HelloworldApp.web\bin\Release\net7.0\publish\HelloworldApp.web.pdb

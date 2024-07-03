@@ -1,0 +1,14 @@
+::ng-deep .document-viewer-dialog {
+    .ng2-pdf-viewer-container {
+        overflow-x: hidden !important;
+    }
+
+    .pdf-container {
+        >.container {
+            width: 100%;
+            max-width: 100% !important;
+        }
+        
+    }
+}
+

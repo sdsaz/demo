@@ -1,0 +1,235 @@
+<div class="navTabs card-bottom-border border-0">
+    <div class="row width--100 border-bottom first-tabs sub-tabs-left">
+        <div class="col tabs-mobile p-0">
+            <ul class="nav nav-tabs font-12 border-bottom-0" id="workflowDetailTab" role="tablist">
+                <ng-container *ngFor="let tab of navTabs">
+                    <li *ngIf="tab.condition " class="nav-item">
+                        <button class="nav-link nav-subtabs" [ngClass]="selectedTab == tab.tabLink ? 'active' : ''"
+                            id="btn_{{tab.tabLink}}" name="btn_{{tab.tabLink}}" data-bs-toggle="tab"
+                            [attr.data-bs-target]="'#' + tab.tabLink" type="button" role="tab" aria-selected="true"
+                            (click)="setTab(tab)">
+                            {{tab.tabName | translate | configuredEntityName }}
+                        </button>
+                    </li>
+                </ng-container>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="tab-content border-0 mt-0" id="tabContent">
+        <!-- Stage history Start-->
+        <div class="tab-pane fade p-3" id="navStageHistory" role="tabpanel"
+            [ngClass]="selectedTab == 'navStageHistory' ? 'show active' : ''" aria-labelledby="navStageHistory-tab"
+            name="navStageHistory">
+            <ng-container *ngIf="onceStageHistoryClicked">
+                <ngx-tab-level-loader *ngIf="!isStageHistoryLoaded; else showStageHistoryTable"></ngx-tab-level-loader>
+        
+                <ng-template #showStageHistoryTable>
+                    <div class="table-responsive tbl-fixed tbl-task max-height-auto border-0">
+                        <p-treeTable #tt class="tbl-stage-history-list" [value]="entityStageTaskHistory" [columns]="cols"
+                            [scrollHeight]="'500px'" [scrollable]="true" [paginator]="false">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th id="tblActivityColumnHeader" scope="col" *ngFor="let col of columns"
+                                        [ttSortableColumn]="col.field" [ttSortableColumnDisabled]="!col.sort" [hidden]="!col.visible"
+                                        class="{{col.field}} {{col.class}}" scope="col">
+                                        {{col.header | translate}}
+                                        <i *ngIf="col.showHrsInDayTooltip" class="fas fa-info-circle dark-grey info-tooltip"
+                                            tooltipClass="custom-tooltip-class"
+                                            [ngbTooltip]="('HISTORY.TAB_STAGE_HISTORY.TOOLTIP_DURATION' | translate).replace('[[hoursInDay]]',hoursInDay)"
+                                            placement="top top-left" container="body" aria-hidden="true"></i>
+                                        <p-treeTableSortIcon [field]="col.field" *ngIf="col.sort"></p-treeTableSortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
+                                <tr>
+                                    <td class="name">
+                                        <div class="d-flex align-items-center">
+                                            <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                                            <span class="d-flex">
+                                                <!-- Icons -->
+                                                <ng-container [ngSwitch]="rowData.type">
+                                                    <i *ngSwitchCase="1" class="fa-solid fa-square-check fa-fw font-18 mr-2 min-w-24px"></i>
+                                                    <i *ngSwitchCase="2" class="far fa-pause-circle fa-fw font-18 mr-2 min-w-24px"></i>
+                                                    <i *ngSwitchCase="3" class="far fa-play-circle fa-fw font-18 mr-2 min-w-24px"></i>
+                                                </ng-container>
+                                                <!-- Name -->
+                                                <span class="d-inline-block">{{ rowData.name }}</span>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="totalTime">
+                                        <span *ngIf="rowData.hasOwnProperty('totalTime')">{{ rowData.totalTime | timeFramePipe :
+                                            hoursInDay }}</span>
+                                    </td>
+                                    <td class="spentTime">
+                                        <span *ngIf="rowData.hasOwnProperty('spentTime')">{{rowData.spentTime | timeFramePipe :
+                                            hoursInDay}}</span>
+                                    </td>
+                                    <td class="pauseTime">
+                                        <span *ngIf="rowData.hasOwnProperty('pauseTime')">{{rowData.pauseTime | timeFramePipe :
+                                            hoursInDay}}</span>
+                                    </td>
+                                    <td class="assignedTo" *ngIf="!isAssignedToFieldHistoryColumn">
+                                        <div *ngIf="rowData.assignedTo" class="vertical-center flex-nowrap">
+                                            <ngx-common-user-profile
+                                                [userId]="rowData?.assignedTo" 
+                                                [userTypeId]="userTypeID.AssignedTo"
+                                                [privacyLevel]="privacyLevel"
+                                                [isItemDisable]="true"
+                                                [isShowName]="false" 
+                                                userLabel="{{'COMMON.COMMON_USER_PROFILE.LABEL_ASSIGNEDTO' | translate | configuredEntityName}}">
+                                            </ngx-common-user-profile>
+                                        </div>
+                                    </td>
+                                    <td class="verifiedBy" *ngIf="!isVerifiedByFieldHistoryColumn">
+                                        <div *ngIf="rowData.verifiedBy" class="vertical-center flex-nowrap">
+                                            <ngx-common-user-profile
+                                                [userId]="rowData?.verifiedBy" 
+                                                [userTypeId]="userTypeID.VerifiedBy"
+                                                [privacyLevel]="privacyLevel"
+                                                [isItemDisable]="true" 
+                                                [isShowName]="false" 
+                                                userLabel="{{'COMMON.COMMON_USER_PROFILE.LABEL_VERIFIEDBY' | translate | configuredEntityName}}">
+                                            </ngx-common-user-profile>
+                                        </div>
+                                    </td>
+                                    <td class="createdBy">
+                                        <div class="vertical-center flex-nowrap">
+                                            <ngx-common-user-profile 
+                                                [userId]="rowData?.createdBy" 
+                                                [userTypeId]="userTypeID.CreatedBy"
+                                                [privacyLevel]="privacyLevel"
+                                                [isItemDisable]="true" 
+                                                [isShowName]="false"
+                                                userLabel="{{'COMMON.COMMON_USER_PROFILE.LABEL_UPDATEDBY' | translate | configuredEntityName}}">
+                                            </ngx-common-user-profile>
+                                        </div>
+                                    </td>
+                                    <td class="createdOn">
+                                        {{ rowData.created | dateFormatPipe: _commonHelper.globalDateFormateWithTime }}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage" let-columns>
+                                <tr>
+                                    <td [attr.colspan]="columns.length" id="lbl-NoRecordsFound"
+                                        class="table-no-record text-center">
+                                        {{ 'HISTORY.TAB_STAGE_HISTORY.MESSAGE_NO_RECORDS_FOUND' | translate}}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-treeTable>
+                    </div>
+                </ng-template>
+            </ng-container>
+        </div>
+        <!-- Stage history End-->
+
+        <!-- Stage pause history Start-->
+        <div class="tab-pane fade p-3" id="navActivityHistory" role="tabpanel"
+            [ngClass]="selectedTab == 'navActivityHistory' ? 'show active' : ''" aria-labelledby="navActivityHistory-tab" name="navActivityHistory">
+            <ng-container *ngIf="onceActivityHistoryClicked">
+                <ngx-tab-level-loader *ngIf="!isActivityHistoryLoaded; else showActivityHistoryTable"></ngx-tab-level-loader>
+        
+                <ng-template #showActivityHistoryTable>
+                    <div class="table-responsive tbl-fixed tbl-task max-height-auto border-0">
+                        <p-table #pt [responsive]="true" responsiveLayout="stack" [rows]="_commonHelper.DefaultPageSize" paginatorDropdownAppendTo="body"
+                            [rowsPerPageOptions]='_commonHelper.globalRowsPerPageOptions' [columns]="activityCols" [value]="activityHistory"
+                            class="tbl-activity-history-list" [lazy]="true" [autoLayout]="true" [scrollable]="true" [paginator]="false">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th *ngFor="let col of columns" id="tblColumnHeader" scope="col">
+                                        {{ col.header | translate }}
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                <tr *ngIf="!rowData.isLoadMoreRow">
+                                    <td class="type">
+                                        <span class="p-column-title">
+                                            {{columns[0].header | translate}}
+                                        </span>
+                                        <ng-container [ngSwitch]="rowData.typeID">
+                                            <span *ngSwitchCase="1">{{'HISTORY.TAB_ACTIVITY.TYPE_ACTIVITY' | translate}}</span>
+                                            <span *ngSwitchCase="2">{{rowData.entityRecordTypeName}}</span>
+                                            <span *ngSwitchCase="3">{{'HISTORY.TAB_ACTIVITY.TYPE_NOTE' | translate}}</span>
+                                            <span *ngSwitchCase="5">{{'HISTORY.TAB_ACTIVITY.TYPE_TAG' | translate}}</span>
+                                            <span *ngSwitchCase="4">{{rowData.entityRecordTypeName}}</span>
+                                            <span *ngSwitchCase="6">{{'HISTORY.TAB_ACTIVITY.TYPE_DOCUMENT' | translate}}</span>
+                                        </ng-container>
+                                    </td>
+                                    <td class="action">
+                                        <span class="p-column-title">
+                                            {{columns[1].header | translate}}
+                                        </span>
+                                        <ng-container [ngSwitch]="rowData.action">
+                                            <span *ngSwitchCase="1">{{'HISTORY.TAB_ACTIVITY.ACTION_TYPE_ADD' | translate}}</span>
+                                            <span *ngSwitchCase="2">{{'HISTORY.TAB_ACTIVITY.ACTION_TYPE_EDIT' | translate}}</span>
+                                            <span *ngSwitchCase="3">{{'HISTORY.TAB_ACTIVITY.ACTION_TYPE_DELETE' | translate}}</span>
+                                            <span *ngSwitchCase="4">{{'HISTORY.TAB_ACTIVITY.ACTION_TYPE_ADD' | translate}}</span>
+                                        </ng-container>
+                                    </td>
+                                    <td class="name">
+                                        <span class="p-column-title">
+                                            {{columns[2].header | translate}}
+                                        </span>
+                                        <div>
+                                            <ng-container [ngSwitch]="rowData.typeID">
+                                                <span *ngSwitchCase="1" [outerHTML]="rowData.description" class="pre-text"></span>
+                                                <span *ngSwitchDefault>{{rowData.description}}</span>
+                                            </ng-container>
+                                        </div>
+                                    </td>
+                                    <td class="createdBy">
+                                        <span class="p-column-title">
+                                            {{columns[3].header | translate}}
+                                        </span>
+                                        <div *ngIf="rowData.actionBy" class="vertical-center flex-nowrap">
+                                            <ngx-common-user-profile 
+                                                [userId]="rowData?.actionBy" 
+                                                [userTypeId]="userTypeID.CreatedBy"
+                                                [privacyLevel]="privacyLevel"
+                                                [isShowName]="true"
+                                                [isItemDisable]="true"  
+                                                userLabel="{{'COMMON.COMMON_USER_PROFILE.LABEL_ACTIONBY' | translate | configuredEntityName}}">
+                                            </ngx-common-user-profile>
+                                        </div>
+                                    </td>
+                                    <td class="createdOn">
+                                        <span class="p-column-title">
+                                            {{columns[4].header | translate}}
+                                        </span>
+                                        {{rowData.actionDate | dateFormatPipe: _commonHelper.globalDateFormateWithTime }}
+                                    </td>
+                                </tr>
+                                <tr *ngIf="rowData.isLoadMoreRow">
+                                    <td colspan="5">
+                                        <div class="width--100 history-loader">
+                                            <ngx-control-level-loading-bar *ngIf="!isLoadMoreCompleted; else showLoadeMoreButton"></ngx-control-level-loading-bar>
+                                            <ng-template #showLoadeMoreButton>
+                                                <a id="btn-event-open" class='btn btn-link p-0 cursor-pointer' (click)="onLoadMoreActivityClick()">
+                                                    {{'HISTORY.TAB_ACTIVITY.BUTTON_LOAD_MORE' | translate}}
+                                                </a>
+                                            </ng-template>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage" let-columns>
+                                <tr>
+                                    <td [attr.colspan]="columns.length" id="lbl-NoRecordsFound"
+                                        class="table-no-record text-center">
+                                        {{ 'HISTORY.TAB_ACTIVITY.MESSAGE_NO_RECORDS_FOUND' | translate}}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </ng-template>
+            </ng-container>
+        </div>
+        <!-- Stage pause history End-->
+    </div>
+</div>

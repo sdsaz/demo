@@ -1,0 +1,748 @@
+<!-- If id is not exists then display message -->
+<div class="flexlayout" *ngIf="!contactForm && !isInitialLoading && hasPermission">
+    <div class="form_wrapper">
+      <div id="no-access-form">
+        <div class="top">
+          <img src="assets/images/default/NoAccessImage.png" class="mb-3" alt="">
+          <div class="subtitle mt-0">{{'CRM.CONTACT.DETAIL.MESSAGE_CONTACT_NOT_EXISTS' | translate | configuredEntityName}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="page-containted detail-contact" *ngIf="isLoaded && contactForm && hasPermission">
+    <!-- Header Start-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 mb-10px">
+                <div class="detail-header h-100">
+                    <div class="page-content card border-0 mb-0 h-100">
+                        <div class="card-body p-card">
+                            <div class="row vertical-center h-100">
+                                <div class="col-xl col-lg-4 col-md-12 mb-3 mb-lg-0 mb-sm-4 d-flex align-self-start">
+                                    <div class="float-left text-center">
+                                        <div id="entity-icon" class="entity-icon">
+                                            <i class="fas fa-address-card" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                    <div class="stage-details float-start">
+                                        <p class="m-0">
+                                            <span class="card-title mb-1">
+                                                <label id="headingEntity">{{ 'CRM.CONTACT.DETAIL.TITLE' | translate | configuredEntityName }}</label>
+                                                <div class="overflow-box">
+                                                    <strong id="nameEntity" class="pre-text">{{copyOfContact.name}}</strong>
+                                                </div>
+                                                <div>
+                                                    <span id="entityRating" class="mt-2 h-21 mr-2 vertical-center">
+                                                        <entity-review-display [entityTypeId]="entityTypeId" [entityId]="contactId" [isFromKanbanOrListView]="false"
+                                                            [isEditPermission]="isEditContact && !(contact.isPaused ?? false)"></entity-review-display>
+                                                    </span>
+                                                    <span *ngIf="contact.entityRecordTypeName!=null" class="mt-2 h-21 badge badge-primary badge--status mr-2" id="badgeEntityRecordType">
+                                                        {{contact.entityRecordTypeName}}
+                                                    </span>
+                                                    <span [ngClass]="contact.isActive == true ? 'bg-primary' : 'bg-danger'" class="mt-2 h-21 badge badge--status" id="badgeActiveInactive">
+                                                        {{ contact.isActive | active }}
+                                                    </span>
+                                                    <span id="badgePaused" *ngIf="contact.isPaused"
+                                                        class="mt-2 h-21 badge badge-danger badge--status ml-2">
+                                                        {{ contact.isPaused == true ? 'Paused' : '' }}
+                                                    </span>
+                                                </div>
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-xl-8 col-lg details-section col-md-12 align-self-start">
+                                    <div class="row">
+                                        <div *ngIf="isRelatedAccount" class="col-xl col-lg-6 col-md-3 col-sm-4 mb-xl-0 mb-lg-3 mb-sm-3 mb-1 header-value col-header">
+                                            <div class="row">
+                                                <div class="col-sm-12 col-header-label">
+                                                    <label>{{
+                                                        'CRM.CONTACT.DETAIL.HEADER_RELATEDACCOUNT' | translate | configuredEntityName }}</label>
+                                                </div>
+                                                <div class="col-sm-12 col">
+                                                    <a [routerLink]="'/accounts/details/' + contact.accountID" id="relatedAccount" [ngClass]="isViewAccount ? 'dark-blue font-weight-bold no-underline cursor-pointer pre-text' : 'no-link'">{{contact.accountName}}</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="isEntityWorkflow && isListViewLayout"
+                                            class="col-header col-xl col-lg-6 col-md-3 col-sm-4 mb-xl-0 mb-lg-3 mb-sm-3 mb-1 header-value">
+                                            <div class="row">
+                                                <div class="col-sm-12 col-header-label">
+                                                    <label>{{
+                                                        'CRM.CONTACT.DETAIL.STATUS' | translate }}</label>
+                                                </div>
+                                                <div class="col-sm-12 col">
+                                                    <p class="m-0"><strong id="statusContact">{{selectedStage?.name}}</strong></p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                            <div class="col-xl col-lg-6 col-md-3 col-sm-4 mb-xl-0 mb-lg-3 mb-sm-3 mb-1 header-value col-header">
+                                            <div class="row">
+                                                <div class="col-sm-12 col-header-label col-created-label">
+                                                    <label>{{ 'CRM.CONTACT.DETAIL.HEADER_CREATED' | translate }}</label>
+                                                </div>
+                                                <div class="col-sm-12 col">
+                                                    <p class="m-0" id="lblCreatedDate">
+                                                        {{contact.created | date }}
+                                                    </p>
+                                                </div>
+                                            </div>                                
+                                        </div>
+                                        <div class="col-header col-xl col-lg-6 col-md-3 col-sm-4 mb-xl-0 mb-lg-3 mb-sm-3 mb-1 header-value">
+                                            <div class="row">
+                                                <div class="col-sm-12 col-header-label col-type-label">
+                                                    <label>{{ 'CRM.CONTACT.DETAIL.HEADER_TYPE' | translate }}</label>
+                                                </div>
+                                                <div class="col-sm-12 col">
+                                                    <p class="m-0" id="lblType">
+                                                        {{contact.typeName}}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="isEntityWorkflow" class="col-header col-xl col-time-section col-lg-6 col-md-3 col-sm-4 mb-xl-0 mb-lg-3 mb-sm-3 mb-1 header-value">
+                                            <div class="row mb-1 mb-sm-2">
+                                                <div class="col-sm-12 col-header-label">
+                                                    <label>{{ 'CRM.CONTACT.DETAIL.TOTAL_SPENT_TIME' | translate }}</label>
+                                                    <i class="fas fa-info-circle dark-grey ml-1 info-tooltip" tooltipClass="custom-tooltip-class" [ngbTooltip]="('CRM.CONTACT.DETAIL.TOOLTIP_DURATION' | translate).replace('[[hoursInDay]]',hoursInDay)" placement="top top-left" container="body" aria-hidden="true"></i>
+                                                </div>
+                                                <div class="col-sm-12 col">
+                                                    <p-skeleton *ngIf="!totalSpentTime; else showTotalSpentTime" width="8rem"></p-skeleton>
+                                                    <ng-template #showTotalSpentTime>
+                                                        <p class="m-0" id="lblTotalSpentTime">
+                                                            {{ totalSpentTime }}
+                                                        </p>
+                                                      </ng-template>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-1 mb-sm-2">
+                                                <div class="col-sm-12 col-header-label">
+                                                    <label>{{ 'CRM.CONTACT.DETAIL.TOTAL_EFFECTIVE_TIME' | translate }}</label>
+                                                    <i class="fas fa-info-circle dark-grey ml-1 info-tooltip" tooltipClass="custom-tooltip-class" [ngbTooltip]="('CRM.CONTACT.DETAIL.TOOLTIP_DURATION' | translate).replace('[[hoursInDay]]',hoursInDay)" placement="top top-left" container="body" aria-hidden="true"></i>
+                                                </div>
+                                                <div class="col-sm-12 col">
+                                                    <p-skeleton *ngIf="!totalEffectiveTime; else showTotalEffectiveTime" width="8rem"></p-skeleton>
+                                                    <ng-template #showTotalEffectiveTime>
+                                                        <p class="m-0" id="lblTotalEffectiveTime">
+                                                            {{ totalEffectiveTime }}
+                                                        </p>
+                                                      </ng-template>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12 col-header-label">
+                                                    <label>{{ 'CRM.CONTACT.DETAIL.TOTAL_PAUSE_TIME' | translate }}</label>
+                                                    <i class="fas fa-info-circle dark-grey ml-1 info-tooltip" tooltipClass="custom-tooltip-class" [ngbTooltip]="('CRM.CONTACT.DETAIL.TOOLTIP_DURATION' | translate).replace('[[hoursInDay]]',hoursInDay)" placement="top top-left" container="body" aria-hidden="true"></i>
+                                                </div>
+                                                <div class="col-sm-12 col">
+                                                    <p-skeleton *ngIf="!totalPauseTime; else showTotalPauseTime" width="8rem"></p-skeleton>
+                                                    <ng-template #showTotalPauseTime>
+                                                        <p class="m-0" id="lblTotalPauseTime">
+                                                            {{ totalPauseTime }}
+                                                        </p>
+                                                      </ng-template>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="back-arrow col-lg">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <button id="btn-back" class='btn btn-secondary mb-12px' type='button' (click)="backToList()">
+                                                {{ 'CRM.CONTACT.DETAIL.BUTTON_BACK' | translate }}
+                                            </button>
+                                        </div>
+                                        <div *ngIf="isEditContact && !contact.isPaused" class="col-12">
+                                            <div class="dropdown">
+                                                <button class="btn btn-primary dropdown-toggle btn-action"
+                                                    type="button" id="dropdownActionMenu"
+                                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                                    {{ 'CRM.CONTACT.DETAIL.BUTTON_ACTION' | translate }}
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownActionMenu">
+                                                    <a id="link-change-status" (click)="onActionChangeStatus()" class="dropdown-item menu--item">
+                                                        <i class="fas fa-toggle-on" aria-hidden="true"></i>
+                                                        {{'CRM.CONTACT.DETAIL.ACTION_TITLE_CHANGESTATUS' | translate }}
+                                                    </a>
+                                                    <a *ngIf="isDeleteContact" id="link-delete" (click)="onDeleteContact(contact.id)" class="dropdown-item menu--item">
+                                                        <i class="far fa-trash-alt me-1" aria-hidden="true"></i>
+                                                        {{'CRM.CONTACT.DETAIL.ACTION_TITLE_DELETE' | translate }}
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-12 col-lg-12 align-self-end align-tags top-margin-tags">
+                                    <div class="vertical-bottom flex-nowrap justify-content-between">
+                                        <entity-tags-view [refreshEntityTag]="refreshEntityTag" [entityId]="contactId"
+                                            [entityTypeId]="entityTypeId" [entityRecordTypeId]="entityRecordTypeId">
+                                        </entity-tags-view>
+                                        <div class="pt-3 pl-3 pe-2 d-flex bookmark-icon">
+                                            <ngx-bookmark [entityTypeId]="entityTypeId" [entityId]="contactId" [isEditPermission]="isEditContact && !(contact.isPaused ?? false)" 
+                                                class="font-18 me-3" [isFromKanbanOrListView]="false">
+                                            </ngx-bookmark>
+                                            <div *ngIf="contact.isShowPauseOrResume">
+                                                <i *ngIf="contact.isPaused && (this._loggedInUser.userId == contact.assignedTo || isResumeRecord)"
+                                                    class="far fa-play-circle font-18 dark-grey cursor-pointer" tooltipClass="tooltip-backward-small"
+                                                    [ngbTooltip]="'CRM.CONTACT.DETAIL.TOOLTIP_RESUME'| translate" id="resumeButton" container="body"
+                                                    (click)="onContactStagePauseChanged(contact, false)"></i>
+                                                <i *ngIf="!isEditContact && contact.isPaused && (this._loggedInUser.userId != contact.assignedTo && !isResumeRecord)"
+                                                    class="far fa-play-circle font-18 dark-grey cursor-pointer" tooltipClass="tooltip-backward-small"
+                                                    [ngbTooltip]="'CRM.CONTACT.DETAIL.MESSAGE_RESUME_NOT_ACCESS'| translate" id="resumeButtonNotAccess"
+                                                    container="body"></i>
+                                                <i *ngIf="isEditContact && !contact.isPaused && (this._loggedInUser.userId == contact.assignedTo || isResumeRecord)"
+                                                    class="far fa-pause-circle font-18 dark-grey cursor-pointer" tooltipClass="tooltip-backward-small"
+                                                    [ngbTooltip]="'CRM.CONTACT.DETAIL.TOOLTIP_PAUSE'| translate" id="pauseButton" container="body"
+                                                    (click)="onContactStagePauseChanged(contact, true)"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Header End-->
+
+    <!-- Stage Start-->
+    <ng-container *ngIf="isEntityWorkflow && !isListViewLayout">
+        <div class="page-content container-fluid stage-process">
+            <!-- Stages Buttons List Start -->
+            <div class="con_scroll d-none d-lg-block d-md-block d-sm-none d-xs-none">
+                <div class="btn-group btn-group-toggle arrow-steps mb-10px" data-toggle="buttons" #menuContent>
+                    <button type="button" class="btn btn-secondary btn--arrow" *ngFor="let stage of contactStages"
+                        id="btn-stage-change-{{(stage.name | lowercase)}}" placement="top bottom" [ngbTooltip]="stage.name"
+                        container="body" triggers="hover" tooltipClass="tooltip-backward-small"
+                        [disabled]="!isEditContact || !contact.isActive || contact.isPaused" 
+                        class="{{ 'btn btn-secondary btn--arrow ' + (stage | stageCss: currentStage) }}"
+                        (click)="onMarkStageAsComplete(stage.id)">
+                        <input type="radio" [name]="stage.name" autocomplete="off">
+                        <span class="btn_name">{{ stage.name }}</span>
+                    </button>
+                </div>
+            </div>
+    
+            <div class="d-lg-none d-md-none d-sm-block d-xs-block py-2">
+                <label>{{ 'CRM.CONTACT.DETAIL.STAGE_TITLE' | translate }}</label>
+                <p-dropdown id="drp-StatusChange" *ngIf="selectedStage" class="form-control mb-2"
+                    [options]="contactStages"
+                    [disabled]="!isEditContact || !contact.isActive || contact.isPaused" 
+                    [(ngModel)]="selectedStage" (onChange)="onMarkStageAsComplete($event.value.id)">
+                    <ng-template let-stage pTemplate="selectedItem">
+                        <div>{{stage.name}}</div>
+                    </ng-template>
+                    <ng-template let-stage pTemplate="item">
+                        <div>{{stage.name}}</div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+            <!-- Stages Buttons List End -->
+        </div>
+    </ng-container>
+    <!-- Stage End-->
+
+    <!-- Body Start-->
+    <div class="page-content container-fluid pr-0">
+        <div class="row h---100vh w-100">
+            <div class="col col-xl-8 col-lg-12 mb-xl-0 mb-2 pr-0 details-box">
+                <!-- nav Tab Menu Start -->
+                <div class="navTabs card-bottom-border border-0 p-card">
+                    <div class="row width--100 border-bottom m-0 first-tabs">
+                        <ng-container>
+                            <ngx-globle-nav-tab [navTabs]="navTabs" [isNativeTab]="isNativeTab" (setTab)="checkTabCall($event,1)"
+                                class="col tabs-mobile p-0" (closeTab)="closeNavTab($event)"
+                                [ngClass]="{'edit-icon-section': isReadOnly && !(tabsNameHideAction | showHidePencilButton: activeTab)}"></ngx-globle-nav-tab>
+                        </ng-container>
+                        <div class="col-auto edit-form-icon px-0">
+                            <div *ngIf="isEditContact && contact.isActive && !contact.isPaused">
+                                <i class="fas fa-pencil-alt pencil-icon fa-lg clr-blue float-right cursor-pointer" id="btnEditTabDetail"
+                                    (click)="showHideDetailTab('EDIT')" *ngIf="isReadOnly && !(tabsNameHideAction | showHidePencilButton: activeTab)" aria-hidden="true"></i>
+                            </div>
+                            <!-- Global save and cancel start -->
+                            <div class="form-update-icons" *ngIf="!isReadOnly && !(tabsNameHideAction | showHidePencilButton: activeTab)">
+                                <i id="btn-cancel" *ngIf="isEditContact && contact.isActive && !contact.isPaused"
+                                    class="fas fa-times fa-lg dark-grey float-right mr-3"
+                                    (click)="showHideDetailTab('CANCEL')" aria-hidden="true"></i>
+                                <i *ngIf="isEditContact && contact.isActive && !contact.isPaused" id="btn-save"
+                                    class="fas fa-check fa-lg clr-blue float-right" (click)="showHideDetailTab('SAVE')" aria-hidden="true"></i>
+                            </div>
+                            <!-- Global save and cancel end -->
+                        </div>
+                    </div>
+
+                    <!-- Tab Content Start -->
+                    <form [hidden]="isAdditionalTab" [formGroup]="contactForm">
+                        <div class="tab-content border-0 mt-0" id="contactDetailTabContent">
+                            <!-- Details Start-->
+                            <div class="tab-pane fade px-0 p-0" id="navDetails" role="tabpanel" [ngClass]="selectedTab == 'navDetails' ? 'show active' : ''"
+                                aria-labelledby="navDetails-tab" name="navDetails">
+
+                                <!-- Basic Information Start-->
+                                <div class="card border-0 m-0 pt-md-0 pt-3">
+                                    <div class="card-header btn-card-edit py-0">
+                                        <span class="vertical-center py-md-3 pt-0 pb-3 line-height-1">{{
+                                            'CRM.CONTACT.DETAIL.TAB_DETAILS.BASIC_INFO' | translate }}</span>
+                                    </div>
+                                    <div class='card-body'>
+                                        <div class='row'>
+                                            <div class='col-sm-4 form-group'>
+                                                <label>
+                                                    {{ 'CRM.CONTACT.DETAIL.TAB_DETAILS.CONTACT_TITLE' | translate }}
+                                                    
+                                                </label>
+                                                <div *ngIf="isReadOnly" class="disable-text pre-text">{{ contact.title ? contact.title : '&nbsp;' }}</div>
+                                                <input #contactTxtName *ngIf="!isReadOnly" id="txt-title" type="text"
+                                                    class="form-control" formControlName="title"
+                                                    [(ngModel)]="contact.title"
+                                                    [ngClass]="{ 'is-invalid': contactfrm.title.errors }" trimValue>
+                                                <div *ngFor='let validation of contactValidationMessages.title'
+                                                    class='invalid-feedback'>
+                                                    <div
+                                                        *ngIf='contactfrm.title.hasError(validation.type) && contactfrm.title.errors' id="errorNameIsRequired">
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class='col-sm-4 form-group'>
+                                                <label>
+                                                    {{ 'CRM.CONTACT.DETAIL.TAB_DETAILS.FIRSTNAME' | translate }}
+                                                    <span class="mandatory"></span>
+                                                </label>
+                                                <div *ngIf="isReadOnly" class="disable-text pre-text">{{ contact.firstName ? contact.firstName : '&nbsp;' }}</div>
+                                                <input #contactTxtName *ngIf="!isReadOnly" id="txt-firstname" type="text"
+                                                    class="form-control" formControlName="firstname"
+                                                    [(ngModel)]="contact.firstName"
+                                                    [ngClass]="{ 'is-invalid': contactfrm.firstname.errors && (contactfrm.firstname.dirty || contactfrm.firstname.touched)}">
+                                                <div *ngFor='let validation of contactValidationMessages.firstname'
+                                                    class='invalid-feedback'>
+                                                    <div
+                                                        *ngIf='contactfrm.firstname.hasError(validation.type) && contactfrm.firstname.errors && (contactfrm.firstname.dirty || contactfrm.firstname.touched)' id="errorNameIsRequired">
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class='col-sm-4 form-group'>
+                                                <label>
+                                                    {{ 'CRM.CONTACT.DETAIL.TAB_DETAILS.LASTNAME' | translate }}
+                                                    <span class="mandatory"></span>
+                                                </label>
+                                                <div *ngIf="isReadOnly" class="disable-text pre-text">{{ contact.lastName ? contact.lastName : '&nbsp;' }}</div>
+                                                <input #contactTxtName *ngIf="!isReadOnly" id="txt-lastname" type="text"
+                                                    class="form-control" formControlName="lastname"
+                                                    [(ngModel)]="contact.lastName"
+                                                    [ngClass]="{ 'is-invalid': contactfrm.lastname.errors && (contactfrm.lastname.dirty || contactfrm.lastname.touched)}">
+                                                <div *ngFor='let validation of contactValidationMessages.lastname'
+                                                    class='invalid-feedback'>
+                                                    <div
+                                                        *ngIf='contactfrm.lastname.hasError(validation.type) && contactfrm.lastname.errors && (contactfrm.lastname.dirty || contactfrm.lastname.touched)' id="errorNameIsRequired">
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class='col-sm-4 form-group'>
+                                                <label>
+                                                    {{ 'CRM.CONTACT.DETAIL.TAB_DETAILS.Name' | translate }}
+                                                </label>
+                                                <div *ngIf="isReadOnly" class="disable-text pre-text">{{ contact.name ? contact.name : '&nbsp;' }}</div>
+                                                <input #contactTxtName *ngIf="!isReadOnly" id="txt-name" type="text"
+                                                    class="form-control" formControlName="name"
+                                                    [(ngModel)]="contact.name"
+                                                    [ngClass]="{ 'is-invalid': contactfrm.name.errors && (contactfrm.name.dirty || contactfrm.name.touched)}">
+                                                <div *ngFor='let validation of contactValidationMessages.name'
+                                                    class='invalid-feedback'>
+                                                    <div
+                                                        *ngIf='contactfrm.name.hasError(validation.type) && contactfrm.name.errors && (contactfrm.name.dirty || contactfrm.name.touched)' id="errorNameIsRequired">
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class='col-sm-4 form-group'>
+                                                <label>{{'CRM.CONTACT.DETAIL.TAB_DETAILS.EMAIL' | translate}}</label>
+                                                <div class="disable-text" *ngIf="isReadOnly">
+                                                    {{ contact.email ? contact.email : '&nbsp;' }}
+                                                </div>
+                                                <input *ngIf="!isReadOnly" id="txt-email" type="email" class="form-control" formControlName="email"
+                                                    [(ngModel)]="contact.email" [ngClass]="{ 'is-invalid': contactfrm.email.errors && (contactfrm.email.dirty || contactfrm.email.touched)}" trimValue>
+                                                <div *ngFor='let validation of contactValidationMessages.email'
+                                                    class='invalid-feedback'>
+                                                    <div
+                                                        *ngIf='contactfrm.email.hasError(validation.type) && contactfrm.email.errors && (contactfrm.email.dirty || contactfrm.email.touched)' id="errorEmailMustBeValidEmailAddress">
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class='col-sm-4 form-group'>
+                                                <label>
+                                                    {{'CRM.CONTACT.DETAIL.TAB_DETAILS.PHONE' | translate}}
+                                                </label>
+                                                <div *ngIf="isReadOnly" class="disable-text">
+                                                    <a *ngIf="contact.phone else blankphone" id="link-phone"
+                                                        class="dark-blue font-weight-bold no-underline cursor-pointer" [href]="contact.phone | phone: 'link'">
+                                                        {{contact.countryCode}} {{ contact.phoneNumber | mask: contact['phoneMask'] }}
+                                                    </a>
+                                                    <ng-template #blankphone>
+                                                        <div>&nbsp;</div>
+                                                    </ng-template>
+                                                </div>
+                                                <div *ngIf="!isReadOnly">
+                                                    <ngx-phone-control  formControlName="phone"></ngx-phone-control>
+                                                    <div *ngFor='let validation of contactValidationMessages.phone' class='invalid-feedback'>
+                                                        <div *ngIf='contactfrm.phone.hasError(validation.type) && submitted && contactfrm.phone.errors' id="errorPhoneMustBeValidPhoneNumber">
+                                                            {{ validation.message | translate }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class='col-sm-4 form-group'>
+                                                <label>
+                                                    {{'CRM.CONTACT.DETAIL.TAB_DETAILS.BIRTHDATE' | translate}}
+                                                </label>
+                                                <div *ngIf="isReadOnly" class="disable-text">
+                                                    {{ contact.birthDate == null ? '&nbsp;' : contact.birthDate | dateFormatPipe: _commonHelper.globalDateFormate }}
+                                                </div>
+                                                <p-calendar *ngIf="!isReadOnly" id="dp-birthDate" class="time-calendar" formControlName="birthDate"
+                                                    [dateFormat]="_commonHelper.globalDatePickerFormate" [placeholder]="_commonHelper.globalDatePlaceholder"
+                                                    [dateMask]="_commonHelper.globalDateMask" [readonlyInput]="false" icon="fas fa-calendar-alt dark-grey"
+                                                    [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true" [selectOtherMonths]="true" [showTime]="false"
+                                                    [minDate]="_commonHelper.globalMinDate" [maxDate]=" todaysDate" [yearRange]="currentYearRange" [(ngModel)]="contact.birthDate">
+                                                </p-calendar>
+                                                <div *ngFor='let validation of contactValidationMessages.birthDate' class='invalid-feedback'>
+                                                    <div *ngIf='contactfrm.birthDate.hasError(validation.type) && submitted && contactfrm.birthDate.errors'
+                                                        id="errorBirthDateMustBeValidBirthDate">
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class='col-sm-4 form-group'>
+                                                <label>{{'CRM.CONTACT.DETAIL.TAB_DETAILS.GENDER' | translate}}</label>
+                                                <div class="disable-text" *ngIf="isReadOnly">
+                                                    {{ (genders | displayValueFinder: {intValue1:contact.gender})?.length
+                                                    ?
+                                                    ( genders | displayValueFinder: {intValue1:contact.gender})[0].name : ' ' }}
+                                                </div>
+
+                                                <p-dropdown *ngIf="!isReadOnly" id="drp-gender" class="form-control" formControlName="gender" [filter]="true" [resetFilterOnHide]="false" [showClear]="true"
+                                                    [options]="genders" placeholder="{{'CRM.CONTACT.DETAIL.TAB_DETAILS.GENDER_PLACEHOLDER' | translate}}" 
+                                                    optionLabel="name" optionValue="intValue1" [(ngModel)]="contact.gender">
+                                                </p-dropdown>
+                                                <div *ngFor='let validation of contactValidationMessages.gender' class='invalid-feedback'>
+                                                    <div *ngIf='contactfrm.gender.hasError(validation.type) && submitted && contactfrm.gender.errors' id="errorGenderMustBeValidGender">
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class='col-sm-4 form-group'>
+                                                <label>{{'CRM.CONTACT.DETAIL.TAB_DETAILS.SSN' | translate}}</label>
+                                                <div class="disable-text view-icon-alignment" *ngIf="isReadOnly">
+                                                    <span *ngIf="encryptSSN">
+                                                        {{ contact.ssn != null && contact.ssn != '' ? (contact.ssn | maskSsn) : '' }}
+                                                    </span>
+                                                    <span *ngIf="decryptSSN">
+                                                        {{ contact.ssn != null && contact.ssn != '' ? (contact.ssn | mask: _commonHelper.globalSsnFormate) : ''}}
+                                                    </span>
+                                                    <i class="far fa-eye dark-grey cursor-pointer" *ngIf="encryptSSN" (click)="toggleSSN()" aria-hidden="true"></i>
+                                                    <i class="far fa-eye-slash dark-grey cursor-pointer" *ngIf="decryptSSN" (click)="toggleSSN()" aria-hidden="true"></i>
+                                                </div>
+                                                <input *ngIf="!isReadOnly" type="text" id="txt-ssn" class="form-control ht--40"  [mask]="_commonHelper.globalSsnFormate"
+                                                    formControlName="ssn" (input)='contactfrm.ssn.invalid' [ngClass]="{ 'is-invalid': submitted && contactfrm.ssn.errors }"
+                                                    [(ngModel)]="contact.ssn">
+                                                <div *ngFor='let validation of contactValidationMessages.ssn' class='invalid-feedback'>
+                                                    <div *ngIf='contactfrm.ssn.hasError(validation.type) && submitted && contactfrm.ssn.errors' id="errorSsnMustBeValidSsn">
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class='col-sm-4 form-group'>
+                                                <label>{{'CRM.CONTACT.DETAIL.TAB_DETAILS.TYPE' | translate}}<span class="mandatory"></span></label>
+                                                <div class="disable-text" *ngIf="isReadOnly">
+                                                    {{ (contactTypes | displayValueFinder: {intValue1:contact.typeId})?.length
+                                                    ?
+                                                    ( contactTypes | displayValueFinder: {intValue1:contact.typeId})[0].name : ' ' }}
+                                                </div>
+                                                <ngx-control-level-loading-bar *ngIf="showContactTypeLoader"></ngx-control-level-loading-bar>
+                                                <p-dropdown *ngIf="!isReadOnly" id="drp-contactTypes" class="form-control" formControlName="typeId" 
+                                                    [options]="contactTypes" placeholder="{{'CRM.CONTACT.DETAIL.TAB_DETAILS.TYPE_PLACEHOLDER' | translate}}" [filter]="true" [resetFilterOnHide]="false" [showClear]="true"
+                                                    optionLabel="name" optionValue="intValue1"  (onChange)="onContactTypeSelectionChange($event.value)"
+                                                    [ngClass]="{ 'is-invalid': submitted && contactfrm.typeId.errors }">
+                                                    [(ngModel)]="contact.typeId">
+                                                </p-dropdown>
+                                                <div *ngFor='let validation of contactValidationMessages.typeId' class='invalid-feedback'>
+                                                    <div *ngIf="contactfrm.typeId.hasError(validation.type) && submitted && contactfrm.typeId.errors">
+                                                        {{ validation.message | translate}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="isEntityWorkflow" class='col-sm-4 form-group'>
+                                                <label>{{ 'CRM.CONTACT.DETAIL.TAB_DETAILS.ASSIGNED_TO' | translate
+                                                    }}</label>
+                                                <ng-container *ngIf="isReadOnly; else templateDrpAssignedTo">
+                                                    <div class="disable-text">
+                                                        {{
+                                                        contact.assignedName != null &&
+                                                        contact.assignedName != '' ?
+                                                        contact.assignedName : ''
+                                                        }}
+                                                    </div>
+                                                </ng-container>
+                                        
+                                                <ng-template #templateDrpAssignedTo>
+                                                    <!-- Assigned To Loading Bar -->
+                                                    <ngx-control-level-loading-bar *ngIf="showAssignedToLoader"></ngx-control-level-loading-bar>
+                                                
+                                                    <p-dropdown *ngIf="!isReadOnly" id="drp-assignedToIDs"
+                                                        [placeholder]="('CRM.CONTACT.DETAIL.TAB_DETAILS.FILTER_PLACEHOLDER_ASSIGNED_TO' | translate)"
+                                                        class="form-control" [options]="assignedToUsers" formControlName="assignedTo" [(ngModel)]="contact.assignedTo"
+                                                        [filter]="true" (onFilter)="assignedToOnFilter($event)" (onChange)="assignedToOnChange($event)"
+                                                        [resetFilterOnHide]="false">
+                                                    </p-dropdown>
+                                                </ng-template>
+                                            </div>
+                                            <div *ngIf="isEntityWorkflow && !isListViewLayout" class='col-sm-4 form-group'>
+                                                <!-- stage task start -->
+                                                <label>{{ 'CRM.CONTACT.DETAIL.TAB_DETAILS.TASKS' | translate }}</label>
+                                                <div *ngIf="isReadOnly && currentStageTask != null" class="disable-text">
+                                                    {{
+                                                    currentStageTask && currentStageTask.length > 0
+                                                    ? (contact.selectedStageTaskIds?.length ?? 0) + ' of ' +
+                                                    currentStageTask.length + '
+                                                    completed' : ''
+                                                    }}
+                                        
+                                                </div>
+                                                <div *ngIf="isReadOnly && (currentStageTask == undefined || currentStageTask == null)" class="disable-text">
+                                                    {{ 'CRM.CONTACT.DETAIL.TAB_DETAILS.NO_TASKS' | translate }}
+                                                </div>
+                                        
+                                                <div *ngIf="!isReadOnly && currentStageTask != null"
+                                                    class="input-group entity-dropdown custom-dropdown-muliselect">
+                                                    <p-multiSelect [options]="currentStageTask" id="drp-stage-task" class="entity-multiSelect"
+                                                        optionLabel="name" formControlName="selectedStageTaskIds" [(ngModel)]="contact.selectedStageTaskIds"
+                                                        [maxSelectedLabels]="500" [showToggleAll]="false" [filter]="false" [showHeader]="false"
+                                                        [displaySelectedLabel]='false'
+                                                        [defaultLabel]="currentStageTask && currentStageTask.length > 0? (contact.selectedStageTaskIds?.length ?? 0) + ' of ' + currentStageTask.length + ' completed' : ''">
+                                                    </p-multiSelect>
+                                                </div>
+                                                <div class="min-height-38px disable-text"
+                                                    *ngIf="!isReadOnly && (currentStageTask == null || currentStageTask == '')">
+                                                    {{ 'CRM.CONTACT.DETAIL.TAB_DETAILS.NO_TASKS' | translate }}
+                                                </div>
+                                                <!-- stage task end -->
+                                            </div>
+                                            <div class='col-sm-4 form-group' *ngIf="isEntityWorkflow && isListViewLayout">
+                                                <label>{{'CRM.CONTACT.DETAIL.TAB_DETAILS.STATUS' | translate}} <span class="mandatory"></span></label>
+                                                <div class="disable-text" *ngIf="isReadOnly">
+                                                    {{ (contactStages | displayValueFinder: {id:contact.entityStageId})?.length
+                                                    ?
+                                                    (contactStages | displayValueFinder: {id:contact.entityStageId})[0].name : ' ' }}
+                                                </div>
+                                                <p-dropdown *ngIf="!isReadOnly" id="drp-stageId" class="form-control" formControlName="entityStageId"
+                                                    [filter]="true" [resetFilterOnHide]="false" [options]="contactStages"
+                                                    placeholder="{{'CRM.CONTACT.DETAIL.TAB_DETAILS.STATUS_PLACEHOLDER' | translate}}" optionLabel="name"
+                                                    optionValue="id" [(ngModel)]="contact.entityStageId"
+                                                    [ngClass]="{ 'is-invalid': submitted && contactfrm.entityStageId.errors }">
+                                                </p-dropdown>
+                                                <div *ngFor='let validation of contactValidationMessages.entityStageId' class='invalid-feedback'>
+                                                    <div *ngIf='contactfrm.entityStageId.hasError(validation.type) && submitted && contactfrm.entityStageId.errors'
+                                                        id="errorStageIsRequired">
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Details End-->
+
+                            <ng-container *ngIf="entityRelationComponents.length > 0">
+                                <div class="tab-pane fade p-3 search-wrapper"
+                                    [ngClass]="selectedTab == (tab.tabLink | removeWhiteSpace) ? 'show active' : ''"
+                                    *ngFor="let tab of entityRelationTabs; let i = index" id="{{ tab.tabLink | removeWhiteSpace }}"
+                                    role="tabpanel">
+                                    <div class="table-responsive">
+                                        <ng-container *ngIf="tab.isTabLoaded">
+                                            <ngx-entity-relation [entityRelationComponent]="entityRelationComponents[i]" [entityId]="contactId"
+                                                [entityTypeId]="entityTypeId"
+                                                [isShowToEntityAndAddEntity]="contact.isActive && !contact?.isPaused"></ngx-entity-relation>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                            </ng-container>
+
+                            <!-- Custom Start-->
+                            <div class="tab-pane fade px-0 pt-0" [ngClass]="selectedTab == ('nav' + tab.tabName | removeWhiteSpace) ? 'show active' : ''"
+                                *ngFor="let tab of formDataJSON; let i = index" id="{{ 'nav' + tab.tabName | removeWhiteSpace }}" name="navCustom"
+                                role="tabpanel" aria-labelledby="navCustom-tab">
+                                <!-- Section Start-->
+                                <div class='card border-0 m-0 pt-md-0 pt-3'
+                                    *ngFor="let section of tab.sections; let j = index">
+                                    <div class="card-header btn-card-edit py-0">
+                                        <span *ngIf="section.sectionName" class="vertical-center py-md-3 pt-0 pb-3 line-height-1">
+                                            {{ section.sectionName }}
+                                        </span>
+                                    </div>
+                                    <div class='card-body'>
+                                        <div class='row'>
+                                            <ngx-custom-field [formGroup]="contactForm" [section]="section" [controls]="section.controls"
+                                                [customFieldJSONData]="contact.customFieldJSONData" [isReadOnly]="isReadOnly" [submitted]="submitted" [refreshTabularDataSource]="refreshCustomFieldDatasource"
+                                                [currencySymbol]="currencySymbol" [entityID]="contactId" [entityTypeID]="entityTypeId" [entityRecordTypeID]="entityRecordTypeId"></ngx-custom-field>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Section End-->
+                            </div>
+                            <!-- Custom End-->
+
+                            <!-- Work Task Start-->
+                            <div class="tab-pane fade p-3 search-wrapper" id="navWorkTasks" role="tabpanel"
+                                [ngClass]="selectedTab == 'navWorkTasks' ? 'show active' : ''" aria-labelledby="navWorkTasks-tab"
+                                name="navWorkTasks">
+                                <div class="mb-3 vertical-center justify-content-end dropdown-with-add" *ngIf="isEditContact && isAddWorkTask && contact.isActive && !contact?.isPaused">
+                                    <button *ngIf="onceWorkTaskClicked" type="button" id="btn-add-workTask" class="btn btn-primary ml-3"
+                                        (click)="addWorkTask()">
+                                        <i *ngIf="workTaskSubTypeDetails?.iconClass" class="{{workTaskSubTypeDetails?.iconClass}} mr-1"
+                                            aria-hidden="true"></i>
+                                        {{('CRM.CONTACT.DETAIL.TAB_WORKTASKS.ADD_WORKTASK_PREFIX' | translate)+" "+
+                                        workTaskSubTypeDetails?.name}}
+                                    </button>
+                                </div>
+                                <div class="expandable-card">
+                                    <ng-container *ngIf="onceWorkTaskClicked">
+                                        <ngx-work-task-expandable-table [entityID]="contactId" [entityTypeID]="entityTypeId" [refresh]="refreshWorkTaskTab"
+                                            [isEntityActive]="contact.isActive && !contact.isPaused"></ngx-work-task-expandable-table>
+                                    </ng-container>
+                                </div>
+                            </div>
+                            <!-- Work Task End-->
+
+                            <!-- Related Opportunities Start-->
+                            <div class="tab-pane fade p-3 search-wrapper" id="navRelatedOpportunities" role="tabpanel"
+                                [ngClass]="selectedTab == 'navRelatedOpportunities' ? 'show active' : ''"
+                                aria-labelledby="navRelatedOpportunities-tab" name="navRelatedOpportunities">
+                                <div *ngIf="isEditContact && isAddOpportunity && contact.isActive && !contact?.isPaused"
+                                    class="mb-3 vertical-center justify-content-end dropdown-with-add">
+                                    <ngx-control-level-loading-bar *ngIf="isShowLoaderForOpportunity"></ngx-control-level-loading-bar>
+                                    <div>
+                                        <button *ngIf="onceRelatedOpportunitiesClicked" type="button" id="btn-add-opportunity"
+                                            class="btn btn-primary ml-3" (click)="addOpportunity()">
+                                            <i class="fas fa-hand-holding-usd me-1" aria-hidden="true"></i>
+                                            {{ 'OPPORTUNITIES.ADD_DIALOG.TITLE' | translate | configuredEntityName }}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <ng-container *ngIf="onceRelatedOpportunitiesClicked">
+                                        <app-dynamic-table 
+                                            *ngIf="!refreshOpporunityTab; else refreshChildComponentForOpportunity()"
+                                            [code]="'ENTITY_OPPORTUNITIES'" 
+                                            [parameters]="tbRelatedOpportunitiesParameters"
+                                            (onEditClick)="editOpportunity($event)"
+                                            (onDeleteClick)="deleteOpportunity($event)">
+                                        </app-dynamic-table>
+                                    </ng-container>
+                                </div>
+                            </div>
+                            <!-- Related Opportunities End-->
+
+                            <!-- Related cases Start-->
+                            <div class="tab-pane fade p-3 search-wrapper" id="navRelatedCases" role="tabpanel" [ngClass]="selectedTab == 'navRelatedCases' ? 'show active' : ''"
+                                aria-labelledby="navRelatedCases-tab" name="navRelatedCases">
+                                <div *ngIf="isEditContact && isAddCase && contact.isActive && !contact?.isPaused"
+                                    class="mb-3 vertical-center justify-content-end dropdown-with-add">
+                                    <ngx-control-level-loading-bar *ngIf="isShowLoaderForCase"></ngx-control-level-loading-bar>
+                                    <div>
+                                        <button *ngIf="onceRelatedCasesClicked" type="button" id="btn-add-case"
+                                            class="btn btn-primary ml-3" (click)="addCase()">
+                                            <i class="fa-solid fa-file-invoice me-1" aria-hidden="true"></i>
+                                            {{ 'CASES.ADD_DIALOG.TITLE' | translate | configuredEntityName }}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <ng-container *ngIf="onceRelatedCasesClicked">
+                                        <app-dynamic-table 
+                                            *ngIf="!refreshCaseTab; else refreshChildComponentForCase()"
+                                            [code]="'ENTITY_CASES'" 
+                                            [parameters]="tbRelatedCasesParameters"
+                                            (onEditClick)="editCase($event)"
+                                            (onDeleteClick)="deleteCase($event)"
+                                            [entityHiddenFieldSettings]="entityHiddenFieldSettings"
+                                            [parentEntityTypeId]="entityTypeId"
+                                            [sectionCodes]="sectionCodeName.EntityCaseColumn">
+                                        </app-dynamic-table>
+                                    </ng-container>
+                                </div>
+                            </div>
+                            <!-- Related cases End-->
+
+                            <!-- Stage/Pause history Start-->
+                            <div class="tab-pane fade" id="navHistory" role="tabpanel" [ngClass]="selectedTab == 'navHistory' ? 'show active' : ''"
+                                aria-labelledby="navHistory-tab" name="navHistory">
+                                <ng-container *ngIf="onceStageHistoryClicked">
+                                    <ngx-history-tab [entityWorkflowId]="entityWorkflowId" [entityTypeId]="entityTypeId" [entityId]="contactId" [hoursInDay]="hoursInDay" [refreshStageHistory]="refreshStageHistory" [refreshActivityHistory]="refreshActivityHistory" [isListViewLayout]="isListViewLayout"></ngx-history-tab>                                 
+                                </ng-container>
+                            </div>
+                            <!-- Stage history End-->
+
+                            <!-- Document Start-->
+                            <div class="tab-pane fade p-3 search-wrapper" id="navDocuments" role="tabpanel"
+                                [ngClass]="selectedTab == 'navDocuments' ? 'show active' : ''" aria-labelledby="navDocuments-tab"
+                                name="navDocuments">
+                                <ng-container *ngIf="onceDocumentClicked">
+                                    <ngx-entity-documents [entityID]="contactId" class="entity-documents" [entityTypeID]="entityTypeId"
+                                        [isDocumentDownloadPermission]="isDocumentDownloadPermission && contact.isActive && !contact?.isPaused"
+                                        [isEditPermission]="isEditContact && contact.isActive && !contact?.isPaused"
+                                        [refreshFromParent]="refreshActivityHistory"
+                                        (refreshDocuments)="setRefreshDocument()">
+                                    </ngx-entity-documents>
+                                </ng-container>
+                            </div>
+                            <!-- Document End-->
+                            
+                        </div>
+                    </form>
+                    <!-- Tab Content END -->
+                    <div *ngIf="isAdditionalTab">
+                        <!-- Tab Additional here -->
+                        <ng-container>
+                            <ngx-globle-nav-tab [isNativeTab]="isNativeTab" [isAdditionalTab]="isAdditionalTab" [navTabs]="navTabsMore"
+                                (setTab)="checkTabCall($event,0)" class="col-12 p-0" (closeTab)="closeNavTab($event)"
+                                [ngClass]="{'edit-icon-section': isReadOnly && !(tabsNameHideAction | showHidePencilButton: activeTab)}"></ngx-globle-nav-tab>
+                        </ng-container>
+                    </div>
+                    <!-- Tab Other Tabs Link -->
+                </div>
+            </div>
+            <activity-section 
+                [entityTypeId]="entityTypeId" 
+                [entityId]="contactId" 
+                [isTagRequired]="true" 
+                [isEditPermission]="isEditContact"
+                [isActive]="contact.isActive"
+                [isPaused]="contact?.isPaused"
+                [isDocumentRequired]="true" 
+                [refreshDocument]="refreshDocument"
+                [refreshActivity]="refreshActivity" 
+                [isDocumentDownloadPermission]="isDocumentDownloadPermission && contact.isActive && !contact?.isPaused"
+                [entityRecordTypeId]="entityRecordTypeId" 
+                (isTagListUpdated)="setRefreshEntityTag()" 
+                (isActivityListUpdated)="setRefreshActivityHistory()"
+                class="col-xl-4 col-md-12 common-box pr-0" 
+                [createdBy]="contact?.createdBy"
+                [privacyLevel]="null">
+            </activity-section>
+        </div>
+    </div>
+    <!-- Body End-->
+</div>

@@ -1,0 +1,82 @@
+// label {
+//     display: block !important;
+// }
+
+.main-title-permiss {
+    margin-bottom: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.role-form.permission-data {
+    max-height: 570px;
+    padding-top: 1px;
+    padding-left: 8px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 40px;
+
+    @media (min-width: 1200px) and (min-height: 768px) { max-height: calc(100vh - 455px); }
+
+    .custom-control-input { margin-top: 0; }
+}
+
+// input[type="checkbox"]:focus {
+//     outline-offset: 0px;
+//     background-color: transparent !important;
+//     color: transparent !important ; 
+// }
+
+::ng-deep .role-main .p-card { height: calc(100vh - 78px);
+    @media (max-width: 1199px) { height: auto; }
+    .p-card-body, & .p-card-content, & .p-card-content > div,  & .p-card-content > div form { height: 100%; } 
+}
+
+.role-main { position: relative;
+    .position-buttons{ 
+        @media (min-width: 1200px) { position: absolute; bottom: 7px; left: 15px; right: 15px; }
+    }
+}
+
+.max-h-row { height: calc(100% - 130px); padding-bottom: 15px;
+    @media (max-width: 1199px) { height: auto; }
+
+    .first-col, .second-col { flex-grow: 1;
+        max-height: 100%;
+        overflow: auto;
+        flex-shrink: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        @media (min-width: 1200px) {
+            max-width: 50%;
+        }
+        .role-form.permission-data { 
+            max-height: 100%;
+            overflow-y: auto;
+            height: 100%;
+            
+            @media (max-width: 1199px) { height:auto; max-height: 400px; }
+        }
+    }
+
+    .second-col { 
+        @media (min-width: 1200px) {
+            max-width: 25%;
+        }
+        @media (max-width: 1199px) { max-width: 475px; padding-top: 15px; }
+
+        .description-section { 
+            max-height: 100%;
+            overflow-y: auto;
+            height: 100%;
+
+            @media (max-width: 1199px) { height:auto; max-height: 400px; line-height: 16px; }
+         }
+    }
+}
+
+::ng-deep .long-tooltip .tooltip-inner {
+    max-width: 350px !important;
+    text-align: left;
+}

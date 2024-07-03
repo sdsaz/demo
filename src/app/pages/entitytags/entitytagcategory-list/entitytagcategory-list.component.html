@@ -1,0 +1,270 @@
+<!-- if user dont have enough permission then display message -->
+<div class="flexlayout" *ngIf="!isListTagCategories">
+    <div class="form_wrapper">
+        <div id="no-access-form">
+            <div class="top">
+                <div class="subtitle m-0">{{'ENTITYTAG_CATEGORY.LIST.MESSAGE_ENTITYTAGCATEGORY_NOT_ACCESS' | translate}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid lineheight35 heading-page mb-2" *ngIf="isListTagCategories">
+    <div class='row align-items-end'>
+        <div class="col-sm-6">
+            <span id="headingEntity" class="fw-600 fs-4">{{'ENTITYTAG_CATEGORY.LIST.TITLE' | translate}}</span>
+        </div>
+        <div *ngIf="isAddTagCategory" class="col-sm-6 resp-nav">
+            <button class="btn btn-primary float-end" type="button" (click)="showHideAddEditTagsCategoryDiv('ADD', 0)" id="btn-add-entity">
+                <i class="fa fa-plus-circle me-1" aria-hidden="true"></i>
+                {{'ENTITYTAG_CATEGORY.LIST.BUTTON_ADD' | translate}}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Div Hide/Show Start-->
+<div class="update-entity-section container-fluid mb-3" *ngIf="addEditTagsCategoryDiv">
+    <div class="row">
+        <div class='col-12 page-content'>
+            <div class='p-card rounded'>
+                <div class="card-header fw-semibold">
+                    <!-- Title -->
+                    <span *ngIf="isEdit == true" id="headingEditEntity">{{'ENTITYTAG_CATEGORY.ADD.TITLE_EDIT' | translate}}</span>
+                    <span *ngIf="isEdit == false" id="headingAddEntity">{{'ENTITYTAG_CATEGORY.ADD.TITLE_ADD' | translate}}</span>
+                </div>
+                <div class='card-body'>
+                    <form *ngIf="tagsCategoryForm" [formGroup]="tagsCategoryForm">
+                        <div class='row'>
+                            <div class='col-xl col-lg-3 col-sm-6 form-group mb-xl-0 pr-xl-0'>
+                                <label>{{'ENTITYTAG_CATEGORY.ADD.BASIC_INFORMATION.ENTITY_NAME' | translate}}<span
+                                        class="mandatory"></span></label>
+
+                                <p-dropdown #entityDropdown class="form-control" [options]="entities"
+                                    formControlName="entityDropDown" id="drp-entity-form"
+                                    placeholder="{{'ENTITYTAG_CATEGORY.ADD.SELECTENTITYNAME'| translate}}"
+                                    [filter]="true" [resetFilterOnHide]="false"
+                                    [ngClass]="{'is-invalid': isEntitySelected && f.entityDropDown.errors }"
+                                    (onChange)="onChangeEntity($event.value)">
+                                </p-dropdown>
+
+                                <div *ngFor='let validation of tagsCategories_validation_messages.entityDropDown'
+                                    class='invalid-feedback'>
+                                    <div id="errorEntityIsRequired"
+                                        *ngIf='f.entityDropDown.hasError(validation.type) && isEntitySelected && f.entityDropDown.errors'>
+                                        {{ validation.message | translate }}
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class='col-xl col-lg-3 col-sm-6 form-group mb-xl-0 pr-xl-0'>
+                                <label>{{'ENTITYTAG_CATEGORY.ADD.BASIC_INFORMATION.ENTITY_RECORD_TYPE' | translate}}</label>
+
+                                <p-dropdown class="form-control" [options]="filteredentityRecordTypes"
+                                    formControlName="entityRecordTypeDropDown" id="drp-entityRecordType-form"
+                                    placeholder="{{'ENTITYTAG_CATEGORY.ADD.SELECTENTITY_RECORDTYPE_NAAME'| translate}}"
+                                    [filter]="true" [resetFilterOnHide]="false" [showClear]="true"
+                                    [ngClass]="{'is-invalid': isEntitySelected && f.entityRecordTypeDropDown.errors }">
+                                </p-dropdown>
+
+                            </div>
+                            <div class='col-xl col-lg-3 col-sm-6 form-group mb-xl-0 pr-xl-0'>
+                                <label>{{'ENTITYTAG_CATEGORY.ADD.BASIC_INFORMATION.NAME'|translate}}<span
+                                        class="mandatory"></span></label>
+                                <input type='text' #entityTagCategoryName formControlName='name' class='form-control' id="txt-name"
+                                    [ngClass]="{ 'is-invalid': f.name.errors && (f.name.dirty || f.name.touched)}" trimValue />
+                                <div *ngFor='let validation of tagsCategories_validation_messages.name'
+                                    class='invalid-feedback'>
+                                    <div id="errorNameIsRequired"
+                                        *ngIf='f.name.hasError(validation.type) && f.name.errors && (f.name.dirty || f.name.touched)'>
+                                        {{ validation.message |translate }}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class='col-xl-custom col-md-2 col-sm-3 form-group mb-xl-0'>
+                                <label>{{'ENTITYTAG_CATEGORY.ADD.BASIC_INFORMATION.IS_PRIVATE'|translate}}</label>
+                                <div class="check-group m-0">
+                                    <input type="checkbox" id="chkIsPrivate" formControlName='isPrivate'
+                                        class='custom-control-input' (change)="onCheckIsPrivate($event)" />
+                                    <label for="chkIsPrivate" class="font-12">
+                                        {{IsPrivate}}
+                                    </label>
+                                </div> 
+                            </div> -->
+                            <div class='col-xl-custom col-md-2 col-sm-3 form-group mb-xl-0 pr-xl-0'>
+                                <label>{{'ENTITYTAG_CATEGORY.ADD.BASIC_INFORMATION.IS_SINGULER'|translate}}</label>
+                                <div>
+                                    <label class="m-0">
+                                        <div class="switch switch-label switch-pill switch-primary mt-1">
+                                            <input type="checkbox" id="swt-active-singular" class="switch-input"
+                                                formControlName='isSingular'>
+                                            <div class="switch-slider switch--status" id="toggle-status-singular"
+                                                [attr.data-checked]="'ENTITYTAG_CATEGORY.ADD.BASIC_INFORMATION.SWITCH_LABEL_SINGULAR' | translate"
+                                                [attr.data-unchecked]="'ENTITYTAG_CATEGORY.ADD.BASIC_INFORMATION.SWITCH_LABEL_NONSINGULAR' | translate">
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class='col-xl col-lg-12 col-md pt-md-18px'>
+                                <div class="width--100 text-right">
+                                    <button class='btn btn-secondary mr-2' type='button' id="btn-cancel"
+                                        (click)="showHideAddEditTagsCategoryDiv('CANCEL', 0)">{{
+                                        'ENTITYTAG_CATEGORY.ADD.BUTTON_CANCEL' | translate}}</button>
+                                    <button type='button' class='btn btn-primary' *ngIf="isEdit" id="btn-save"
+                                        (click)="saveTagsCategoryForm('EDIT', tagsCategoryForm.getRawValue())"
+                                        [disabled]="submitted">{{
+                                        'ENTITYTAG_CATEGORY.ADD.BUTTON_SAVE' | translate}}</button>
+                                    <button type='button' class='btn btn-primary' *ngIf="!isEdit" id="btn-save"
+                                        (click)="saveTagsCategoryForm('ADD', tagsCategoryForm.getRawValue())"
+                                        [disabled]="submitted">
+                                        {{ 'ENTITYTAG_CATEGORY.ADD.BUTTON_ADD' | translate}}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page Content Start -->
+<div *ngIf="isListTagCategories" class="container-fluid entity-main pb-5 pb-xl-0">
+    <!-- Table Header Start -->
+    <div class="row align-items-end entity-search-area mb-3">
+        <div class="col-xl-3 col-lg col-md-3 col-sm-6 mb-md-0 mb-3">
+            <div>
+                <label class="mb-1 fs13px">{{'ENTITYTAG_CATEGORY.LIST.SEARCH' | translate}}</label>
+                <div class="p-input-icon-right w-100">
+                    <i class="pi pi-search" aria-hidden="true"></i>
+                    <input #searchTextInput pInputText type="text" id="txt-search-text"
+                        class="w-100 customInputText form-control" [(ngModel)]="filterParam.searchString" />
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-larger col-xl-3 col-md-3 col-6 mb-md-0 mb-3">
+            <div>
+                <label class="mb-1 fs13px">{{'ENTITYTAG_CATEGORY.ADD.BASIC_INFORMATION.ENTITY_NAME' |
+                    translate}}</label>
+                <div>
+                    <p-dropdown class="form-control border-0 center-dropdown" [options]="entities"
+                        [(ngModel)]="selectedEntities" id="drp-entity-type"
+                        placeholder="{{'ENTITYTAG_CATEGORY.ADD.SELECTENTITYNAME'| translate}}" [filter]="true"
+                        [resetFilterOnHide]="false" filterBy="label" [showClear]="true"
+                        (onChange)="changeEntityType($event)">
+                    </p-dropdown>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-larger col-xl-3 col-md col-6 mb-sm-0 mb-3">
+            <div>
+                <label class="mb-1 fs13px">{{'ENTITYTAG_CATEGORY.ADD.BASIC_INFORMATION.ENTITY_RECORD_TYPE' | translate}}</label>
+                <div>
+                    <p-dropdown class="form-control border-0 center-dropdown" [options]="filteredentityRecordTypesForFilter"
+                        [(ngModel)]="selectedEntityRecordType" id="drp-entityRecordType"
+                        placeholder="{{'ENTITYTAG_CATEGORY.ADD.SELECTENTITY_RECORDTYPE_NAAME'| translate}}" [filter]="true"
+                        [resetFilterOnHide]="false" [showClear]="true"
+                        (onChange)="changeEntityRecordTypeType($event)">
+                    </p-dropdown>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-auto col-sm-6 mb-0">
+            <button id="btn-reset" class="btn btn-outline-secondary" type="button" (click)="onResetAllFilters()"
+                [disabled]="((filterParam.searchString == '' && filterParam.filters.EntityTypeId == null && filterParam.filters.EntityRecordTypeId == null ) ? true : false)">
+                {{'ENTITYTAG_CATEGORY.LIST.BUTTON_RESET'|translate}}
+            </button>
+        </div>
+    </div>
+
+    <!-- Table Header End -->
+    <!-- Table Start -->
+    <div class="p-card">
+        <p-table *ngIf="entityTagsCategories" #pTable [responsive]="true" responsiveLayout="stack" [rows]="_commonHelper.DefaultPageSize"
+            [rowsPerPageOptions]='_commonHelper.globalRowsPerPageOptions' [columns]="cols" paginatorDropdownAppendTo="body"
+            [value]="entityTagsCategories" class="tbl-tags-category-list tbl-entity" sortField="name"
+            [sortOrder]="1" (onPage)="paginate($event)" [totalRecords]="totalRecords" [autoLayout]="true"
+            [scrollable]="true" [paginator]="true" [paginator]="totalRecords > 0" [ngClass]="totalRecords == 0 ? 'tbl-height-zero' : ''"
+            [scrollHeight]="'calc(100vh - 188px)'">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th id="tblColumnHeader" *ngFor="let col of columns" [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.sort" [ngClass]="col.header == '' ? 'hide-when-no-records' : ''"
+                        scope="col" class="{{col.field}} {{col.class}}" [hidden]="!col.visible" (click)="ChangeOrder(col)">
+                        {{ col.header | translate }}
+                        <p-sortIcon [field]="col.field" *ngIf="col.sort"></p-sortIcon>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                    <td class="font-bold name">
+                        <span class="p-column-title">
+                          {{columns[0].header | translate}}
+                        </span>
+                        <span class="pre-text">{{rowData.name}}</span></td>
+                    <td class="font-bold entityTypeName">
+                        <span class="p-column-title">
+                          {{columns[1].header | translate}}
+                        </span>
+                        {{rowData.entityDisplayName}}</td>
+                    <td class="font-bold entityRecordTypeName">
+                        <span class="p-column-title">
+                          {{columns[2].header | translate}}
+                        </span>
+                        {{rowData.entityRecordTypeName}}</td>
+                    <td class="font-bold isSingular">
+                        <span class="p-column-title">
+                          {{columns[3].header | translate}}
+                        </span>
+                        {{rowData.isSingular? ('ENTITYTAG_CATEGORY.LIST.SINGULAR_STATUS_YES' | translate):('ENTITYTAG_CATEGORY.LIST.SINGULAR_STATUS_NO'|translate)}}</td>
+                    <td class="grid-dropdown action">
+                        <div class="dropdown drop-no-arrow" *ngIf="isEditTagCategory || isDeleteTagCategory">
+                            <button pButton icon="fas fa-wrench" class="p-button-rounded p-button-sm"
+                                    type="button" id="drp-action"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="drp-action">
+                                <li *ngIf="isEditTagCategory">
+                                    <a (click)="showHideAddEditTagsCategoryDiv('EDIT', rowData.id)" id="link-Edit"
+                                        class="dropdown-item menu--item">
+                                        <i class="fas fa-pencil-alt pd-menu-icon" aria-hidden="true"></i>
+                                        {{'ENTITYTAG_CATEGORY.LIST.BUTTON_EDIT'|translate}}
+                                    </a>
+                                </li>
+                                <li *ngIf="isDeleteTagCategory">
+                                    <a id="link-Delete" (click)="deleteEntityTagCategory(rowData.id)"
+                                        class="dropdown-item menu--item">
+                                        <i class="far fa-trash-alt pd-menu-icon" aria-hidden="true"></i>
+                                        {{'ENTITYTAG_CATEGORY.LIST.BUTTON_REMOVE'|translate}}</a>
+                                </li>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="paginatorleft">
+                <span id="startToEndOfTotalRecords">{{start}} - {{end}} of {{totalRecords}} records</span>
+            </ng-template>
+            <ng-template pTemplate="paginatorright">
+                <p-button type="button" icon="pi pi-chevron-left" styleClass="p-button-text" (click)="prev()" id="paginatorLeftPage"
+                    [disabled]="end == filterParam.pageSize"></p-button>
+                <input type="number" min="1" [max]="totalPages" [(ngModel)]="filterParam.pageNo" (change)="changePage()" class="pageNoInput" id="paginatorInputPage"> /
+                <span id="paginatorTotalPages" class="ml-1">{{totalPages}}</span>
+                <p-button type="button" icon="pi pi-chevron-right" styleClass="p-button-text" (click)="next()" id="paginatorRightPage"
+                    [disabled]="end == totalRecords"></p-button>
+                <p-button type="button" icon="pi pi-undo" styleClass="p-button-text" (click)="resetPaginator()" id="paginatorResetButton"
+                    [disabled]="end == filterParam.pageSize"></p-button>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                    <td [attr.colspan]="columns.length" id="lbl-NoRecordsFound" class="table-no-record text-center">
+                        {{ 'ENTITYTAG_CATEGORY.LIST.MESSAGE_NO_RECORDS_FOUND' | translate}}
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <!-- Table End -->
+</div>
+<!-- Page Content End -->

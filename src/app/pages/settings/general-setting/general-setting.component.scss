@@ -1,0 +1,39 @@
+.card{ border-radius: 5px; 
+    .card-header { padding: 0.75rem 0; margin: 0 15px; background-color: transparent; font-weight: bold; }
+}
+
+::ng-deep p-multiselectitem li {
+    font-weight: normal !important;
+}
+
+::ng-deep .entity-dropdown .ui-multiselect-label{
+    width: calc(100% - 20px) !important;
+}
+
+::ng-deep body .ui-multiselect-panel .ui-multiselect-header .ui-multiselect-filter-container{
+    width: calc(100% - 15px) !important;
+}
+
+// prime ng input override - start
+:host ::ng-deep{
+    .multiSelectOverride.p-multiselect
+    {
+        width: 100%;
+    }
+    .customTable.p-datatable .p-datatable-wrapper table tbody tr:last-child{
+        padding-bottom: 90px !important;
+    }
+    .multiSelectOverride.p-multiselect,
+    .dropDownOverride.p-dropdown {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+.grey-400bg, .btn-check:checked+.btn.grey-400bg, .btn.active.grey-400bg, .btn.show.grey-400bg, .btn.grey-400bg:first-child:active, :not(.btn-check)+.btn.grey-400bg:active{
+    background-color: #457fad;
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    height: 34px;
+}

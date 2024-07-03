@@ -1,0 +1,20 @@
+
+.customfield-loader {
+    width: 10px !important;
+    height: 10px !important;
+    margin: 5px !important;
+}
+
+.customfield-loader-wrapper {
+    position: relative;
+    top: 0;
+    z-index: 1039;
+    background-color: rgba(0, 0, 0, 0.05);
+    cursor: not-allowed;
+    width: 100%;
+    margin: 0 auto;
+    height: auto;
+    padding: 8px 10px;
+    margin-bottom: -37px;
+    border-radius: 5px;
+}

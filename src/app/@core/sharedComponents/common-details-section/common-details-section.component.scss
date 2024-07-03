@@ -1,0 +1,52 @@
+@import '../../../../scss/variables.scss';
+
+.entityTypeNameTxt {
+    font-weight: 400;
+}
+
+.entityIcon {
+    font-size: 2.813rem;
+}
+
+.min-height-100px { min-height: 100px; }
+
+.relatedToClick {
+    cursor: pointer;
+}
+
+::ng-deep .maxwidth-stage .p-overlay {
+    min-width: 317px !important;
+    max-width: 317px !important;
+
+    @media (max-width: 575px) {
+        min-width: calc(100vw - 138px) !important;
+        max-width: calc(100vw - 138px) !important;
+    }
+}
+
+.showMoreDetailsLink {
+    cursor: pointer;
+}
+
+.btn-quick-view, ::ng-deep .nb-theme-dark .btn-quick-view.btn-outline-secondary, ::ng-deep .nb-theme-dark .btn-quick-view.btn-outline-secondary.focus, ::ng-deep .nb-theme-dark .btn-quick-view.btn-outline-secondary:active, ::ng-deep .nb-theme-dark .btn-quick-view.btn-outline-secondary:focus, ::ng-deep .nb-theme-dark .btn-quick-view.btn-outline-secondary:hover{
+    color: var(--surface-800) !important; margin-right: 10px; min-width: 32px; max-width: 32px; padding: 0;
+
+    i.fa-lg { line-height: 26px; vertical-align: middle; }
+}
+
+.btn-quick-view:last-child { margin-right: 0; }
+
+.btn-add-worktasks { position: relative;
+    .icon-plus-worktasks { position: absolute;
+    bottom: -5px;
+    right: -3px;
+    border-radius: 50%;
+    font-size: 15px;
+    background-color: var(--surface-0);
+    color: var(--surface-700);
+ }
+}
+
+.common-details-header { width: calc(100% - 116px); }
+.clr-raise-hand { color: $dark-green; }
+.clr-remove-raise-hand { color: $clr-blue; }

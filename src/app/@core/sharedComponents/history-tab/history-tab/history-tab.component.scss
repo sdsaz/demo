@@ -1,0 +1,53 @@
+.tbl-stage-history-list{
+    .checkbox-col{ width: 50px; max-width: 50px; }
+    th{ height: 40px; }
+    th.assignedTo, td.assignedTo, th.verifiedBy, td.verifiedBy, th.createdBy, td.createdBy {width: 140px; min-width: 140px; max-width: 140px; word-break: break-word;
+        @media (max-width: 1359px) and (min-width: 1140px) { min-width: 130px; max-width: 130px; }
+    }
+    th.totalTime, td.totalTime,th.spentTime, td.spentTime,th.pauseTime, td.pauseTime{ width: 140px; min-width: 140px; max-width: 140px; }
+    th.createdOn, td.createdOn{ width: 148px; min-width: 148px; max-width: 148px; }
+    th.name, td.name{
+        min-width: 270px; width: 270px; word-break: break-word;
+
+        @media (max-width: 1439px) { min-width: 210px; max-width: 210px; }
+    }
+}
+
+::ng-deep .stage-process + .page-content.container-fluid .tbl-stage-history-list .p-treetable-scrollable-body {
+    @media (min-width: 1140px) and (min-height: 576px) { max-height: 453px !important; }
+}
+
+::ng-deep .page-containted .tbl-activity-history-list{
+    td.name p { display: inline; }
+
+    @media (min-width: 641px) {
+        .p-datatable-wrapper {
+            th.type, td.type, th.action, td.action {width: 150px !important; min-width: 150px; max-width: 150px; word-break: break-word; }
+            th.createdBy, td.createdBy {width: 180px !important; min-width: 180px; max-width: 180px; word-break: break-word; }
+            th.createdOn, td.createdOn{ width: 155px !important; min-width: 155px; max-width: 155px; }
+            th.name, td.name{
+                min-width: 300px; word-break: break-word;
+            }
+        }
+    }
+    @media (max-width: 40em) {
+        .p-datatable.p-datatable-scrollable .p-datatable-tbody > tr > td.action { justify-content: flex-start !important; }
+    }
+}
+
+.rounded-circle {
+    width: 24px;
+    height: 24px;
+}
+
+.max-height-auto.tbl-fixed.tbl-task { max-height: 100%; }
+.sub-tabs-left { width: calc(100% - 30px); margin: 0 1rem !important; }
+
+::ng-deep .history-loader { text-align: center;
+    .cursor-pointer { cursor: pointer !important; }
+    .control-loader-wrapper{ top: -5px !important; margin-bottom: -10px !important; padding: 6px 10px !important; }
+}
+
+::ng-deep .navTabs .navTabs .nav-item .nav-link.nav-subtabs { padding: 0.5rem 1rem; }
+
+.min-w-24px { min-width: 24px; }

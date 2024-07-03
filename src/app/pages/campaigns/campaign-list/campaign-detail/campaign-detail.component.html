@@ -1,0 +1,831 @@
+<!-- If id is not exists then display message -->
+<div class="flexlayout" *ngIf="!campaignForm && !isInitialLoading && hasPermission">
+    <div class="form_wrapper">
+        <div id="no-access-form">
+            <div class="top">
+                <img src="assets/images/default/NoAccessImage.png" class="mb-3" alt="">
+                <div class="subtitle mt-0">{{'CRM.CAMPAIGN.DETAIL.MESSAGE_CAMPAIGN_NOT_EXISTS' | translate |
+                    configuredEntityName}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="page-containted detail-campaign" *ngIf="isLoaded && campaignForm && hasPermission">
+    <!-- Header Start-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 mb-10px">
+                <div class="detail-header h-100">
+                    <div class="page-content card border-0 mb-0 h-100">
+                        <div class="card-body p-card">
+                            <div class="row vertical-center h-100">
+                                <div class="col-xl col-lg-5 col-md-12 mb-3 mb-lg-0 mb-sm-4 d-flex align-self-start">
+                                    <div class="float-left text-center">
+                                        <div id="entity-icon" class="entity-icon">
+                                            <i class="fas fa-bullhorn" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                    <div class="stage-details float-start">
+                                        <p class="m-0">
+                                            <span class="card-title mb-1">
+                                                <label id="headingEntity">{{ 'CRM.CAMPAIGN.DETAIL.TITLE' | translate |
+                                                    configuredEntityName }}</label>
+                                                <div class="overflow-box">
+                                                    <strong id="nameEntity" class="pre-text">{{campaignName}}</strong>
+                                                </div>
+                                                <div>
+                                                    <span id="entityRating" class="mt-2 h-21 mr-2 vertical-center">
+                                                        <entity-review-display [entityTypeId]="entityTypeId" [entityId]="campaignId" [isFromKanbanOrListView]="false"
+                                                            [isEditPermission]="isEditCampaign && !(campaign.isPaused ?? false)">
+                                                        </entity-review-display>
+                                                    </span>
+                                                    <span *ngIf="campaign.entityRecordTypeName!=null" class="mt-2 mb-2 h-21 badge badge-primary badge--status mr-2" id="badgeEntityRecordType">
+                                                        {{campaign.entityRecordTypeName}}
+                                                    </span>
+                                                    <span [ngClass]="campaign.isActive == true ? 'bg-primary' : 'bg-danger'" class="mt-2 h-21 badge badge--status mr-2" id="badgeActiveInactive">                                                                                                                
+                                                        {{ campaign.isActive | active }}
+                                                    </span>
+                                                    <span *ngIf="!copyOfCampaign?.schedulePattern || !copyOfCampaign.fromSMTPSettingID || !copyOfCampaign.toDatasourceCodes" class="mt-2 h-21 badge badge--status bg-warning text-dark" id="badgeScheduleIsPending">
+                                                        <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                                                        {{ 'CRM.CAMPAIGN.DETAIL.HEADER_SCHEDULE_PENDING_MSG' | translate}}
+                                                    </span>
+                                                </div>
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg details-section col-md-12 align-self-start">
+                                    <div class="row">
+                                        <div class="col-xl col-lg-6 col-md-6 col-sm-6 mb-xl-0 mb-lg-3 mb-md-0 mb-sm-3 mb-1 header-value col-header">
+                                            <div class="row">
+                                                <div class="col-sm-12 col-header-label col-created-label">
+                                                    <label>{{ 'CRM.CAMPAIGN.DETAIL.HEADER_CREATED' | translate}}</label>
+                                                </div>
+                                                <div class="col-sm-12 col">
+                                                    <p class="m-0" id="lblCreatedDate">
+                                                        {{campaign.created | date:'medium' }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-1 mt-sm-2 col-header">
+                                                <div class="col-sm-12 col-header-label col-created-label">
+                                                    <label>{{ 'CRM.CAMPAIGN.DETAIL.HEADER_CREATED_BY' | translate}}</label>
+                                                </div>
+                                                <div class="col-sm-12 col">
+                                                    <p class="m-0">
+                                                        {{campaign.createdByName}}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl col-lg-6 col-md-6 col-sm-6 mb-xl-0 mb-lg-3 mb-md-0 mb-sm-3 mb-1 header-value col-header">
+                                            <div class="row">
+                                                <div class="col-sm-12 col-header-label">
+                                                    <label>{{ 'CRM.CAMPAIGN.DETAIL.HEADER_MODIFIED' | translate}}</label>
+                                                </div>
+                                                <div class="col-sm-12 col">
+                                                    <p class="m-0">
+                                                        {{campaign.modified | date:'medium' }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-1 mt-sm-2 col-header">
+                                                <div class="col-sm-12 col-header-label">
+                                                    <label>{{ 'CRM.CAMPAIGN.DETAIL.HEADER_MODIFIED_BY' | translate}}</label>
+                                                </div>
+                                                <div class="col-sm-12 col">
+                                                    <p class="m-0">
+                                                        {{campaign.modifiedByName}}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="back-arrow col-lg">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <button id="btn-back" class='btn btn-secondary mb-12px' type='button'
+                                                (click)="backToList()">
+                                                {{ 'CRM.CAMPAIGN.DETAIL.BUTTON_BACK' | translate }}
+                                            </button>
+                                        </div>
+                                        <div *ngIf="isEditCampaign" class="col-12">
+                                            <div class="dropdown">
+                                                <button class="btn btn-primary dropdown-toggle btn-action" type="button"
+                                                    id="dropdownActionMenu" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                    {{ 'CRM.CAMPAIGN.DETAIL.BUTTON_ACTION' | translate }}
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownActionMenu">
+                                                    <a id="link-change-status" (click)="onActionChangeStatus()"
+                                                        class="dropdown-item menu--item">
+                                                        <i class="fas fa-toggle-on" aria-hidden="true"></i>
+                                                        {{'CRM.CAMPAIGN.DETAIL.ACTION_TITLE_CHANGESTATUS' | translate }}
+                                                    </a>
+                                                    <a *ngIf="isDeleteCampaign" id="link-delete" (click)="onDeleteCampaignClick(campaign.id)"
+                                                        class="dropdown-item menu--item">
+                                                        <i class="far fa-trash-alt me-1" aria-hidden="true"></i>
+                                                        {{'CRM.CAMPAIGN.DETAIL.ACTION_TITLE_DELETE' | translate }}
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-12 col-lg-12 align-self-end align-tags top-margin-tags">
+                                    <div class="vertical-bottom flex-nowrap justify-content-between">
+                                        <entity-tags-view [refreshEntityTag]="refreshEntityTag" [entityId]="campaignId"
+                                            [entityTypeId]="entityTypeId" [entityRecordTypeId]="entityRecordTypeId">
+                                        </entity-tags-view>
+                                    
+                                        <div class="pt-3 pl-3 pe-2 d-flex bookmark-icon">
+                                            <ngx-bookmark [entityTypeId]="entityTypeId" [entityId]="campaignId" [isEditPermission]="isEditCampaign"
+                                                class="font-18" [isFromKanbanOrListView]="false">
+                                            </ngx-bookmark>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Header End-->
+
+    <!-- Body Start-->
+    <div class="page-content container-fluid pr-0">
+        <div class="row h---100vh w-100">
+            <div class="col col-xl-8 col-lg-12 mb-xl-0 mb-2 pr-0 details-box">
+                <!-- nav Tab Menu Start -->
+                <div class="navTabs card-bottom-border border-0 p-card">
+                    <div class="row width--100 border-bottom m-0 first-tabs">
+                        <!-- Tab Section here -->
+                       <ng-container>
+                        <ngx-globle-nav-tab [navTabs]="navTabs" [isNativeTab]="isNativeTab"  (setTab)="checkTabCall($event,1)"
+                            class="col tabs-mobile p-0" (closeTab)="closeNavTab($event)"
+                            [ngClass]="{'edit-icon-section': isReadOnly && !(['navWorkTasks', 'navContacts', 'navAttachment', 'navProducts', 'navHistory', 'additionalTabs','navDocuments'] | showHidePencilButton: activeTab)}"></ngx-globle-nav-tab>
+                        </ng-container>
+						
+                        <div class="col-auto edit-form-icon px-0">
+                            <div *ngIf="isEditCampaign && campaign.isActive">
+                                <i class="fas fa-pencil-alt pencil-icon fa-lg clr-blue float-right cursor-pointer"
+                                    id="btnEditTabDetail" (click)="showHideDetailTab('EDIT')"
+                                    *ngIf="isReadOnly && !(['navRelatedNewsletters', 'navHistory','additionalTabs','navDocuments'] | showHidePencilButton: activeTab)" aria-hidden="true"></i>
+                            </div>
+                            <!-- Global save and cancel start -->
+                            <div class="form-update-icons" *ngIf="!isReadOnly && !(['navRelatedNewsletters', 'navHistory','additionalTabs','navDocuments'] | showHidePencilButton: activeTab)">
+                                <i id="btn-cancel"
+                                    class="fas fa-times fa-lg dark-grey float-right mr-3"
+                                    (click)="showHideDetailTab('CANCEL')" aria-hidden="true"></i>
+                                <i *ngIf="isEditCampaign" id="btn-save"
+                                    class="fas fa-check fa-lg clr-blue float-right" (click)="showHideDetailTab('SAVE')" aria-hidden="true"></i>
+                            </div>
+                            <!-- Global save and cancel end -->
+                        </div>
+                    </div>
+
+                    <!-- Tab Content Start -->
+                    <form [hidden]="isAdditionalTab"  [formGroup]="campaignForm">
+                        <div class="tab-content border-0 mt-0" id="campaignDetailTabContent">
+                            <!-- Details Start-->
+                            <div class="tab-pane fade px-0 p-0" id="navDetails" role="tabpanel"
+                                [ngClass]="selectedTab == 'navDetails' ? 'show active' : ''" name="navDetails"
+                                aria-labelledby="navDetails-tab">
+
+                                <!-- Basic Information Start-->
+                                <div class="card border-0 m-0 pt-md-0 pt-3">
+                                    <div class="card-header btn-card-edit py-0">
+                                        <span class="vertical-center py-md-3 pt-0 pb-3 line-height-1">{{
+                                            'CRM.CAMPAIGN.DETAIL.TAB_DETAILS.BASIC_INFO' | translate }}</span>
+                                    </div>
+                                    <div class='card-body'>
+                                        <div class='row'>
+                                            <div class='col-lg-6 col-md-12 form-group'>
+                                                <label>
+                                                    {{ 'CRM.CAMPAIGN.DETAIL.TAB_DETAILS.NAME' | translate }}
+                                                    <span class="mandatory"></span>
+                                                </label>
+                                                <div *ngIf="isReadOnly" class="disable-text pre-text">{{ campaign.name ?
+                                                    campaign.name : '&nbsp;' }}</div>
+                                                <input #campaignTxtName *ngIf="!isReadOnly" id="txt-name" type="text"
+                                                    class="form-control" formControlName="name" [(ngModel)]="campaign.name"
+                                                    [ngClass]="{ 'is-invalid': submitted && campaignfrm.name.errors && (campaignfrm.name.dirty || campaignfrm.name.touched)}" trimValue>
+                                                <div *ngFor='let validation of campaignValidationMessages.name'
+                                                    class='invalid-feedback'>
+                                                    <div *ngIf='submitted && campaignfrm.name.hasError(validation.type) && campaignfrm.name.errors && (campaignfrm.name.dirty || campaignfrm.name.touched)'
+                                                        id="errorNameIsRequired">
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class='col-lg-3 col-sm-6 col-md-6 form-group'>
+                                                <label>
+                                                    {{'CRM.CAMPAIGN.DETAIL.TAB_DETAILS.STARTDATE' | translate}}
+                                                    <span class="mandatory"></span>
+                                                </label>
+                                                <div *ngIf="isReadOnly" class="disable-text">
+                                                    {{ campaign.startDate == null ? '&nbsp;' : campaign.startDate | dateFormatPipe: _commonHelper.globalDateFormate }}
+                                                </div>
+                                                <p-calendar *ngIf="!isReadOnly" id="dp-startDate" class="time-calendar"
+                                                    formControlName="startDate" appendTo="body"
+                                                    [dateFormat]="_commonHelper.globalDatePickerFormate"
+                                                    [placeholder]="_commonHelper.globalDatePlaceholder"
+                                                    [dateMask]="_commonHelper.globalDateMask" [readonlyInput]="false"
+                                                    icon="fas fa-calendar-alt dark-grey" [showIcon]="true"
+                                                    [monthNavigator]="true" [yearNavigator]="true" [showTime]="false"
+                                                    [minDate]="_commonHelper.globalMinDate"
+                                                    [maxDate]="_commonHelper.globalMaxDate"
+                                                    [yearRange]="_commonHelper.globalYearRange" selectOtherMonths="true"
+                                                    [ngClass]="{ 'is-invalid': submitted && campaignfrm.startDate.errors && (campaignfrm.startDate.dirty || campaignfrm.startDate.touched)}">
+                                                </p-calendar>
+                                                <div *ngFor='let validation of campaignValidationMessages.startDate' class='invalid-feedback'>
+                                                    <div *ngIf='campaignfrm.startDate.hasError(validation.type) && submitted && campaignfrm.startDate.errors' id="errorStartDateMustBeValidStartDate">
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class='col-lg-3 col-sm-6 col-md-6 form-group'>
+                                                <label>
+                                                    {{'CRM.CAMPAIGN.DETAIL.TAB_DETAILS.ENDDATE' | translate}}
+                                                    <span class="mandatory"></span>
+                                                </label>
+                                                <div *ngIf="isReadOnly" class="disable-text">
+                                                    {{ campaign.endDate == null ? '&nbsp;' : campaign.endDate | dateFormatPipe: _commonHelper.globalDateFormate }}
+                                                </div>
+                                                <p-calendar *ngIf="!isReadOnly" id="dp-endDate" class="time-calendar"
+                                                    formControlName="endDate" appendTo="body"
+                                                    [dateFormat]="_commonHelper.globalDatePickerFormate"
+                                                    [placeholder]="_commonHelper.globalDatePlaceholder"
+                                                    [dateMask]="_commonHelper.globalDateMask" [readonlyInput]="false"
+                                                    icon="fas fa-calendar-alt dark-grey" [showIcon]="true"
+                                                    [monthNavigator]="true" [yearNavigator]="true" [showTime]="false"
+                                                    [minDate]="campaignfrm.startDate.value != null ? campaignfrm.startDate.value : _commonHelper.globalMinDate "
+                                                    [maxDate]="_commonHelper.globalMaxDate"
+                                                    [yearRange]="_commonHelper.globalYearRange" selectOtherMonths="true"
+                                                    [ngClass]="{ 'is-invalid': submitted && campaignfrm.endDate.errors && (campaignfrm.endDate.dirty || campaignfrm.endDate.touched)}">
+                                                </p-calendar>
+                                                <div *ngFor='let validation of campaignValidationMessages.endDate' class='invalid-feedback'>
+                                                    <div *ngIf='campaignfrm.endDate.hasError(validation.type) && submitted && campaignfrm.endDate.errors' id="errorEndDateMustBeValidEndDate">
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class='col-xl-12 form-group'>
+                                                <label>
+                                                    {{ 'CRM.CAMPAIGN.DETAIL.TAB_DETAILS.DESCRIPTION' | translate }}
+                                                </label>
+                                                <div *ngIf="isReadOnly" class="disable-text pre-text">{{
+                                                    campaign.description ? campaign.description : '&nbsp;' }}</div>
+                                                <textarea *ngIf="!isReadOnly" id="txt-description" class="form-control" rows="3" 
+                                                    formControlName="description" [(ngModel)]="campaign.description"
+                                                    [ngClass]="{ 'is-invalid': submitted && campaignfrm.description.errors && (campaignfrm.description.dirty || campaignfrm.description.touched)}" trimValue>
+                                                </textarea>
+                                                <div *ngFor='let validation of campaignValidationMessages.description'
+                                                    class='invalid-feedback'>
+                                                    <div *ngIf='submitted && campaignfrm.description.hasError(validation.type) && campaignfrm.description.errors && (campaignfrm.description.dirty || campaignfrm.description.touched)'
+                                                        id="errorDescriptionIsRequired">
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-header btn-card-edit py-0">
+                                        <span class="vertical-center py-md-3 pt-0 pb-3 line-height-1">{{ 'CRM.CAMPAIGN.DETAIL.TAB_DETAILS.EMAIL_INFORMATION' | translate }}</span>
+                                    </div>
+                                    <div class='card-body'>
+                                        <div class='row'>
+                                            <div class='col-sm-6 form-group'>
+                                                <label>{{ 'CRM.CAMPAIGN.DETAIL.TAB_DETAILS.FROM' | translate }}
+                                                    <span class="mandatory"></span>
+                                                </label>
+                                                <div *ngIf="isReadOnly" class="disable-text pre-text">{{ campaign.fromSMTPSettingName ? campaign.fromSMTPSettingName : '&nbsp;' }}</div>
+                                                
+                                                <ngx-control-level-loading-bar *ngIf="isShowSmtpFromEmailsLoader"></ngx-control-level-loading-bar>
+                                                <p-dropdown  *ngIf="!isReadOnly" id="drp-from"
+                                                    class="form-control"
+                                                    [(ngModel)]="campaign.fromSMTPSettingID" 
+                                                    formControlName="fromSMTPSettingID"
+                                                    [options]="SmtpFromEmails"
+                                                    placeholder="{{'CRM.CAMPAIGN.DETAIL.TAB_DETAILS.FROM_PLACEHOLDER'| translate}}"
+                                                    [ngClass]="{ 'is-invalid': submitted && campaignfrm.fromSMTPSettingID.errors && (campaignfrm.fromSMTPSettingID.dirty || campaignfrm.fromSMTPSettingID.touched)}"
+                                                    [showClear]="true" [filter]="true"
+                                                    [resetFilterOnHide]="false" filterBy="label">
+                                                </p-dropdown>
+                                                <div *ngFor='let validation of campaignValidationMessages.fromSMTPSettingID'
+                                                    class='invalid-feedback'>
+                                                    <div *ngIf='submitted && campaignfrm.fromSMTPSettingID.hasError(validation.type) && campaignfrm.fromSMTPSettingID.errors && (campaignfrm.fromSMTPSettingID.dirty || campaignfrm.fromSMTPSettingID.touched)'
+                                                        id="errorfromSMTPSettingIDIsRequired">
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class='col-sm-6 form-group'>
+                                                <label>
+                                                    {{ 'CRM.CAMPAIGN.DETAIL.TAB_DETAILS.RECIPIENTS' | translate }}
+                                                    <span class="mandatory"></span>
+                                                </label>
+                                                <div class="disable-text pre-text" *ngIf="isReadOnly">{{ campaignRecipients | displayValueFinder: {value:campaign.toDatasourceCodes} : 'label' }}</div>
+
+                                                <p-multiSelect *ngIf="!isReadOnly" [options]="campaignRecipients" formControlName="toDatasourceCodes" id="mlt_ToDatasourceCodes"
+                                                    class="entity-multiSelect"
+                                                    styleClass="multiSelectOverride" [maxSelectedLabels]="_commonHelper.globalMultiselectMaxSelectedLabels" 
+                                                    [filter]="true" [showClear]="true" [showHeader]="true" [resetFilterOnHide]="false" [displaySelectedLabel]='true' [showToggleAll]="true"
+                                                    optionLabel="label" optionValue="value" defaultLabel="{{ 'CRM.CAMPAIGN.DETAIL.TAB_DETAILS.RECIPIENTS_PLACEHOLDER' | translate }}"
+                                                    (onChange)="onRecipientsChange($event)"
+                                                    [ngClass]="{ 'is-invalid': submitted && campaignfrm.toDatasourceCodes.errors && (campaignfrm.toDatasourceCodes.dirty || campaignfrm.toDatasourceCodes.touched)}">
+                                                </p-multiSelect>
+                                                <div *ngFor='let validation of campaignValidationMessages.toDatasourceCodes'
+                                                    class='invalid-feedback'>
+                                                    <div *ngIf='submitted && campaignfrm.toDatasourceCodes.hasError(validation.type) && campaignfrm.toDatasourceCodes.errors && (campaignfrm.toDatasourceCodes.dirty || campaignfrm.toDatasourceCodes.touched)'
+                                                        id="errortoDatasourceCodesIsRequired">
+                                                        {{ validation.message | translate }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Details End-->
+
+                            <!-- Schedule Start -->
+                            <div class="tab-pane fade px-0 p-0" id="navSchedule" role="tabpanel" name="navSchedule"
+                                [ngClass]="selectedTab == 'navSchedule' ? 'show active' : ''" aria-labelledby="navSchedule-tab">
+                                <ng-container *ngTemplateOutlet="scheduleTab; context: {form: campaignForm}"></ng-container>
+                            </div>
+                            <!-- Schedule End -->
+
+                            <!-- Custom Start-->
+                            <div class="tab-pane fade px-0 pt-0" name="navCustom"
+                                [ngClass]="selectedTab == ('nav' + tab.tabName | removeWhiteSpace) ? 'show active' : ''"
+                                *ngFor="let tab of formDataJSON; let i = index"
+                                id="{{ 'nav' + tab.tabName | removeWhiteSpace }}" role="tabpanel"
+                                aria-labelledby="navCustom-tab">
+                                <!-- Section Start-->
+                                <div class='card border-0 m-0 pt-md-0 pt-3'
+                                    *ngFor="let section of tab.sections; let j = index">
+                                    <div class="card-header btn-card-edit py-0">
+                                        <span *ngIf="section.sectionName"
+                                            class="vertical-center py-md-3 pt-0 pb-3 line-height-1">
+                                            {{ section.sectionName }}
+                                        </span>
+                                    </div>
+                                    <div class='card-body'>
+                                        <div class='row'>
+                                            <ngx-custom-field [formGroup]="campaignForm" [section]="section"
+                                                [controls]="section.controls"
+                                                [customFieldJSONData]="campaign.customFieldJSONData"
+                                                [isReadOnly]="isReadOnly" [submitted]="submitted"
+                                                [currencySymbol]="currencySymbol" [refreshTabularDataSource]="refreshCustomFieldDatasource"
+                                                [entityID]="campaignId" [entityTypeID]="entityTypeId" [entityRecordTypeID]="entityRecordTypeId"></ngx-custom-field>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Section End-->
+                            </div>
+                            <!-- Custom End-->
+
+                            <!-- Related Newsletters Tab Start-->
+                            <div class="tab-pane fade p-3 search-wrapper" id="navRelatedNewsletters" role="tabpanel" [ngClass]="selectedTab == 'navRelatedNewsletters' ? 'show active' : ''"
+                                aria-labelledby="navRelatedNewsletters-tab" name="navRelatedNewsletters">
+                                <div *ngIf="isEditCampaign && campaign.isActive" class="mb-3 vertical-center dropdown-with-add">
+                                    <div class="vertical-center w-100 min-h-dropdown-with-button" [ngClass]="(relatedNewsletters && relatedNewsletters.length > 0) ? 'justify-content-between' : 'justify-content-end'"  >
+                                        <button *ngIf="!relatedNewsletterDragEnable && (relatedNewsletters && relatedNewsletters.length > 0)" id="btn-enableDrag" class='btn btn-primary mr-3 mb-md-0 mb-3' type='button' (click)="onDragToggle()">
+                                            {{ 'CRM.CAMPAIGN.DETAIL.TAB_RELATEDNEWSLETTER.BUTTON_TOGGLE_DRAG' | translate }}
+                                        </button>
+                                        <div class="w-100" *ngIf="relatedNewsletterDragEnable">
+                                            <button id="btn-dragCancle" class='btn btn-secondary mr-3' type='button' (click)="onDragCancle()">
+                                                {{ 'CRM.CAMPAIGN.DETAIL.TAB_RELATEDNEWSLETTER.BUTTON_TOGGLE_CANCLE' | translate }}
+                                            </button>
+                                            <button id="btn-dragSave" class='btn btn-primary' type='button' (click)="onDragSave()">
+                                                {{ 'CRM.CAMPAIGN.DETAIL.TAB_RELATEDNEWSLETTER.BUTTON_TOGGLE_SAVE' | translate }}
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <ngx-control-level-loading-bar *ngIf="isShowAvailableNewslettersLoader"></ngx-control-level-loading-bar>
+                                            <p-dropdown #relatedNewsletterDrpRef *ngIf="!relatedNewsletterDragEnable" class="form-control static-dropdown-width text-left mb-md-0 mb-3"
+                                                id="drp-relatedNewsletter" [options]="availableNewsletters" [(ngModel)]="selectedNewsletter" [ngModelOptions]="{standalone: true}"
+                                                placeholder="{{'CRM.CAMPAIGN.DETAIL.TAB_RELATEDNEWSLETTER.ADD_RELATEDNEWSLETTERS_PLACEHOLDER' | translate | configuredEntityName}}"
+                                                (onFilter)="relatedNewslettersOnFilter($event)" (onChange)="relatedNewslettersOnChange($event)" 
+                                                [filter]="true" [resetFilterOnHide]="false" [showClear]="true" optionLabel="name" optionValue="id">
+                                            </p-dropdown>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive related-newsletter-grid">
+                                    <ng-container *ngIf="onceRelatedNewsletterClicked">
+
+                                        <ngx-tab-level-loader *ngIf="showRelatedNewslettersTableLoader; else showRelatedNewsletterTable"></ngx-tab-level-loader>
+                                        <ng-template #showRelatedNewsletterTable>
+                                            <p-table #relatedNewsletterTable [responsive]="true" responsiveLayout="stack" 
+                                                [columns]="relatedNewsletterColumns" [value]="relatedNewsletters" [lazy]="true" 
+                                                [totalRecords]="totalRelatedNewsletterRecord" [autoLayout]="true"
+                                                [scrollable]="false" [paginator]="false" paginatorDropdownAppendTo="body"
+                                                [ngClass]="totalRelatedNewsletterRecord == 0 ? 'tbl-height-zero user-select-none' : 'user-select-none'"                                            
+                                                (onRowReorder)="onRowReorderForRelatedNewsletter($event)">
+                                                <!--Removed search box as discussed with Upen sir. Ticket: SDC-1346 -->
+                                                <ng-template pTemplate="caption" *ngIf="false">
+                                                    <div class="p-input-icon-right w-100">
+                                                        <i class="pi pi-search" aria-hidden="true"></i>
+                                                        <input #relatedNewsletterSearchBoxInput pInputText type="text" id="txt-related-newsletter-search-text"
+                                                            class="w-100 customInputText form-control" size="50" (keyup)="search($event.target.value)"/>
+                                                    </div>
+                                                </ng-template>
+                                                <ng-template pTemplate="header" let-columns>
+                                                    <tr>
+                                                        <th class="drag-icon" *ngIf="relatedNewsletterDragEnable"></th>
+                                                        <th *ngFor="let col of columns" [pSortableColumn]="col.field" id="tblColumnHeader"
+                                                            [pSortableColumnDisabled]="!col.sort" class="{{col.field}} {{col.class}}" [ngClass]="col.header == '' ? 'hide-when-no-records' : ''"
+                                                            scope="col" (click)="changeOrder(col)">
+                                                            {{ col.header }}
+                                                            <p-sortIcon [field]="col.field" *ngIf="col.sort" id="iconSort"></p-sortIcon>
+                                                        </th>
+                                                    </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="body" let-rowData let-columns="columns" let-index="rowIndex">
+                                                    <tr [pReorderableRow]="index">
+                                                        <!-- 
+                                                            -- primeng version : 13.4.1
+                                                            --pReorderableRowHandle : This directive is used to make rows draggable according to prime ng but there are no properties available to make drag disable
+                                                            -- So after checking code of prime ng pReorderableRowHandle directive, found that it will only add class 'p-datatable-reorderablerow-handle' to element.
+                                                            -- So we used ngclass to add remove this class based on condition to make row Drag enable and Drag disable.
+                                                        -->
+                                                        <td *ngIf="relatedNewsletterDragEnable" class="drag-icon" tooltipClass="related-newsletter-tooltip" ngbTooltip="{{ 'CRM.CAMPAIGN.DETAIL.TAB_RELATEDNEWSLETTER.TOOLTIP_DRAG_AND_DROP' | translate | configuredEntityName}}" placement="right-top" container="body">
+                                                            <span class="pi pi-bars" [ngClass]="{'p-datatable-reorderablerow-handle' : relatedNewsletterDragEnable}" ></span>
+                                                        </td>
+                                                        <td class="bookmark">
+                                                            <ngx-bookmark [entityTypeId]="entity.Newsletters" [entityId]="rowData.newsletterID" [isStarred]="rowData?.isStarred"
+                                                                [isEditPermission]="false" [isFromKanbanOrListView]="true">
+                                                            </ngx-bookmark>
+                                                        </td>
+                                                        <td class="newsletterName" [ngClass]="{'p-datatable-reorderablerow-handle' : relatedNewsletterDragEnable}">
+                                                            <span class="p-column-title">
+                                                                {{columns[1].header}}
+                                                            </span>
+                                                            <a [routerLink]="'/newsletters/details/' + rowData.newsletterID"
+                                                                [ngClass]="isViewNewsletter ? 'dark-blue font-weight-bold no-underline cursor-pointer pre-text' : 'no-link'">{{rowData.newsletterName}}</a>
+                                                        </td>    
+                                                        <td class="sentOn" [ngClass]="{'p-datatable-reorderablerow-handle' : relatedNewsletterDragEnable}">
+                                                            <span class="p-column-title">
+                                                                {{columns[2].header}}
+                                                            </span>
+
+                                                            <span></span>
+                                                        </td>                                                
+                                                        <td class="status" [ngClass]="{'p-datatable-reorderablerow-handle' : relatedNewsletterDragEnable}">
+                                                            <span class="p-column-title">
+                                                                {{columns[3].header}}
+                                                            </span>
+
+                                                            <span [ngClass]="rowData.status == true ? 'bg-primary' : 'bg-danger'" class="h-21 badge badge--status">
+                                                                {{ rowData.status | active }}
+                                                            </span>
+                                                        </td>
+                                                        <td class="id action justify-content-end">
+                                                            <div class="dropdown text-right" *ngIf="isDeleteCampaign">
+                                                                <button pButton icon="fas fa-wrench" class="p-button-rounded p-button-sm"
+                                                                    type="button" id="drp-action" data-bs-toggle="dropdown"
+                                                                    aria-expanded="false">
+                                                                </button>
+                                                                <ul class="dropdown-menu dropdown-menu-end"
+                                                                    aria-labelledby="drp-action">
+                                                                    <li>
+                                                                        <a id="link-Delete" class="dropdown-item"
+                                                                            (click)="deleteRelatedNewsletter(rowData.id)">
+                                                                            <i class="far fa-trash-alt me-1" aria-hidden="true"></i>
+                                                                            {{ 'CRM.CAMPAIGN.DETAIL.TAB_RELATEDNEWSLETTER.BUTTON_REMOVE' | translate }}
+                                                                        </a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="emptymessage" let-columns>
+                                                    <tr>
+                                                        <td [attr.colspan]="columns.length + 1" id="lbl-NoRecordsFound" class="table-no-record text-center">
+                                                            {{ 'CRM.CAMPAIGN.DETAIL.TAB_RELATEDNEWSLETTER.MESSAGE_NO_RECORDS_FOUND' | translate}}
+                                                        </td>
+                                                    </tr>
+                                                </ng-template>
+
+                                            </p-table>
+                                        </ng-template>
+                                    </ng-container>
+                                </div>
+                            </div>
+                         <!-- Related Newsletters Tab End-->
+
+                        <!-- Stage/Pause history Start-->
+                        <div class="tab-pane fade" id="navHistory" role="tabpanel" [ngClass]="selectedTab == 'navHistory' ? 'show active' : ''"
+                            aria-labelledby="navHistory-tab" name="navHistory">
+                            <ng-container *ngIf="onceStageHistoryClicked">
+                                <ngx-history-tab [entityWorkflowId]="null" [entityTypeId]="entityTypeId" [entityId]="campaignId"
+                                    [hoursInDay]="hoursInDay" [refreshStageHistory]="refreshStageHistory"
+                                    [refreshActivityHistory]="refreshActivityHistory"></ngx-history-tab>
+                            </ng-container>
+                        </div>
+                        <!-- Stage/Pause history End-->
+
+                        <!-- Document Start-->
+                        <div class="tab-pane fade p-3 search-wrapper" id="navDocuments" role="tabpanel"
+                            [ngClass]="selectedTab == 'navDocuments' ? 'show active' : ''" aria-labelledby="navDocuments-tab"
+                            name="navDocuments">
+                            <ng-container *ngIf="onceDocumentClicked">
+                                <ngx-entity-documents [entityID]="campaignId" class="entity-documents" [entityTypeID]="entityTypeId"
+                                    [isDocumentDownloadPermission]="isDocumentDownloadPermission && campaign.isActive"
+                                    [isEditPermission]="isEditCampaign && campaign.isActive"
+                                    [refreshFromParent]="refreshActivityHistory"
+                                    (refreshDocuments)="setRefreshDocument()">
+                                </ngx-entity-documents>
+                            </ng-container>
+                        </div>
+                        <!-- Document End-->
+
+                        </div>
+                    </form>
+                    <!-- Tab Content END -->
+                    <div *ngIf="isAdditionalTab">
+                        <!-- Tab Additional here -->
+                        <ng-container>
+                            <ngx-globle-nav-tab [isNativeTab]="isNativeTab" [isAdditionalTab]="isAdditionalTab" [navTabs]="navTabsMore" (setTab)="checkTabCall($event,0)"
+                                class="col-12 p-0" (closeTab)="closeNavTab($event)"
+                                [ngClass]="{'edit-icon-section': isReadOnly && !(['navWorkTasks', 'navContacts', 'navAttachment', 'navProducts', 'navHistory', 'additionalTabs','navDocuments'] | showHidePencilButton: activeTab)}"></ngx-globle-nav-tab>
+                        </ng-container>
+                    </div>
+                    <!-- Tab Other Tabs Link -->
+                </div>
+            </div>
+            <activity-section 
+                [entityTypeId]="entityTypeId" 
+                [entityId]="campaignId" 
+                [isTagRequired]="true"
+                [isEditPermission]="isEditCampaign"
+                [isActive]="campaign.isActive" 
+                [isDocumentRequired]="true" 
+                [isDocumentDownloadPermission]="isDocumentDownloadPermission && campaign.isActive"
+                [refreshDocument]="refreshDocument"
+                [refreshActivity]="refreshActivity" 
+                [entityRecordTypeId]="entityRecordTypeId"
+                (isTagListUpdated)="setRefreshEntityTag()" 
+                (isActivityListUpdated)="setRefreshActivityHistory()" 
+                class="col-xl-4 col-md-12 common-box pr-0"
+                [createdBy]="campaign?.createdBy"
+                [privacyLevel]="null">
+            </activity-section>
+        </div>
+    </div>
+    <!-- Body End-->
+</div>
+
+<ng-template #scheduleTab let-form="form">
+    <div [formGroup]="form" [ngClass]="isReadOnly ? 'pe-none' : ''">
+        <div class="card border-0 mb-3 pt-md-0 pt-3 schedule-form">
+            <div class='card-body'>
+                <div class='row'>
+                    <div class="col-auto pt-1">
+                        <label class="col-form-label">{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.SCHEDULE_TIME' | translate }}<span class="mandatory"></span></label>
+                    </div>
+                    <div class="col d-flex flex-wrap align-items-center">
+                        <div *ngIf="isReadOnly" class="disable-text mr-1 mt-1">
+                            {{timeString}}
+                        </div>
+                        <p-calendar id="dp-schedule-time" *ngIf="!isReadOnly" [timeOnly]="true" hourFormat="12"
+                            formControlName="scheduleTime" class="w-86px" [placeholder]="_commonHelper.globalTimePlaceholder"
+                            [dateMask]="_commonHelper.globalTimeMask" [stepMinute]="15" [readonlyInput]="false"
+                            [minDate]="_commonHelper.globalMinDate" [maxDate]="_commonHelper.globalMaxDate" selectOtherMonths="true"
+                            [ngClass]="{ 'is-invalid': submitted && form.get('scheduleTime').errors && (form.get('scheduleTime').dirty || form.get('scheduleTime').touched)}">
+                        </p-calendar>
+                        <div *ngFor='let validation of campaignValidationMessages.scheduleTime'
+                            class='invalid-feedback'>
+                            <div *ngIf="form.get('scheduleTime').hasError(validation.type) && submitted && form.get('scheduleTime').errors">
+                                {{ validation.message | translate }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class='row mt-2'>
+                    <div class="col-auto">
+                        <label class="col-form-label">{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.REPEAT_CONTENT' | translate }}</label>
+                    </div>
+                    <div class="col d-flex flex-wrap align-items-center">
+                        <div *ngIf="isReadOnly" class="disable-text disable-max mr-1 mt-1">
+                            {{campaign.isRepeatContentList ? ('CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.REPEAT_CONTENT_LABEL_SWITCH_YES' | translate) : ('CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.REPEAT_CONTENT_LABEL_SWITCH_NO' | translate)}}
+                        </div>
+                        <label class="h-27px m-0">
+                            <div *ngIf="!isReadOnly" class="switch switch-label switch-pill switch-primary">
+                                <input [disabled]="isReadOnly" type="checkbox" id="swt-yes-no" formControlName="isRepeatContentList" class="switch-input"
+                                    [(ngModel)]="campaign.isRepeatContentList">
+                                <div class="switch-slider switch--status"
+                                    [attr.data-checked]="'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.REPEAT_CONTENT_LABEL_SWITCH_YES' | translate"
+                                    [attr.data-unchecked]="'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.REPEAT_CONTENT_LABEL_SWITCH_NO' | translate">
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 m-0 pt-md-0 pt-3 schedule-form">
+            <div class="card-header btn-card-edit py-0">
+                <span class="vertical-center py-md-3 pt-0 pb-3 line-height-1">{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.HEADER_RECURRENCE_PATTERN' | translate }}</span>
+            </div>
+            <div class='card-body'>
+                <div class='row'>
+                    <div class='col form-group vertical-divider'>
+                        <div class="row">
+                            <div class="p-field-radiobutton mb-3">
+                                <p-radioButton id="radio-daily" name="recurrence_pattern" value="Daily" #rdoDaily
+                                    [(ngModel)]="recurrence_pattern" [ngModelOptions]="{standalone: true}"
+                                    [disabled]="isReadOnly" (onClick)="onScheduleOptionChange()">
+                                </p-radioButton>
+                                <label for="radio-daily" class="custom-control-label pl-2 cursor-pointer" (click)="rdoDaily?.select()">{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.RECURRENCE_PATTERN_DAILY' | translate }}</label>
+                            </div>
+                            <div class="p-field-radiobutton mb-3">
+                                <p-radioButton id="radio-weekly" name="recurrence_pattern" value="Weekly" #rdoWeekly
+                                    [(ngModel)]="recurrence_pattern" [ngModelOptions]="{standalone: true}"
+                                    [disabled]="isReadOnly" (onClick)="onScheduleOptionChange()">
+                                </p-radioButton>
+                                <label for="radio-weekly" class="custom-control-label pl-2 cursor-pointer" (click)="rdoWeekly?.select()">{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.RECURRENCE_PATTERN_WEEKLY' | translate }}</label>
+                            </div>
+                            <div class="p-field-radiobutton">
+                                <p-radioButton id="radio-monthly" name="recurrence_pattern" value="Monthly" #rdoMonthly
+                                    [(ngModel)]="recurrence_pattern" [ngModelOptions]="{standalone: true}"
+                                    [disabled]="isReadOnly" (onClick)="onScheduleOptionChange()">
+                                </p-radioButton>
+                                <label for="radio-monthly" class="custom-control-label pl-2 cursor-pointer" (click)="rdoMonthly?.select()">{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.RECURRENCE_PATTERN_MONTHLY' | translate }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col form-group width-selection">
+                        <div class="row vertical-align-middle">
+                            <ng-container [ngSwitch]="recurrence_pattern">
+                                <ng-container *ngSwitchCase="'Daily'">
+                                    <div class="col-lg">
+                                        <div class="p-field-radiobutton radiobtnEvery" [ngClass]="!isReadOnly ? 'align-items-baseline mb-2' : 'align-items-center'">
+                                            <p-radioButton id="radio-every" name="pattern" [(ngModel)]="every_day_type" #rdoEvery
+                                                value="Every" [ngModelOptions]="{standalone: true}"
+                                                [disabled]="isReadOnly" (onClick)="onDailySubOptionChange()">
+                                            </p-radioButton>
+                                            <label for="Daily" class="custom-control-label pl-2 text-nowrap cursor-pointer" [ngClass]="!isReadOnly ? 'mt-10px' : ''" (click)="rdoEvery?.select()">{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.DAILY_PATTERN_EVERY' | translate }}</label>
+                                            <div class="col-sm-auto d-flex flex-wrap align-items-center ml-2">
+                                                <div *ngIf="isReadOnly" class="disable-text disable-max mx-1 mt-1">
+                                                    {{day}}
+                                                </div>
+                                                <ng-container  *ngIf="every_day_type == 'Every'">
+                                                    <input id="txt-every-days" *ngIf="!isReadOnly" type="number" class="form-control ml-0 mr-2" min="1" max="999"
+                                                        formControlName="day" [readonly]="every_day_type == 'Every_Weekday'"
+                                                        [(ngModel)]="day" (keypress)="textEventHandlerFor3Char($event)"
+                                                        [ngClass]="{ 'is-invalid': submitted && form.get('day').errors && (form.get('day').dirty || form.get('day').touched)}">
+                                                    <label class="text-nowrap">{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.DAILY_PATTERN_EVERY_DAYS' | translate }}<span class="mandatory"></span></label>
+                                                    <div *ngFor='let validation of campaignValidationMessages.day' class='invalid-feedback'>
+                                                        <div *ngIf="form.get('day').hasError(validation.type) && submitted && form.get('day').errors">
+                                                            {{ validation.message | translate }}
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                            </div>
+                                        </div>
+                                        <div class="p-field-radiobutton" [ngClass]="!isReadOnly ? 'mb-2' : 'min-height-38px'">
+                                            <p-radioButton id="radio-every-weekday" name="pattern" [(ngModel)]="every_day_type" value="Every_Weekday" #rdoEveryWeekday
+                                                [ngModelOptions]="{standalone: true}" [disabled]="isReadOnly" (onClick)="onDailySubOptionChange()">
+                                            </p-radioButton>
+                                            <label for="Daily" class="custom-control-label pl-2 cursor-pointer" (click)="rdoEveryWeekday?.select()">{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.DAILY_PATTERN_EVERY_WEEKDAY' | translate }}</label>
+                                        </div>
+                                        <div class="text-danger font-12" *ngIf="submitted && !every_day_type">
+                                            {{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.ERROR_DAILY_SUB_OPTION_REQUIRED' | translate }}
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngSwitchCase="'Weekly'">
+                                    <div class="col-lg">
+                                        <div class="row">
+                                            <div class="col-12 d-flex mb-3 align-items-baseline flex-wrap">
+                                                <label for="" class="mb-2 mb-sm-0">{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.RECCURE_EVERY' | translate }}</label>
+                                                <div class="col-auto d-flex flex-wrap align-items-center ml-2">
+                                                    <div *ngIf="isReadOnly" class="disable-text disable-max disable-spacing mr-1">
+                                                        {{week}}
+                                                    </div>
+                                                    <input id="txt-every-weeks" *ngIf="!isReadOnly" type="number" class="form-control ml-0 mr-2 w-55" min="1" max="99"
+                                                        formControlName="week" [(ngModel)]="week" (keypress)="textEventHandlerFor2Char($event)"
+                                                        [ngClass]="{ 'is-invalid': submitted && form.get('week').errors && (form.get('week').dirty || form.get('week').touched)}">
+                                                    <label class="text-nowrap">{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.WEEKLY_PATTERN_EVERY_WEEKS' | translate }}<span class="mandatory"></span></label>
+                                                    <div *ngFor='let validation of campaignValidationMessages.week' class='invalid-feedback'>
+                                                        <div *ngIf="form.get('week').hasError(validation.type) && submitted && form.get('week').errors">
+                                                            {{ validation.message | translate }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12 d-flex flex-wrap pl-xl-5 pl-4">
+                                                <ng-container *ngFor="let enum of weekdays">
+                                                    <div class="custom-control custom-checkbox col-max-day" 
+                                                        [ngClass]="{ 'is-invalid': !isAnyWeekDaySelected && submitted}">
+                                                        <input id="chk-{{(enum.key | lowercase)}}" name="chk-{{(enum.key | lowercase)}}" type="checkbox" 
+                                                            class="custom-control-input" [checked]="enum.isSelected" 
+                                                            [(ngModel)]="enum.isSelected" [ngModelOptions]="{standalone: true}"
+                                                            (change)="onWeekDaycheckChange()"/>
+                                                        <label for="chk-{{(enum.key | lowercase)}}" class="custom-control-label">{{enum.key | translate}}</label>
+                                                    </div>
+                                                </ng-container>
+                                                <div *ngIf="!isAnyWeekDaySelected && submitted" class='invalid-feedback'>
+                                                        {{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.ERROR_MESSAGE_SELECT_WEEKDAYS' | translate }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngSwitchCase="'Monthly'">
+                                    <div class="col-lg">
+                                        <div class="row">
+                                            <div class="col-12 d-flex align-items-baseline">
+                                                <label for="" class="mb-2 mb-sm-0 text-nowrap">{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.MONTHLY_DAY' | translate }}<span class="mandatory"></span></label>
+                                                <div class="d-flex flex-wrap align-items-baseline ml-2 w-100">
+                                                    <div *ngIf="isReadOnly" class="disable-text disable-max disable-spacing w-142px mb-2 mr-2">
+                                                        {{monthDay}}
+                                                    </div>
+                                                    <div [ngClass]="{ 'w-142px' : !isReadOnly }" class="d-flex flex-wrap align-items-baseline mb-2">
+                                                        <input id="txt-every-month-day" *ngIf="!isReadOnly" type="text" class="form-control ml-0 w-100 mr-2 text-truncate-input"
+                                                            formControlName="monthDay" [(ngModel)]="monthDay" (keypress)="textCommaSperatedNumberEventHandler($event);" (keyup)="isMonthlyDaysRepeat();"
+                                                            [ngClass]="{ 'is-invalid': (submitted && isAnyMonthlyDaysRepeat && !form.get('monthDay').errors) || (submitted && form.get('monthDay').errors && (form.get('monthDay').dirty || form.get('monthDay').touched))}">
+                                                        <div *ngFor='let validation of campaignValidationMessages.monthDay' class='invalid-feedback mt-0 w-142px'>
+                                                            <div *ngIf="form.get('monthDay').hasError(validation.type) && submitted && form.get('monthDay').errors" class="mt-1">
+                                                                {{ validation.message | translate }}
+                                                            </div>
+                                                        </div>
+                                                        <div *ngIf="isAnyMonthlyDaysRepeat && submitted && !form.get('monthDay').errors" class='invalid-feedback mt-0 w-142px'>
+                                                            <div class="mt-1">{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.ERROR_MONTH_DAY_REPEAT' | translate }}</div>
+                                                        </div>
+                                                    </div>
+                                                    <label class="text-nowrap mb-2 mb-lg-0 mr-2">{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.MONTHLY_OF_EVERY' | translate }}</label>
+
+                                                    <div class="d-flex flex-wrap align-items-baseline months-width">
+                                                        <div *ngIf="isReadOnly" class="disable-text disable-max disable-spacing mr-1 mb-md-0 mb-2">
+                                                            {{month}}
+                                                        </div>
+                                                        <input id="txt-every-months" *ngIf="!isReadOnly" type="number" class="form-control ml-0 mr-2 mb-md-0 mb-2 w-55" min="1" max="99"
+                                                            formControlName="month" [(ngModel)]="month" (keypress)="textEventHandlerFor2Char($event)"
+                                                            [ngClass]="{ 'is-invalid': submitted && form.get('month').errors && (form.get('month').dirty || form.get('month').touched)}">
+                                                        <label class="text-nowrap">{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.MONTHLY_MONTHS' | translate }}<span class="mandatory"></span>
+                                                            <i class="fas fa-info-circle dark-grey ml-1 info-tooltip pe-auto" ngbTooltip="{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.MONTH_TOOLTIP' | translate }}" placement="top-right bottom-right" container="body" aria-hidden="true" opensOn="Hover"></i>
+                                                        </label>
+                                                        
+                                                        <div *ngFor='let validation of campaignValidationMessages.month' class='invalid-feedback mt-0 w-100'>
+                                                            <div *ngIf="form.get('month').hasError(validation.type) && submitted && form.get('month').errors" class="mt-1">
+                                                                {{ validation.message | translate }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" *ngIf="submitted && !recurrence_pattern">
+                    <div class="col form-group invalid-error font-11">
+                        {{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.ERROR_RECURRENCE_PATTERN_REQUIRED' | translate }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 m-0 pt-md-0 pt-3 schedule-form">
+            <div class='card-body pt-0'>
+                <div class='row'>
+                    <div class="col-auto pt-1">
+                        <label class="col-form-label">{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.MAX_OCCURRENCES_END_AFTER' | translate }}</label>
+                    </div>
+                    <div class="col d-flex flex-wrap align-items-center mb-3">
+                        <div *ngIf="isReadOnly" class="disable-text disable-max mr-1 mt-2">
+                            {{campaign.maxNoOfOccurrence}}
+                        </div>
+                        <input id="txt-occurrence" *ngIf="!isReadOnly" type="number" class="form-control mr-2" min="1"
+                            max="999" formControlName="maxNoOfOccurrence" [(ngModel)]="campaign.maxNoOfOccurrence"
+                            (keypress)="textEventHandlerFor3Char($event)"
+                            [ngClass]="{ 'is-invalid': submitted && form.get('maxNoOfOccurrence').errors && (form.get('maxNoOfOccurrence').dirty || form.get('maxNoOfOccurrence').touched)}">
+                        <label class="text-nowrap" [ngClass]="isReadOnly ? 'mt-1' : ''">{{ 'CRM.CAMPAIGN.DETAIL.TAB_SCHEDULE.OCCURRENCES' | translate }}</label>
+                        <div *ngFor='let validation of campaignValidationMessages.maxNoOfOccurrence' class='invalid-feedback'>
+                            <div *ngIf="form.get('maxNoOfOccurrence').hasError(validation.type) && submitted && form.get('maxNoOfOccurrence').errors">
+                                {{ validation.message | translate }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

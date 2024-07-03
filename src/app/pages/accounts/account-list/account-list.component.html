@@ -1,0 +1,313 @@
+<div class="entity-page entity-main filters-two">
+    <!-- Header Start -->
+    <div class="page-header">
+        <div class="container-fluid lineheight35 heading-page">
+            <div class="row">
+                <div class="col-sm-4 lh-sm">
+                    <h4 class="m-0">
+                        <span id="headingEntity" class="header-text">{{ EntityTitle | translate |
+                            configuredEntityName }}</span>
+                    </h4>
+                </div>
+                <div class="col">
+                    <div class="btn-view">
+                        <a *ngIf="isImportAccount" id="btn-import-entity" class="btn btn-link p-0 text-nowrap mb-2"
+                            (click)="openImportAccount()">
+                            <i class="far fa-file-excel mr-1" aria-hidden="true"></i>
+                            {{ 'CRM.ACCOUNT.LIST.BUTTON_IMPORT' | translate | configuredEntityName }}
+                        </a>
+                        <button *ngIf="isAddAccount" type="button" id="btn-add-entity" class="btn btn-primary ml-3 mb-2"
+                            (click)="addAccount()">
+                            <i class="fa fa-plus-circle me-1" aria-hidden="true"></i>
+                            {{'CRM.ACCOUNT.LIST.BUTTON_ADD' | translate | configuredEntityName }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Header End -->
+
+    <!-- Page Content Start -->
+    <div class="page-content one-row-filters">
+        <div class="entity-search-area pt-2 mb-2">
+            <div class="container-fluid">
+                <div class="row align-items-end common-listing-filters">
+                    <div class="col-xl-2 col-md-4 col-6 mb-xl-0 mb-3 pe-xxl-2 pe-xl-0 filter-width "> 
+                        <div class="mb-1 fs13px">{{ 'CRM.ACCOUNT.LIST.SEARCH' | translate }}</div>
+                        <div class="p-input-icon-right w-100">
+                            <i class="pi pi-search" aria-hidden="true"></i>
+                            <input #searchTextInput pInputText type="text" id="txt-search-text"
+                                class="w-100 customInputText form-control" size="50"
+                                [(ngModel)]="pagingParams.searchString" />
+                        </div>
+                    </div>
+                    <!-- <div class="col-xl-2 col-md-3 col-6 mb-lg-0 mb-3 filter-width">
+                        <div class="mb-1 fs13px">{{ 'CRM.ACCOUNT.LIST.FILTER_LABEL_STATUS' | translate }}</div>
+                        <p-dropdown id="drp-status" [options]="statusOptions" [filter]="false" [resetFilterOnHide]="false"
+                            class="form-control" name="assignedUserId" [(ngModel)]="pagingParams.status"
+                            [showClear]="true" [placeholder]="'CRM.CONTACT.LIST.PLACEHOLDER_STATUS' | translate"
+                            (onChange)="onFilterStatus($event)">
+                        </p-dropdown>
+                    </div> -->
+                    <div class="col-xl-2 col-md-4 col-6 mb-xl-0 mb-3 pe-xxl-2 pe-xl-0 filter-width" *ngIf="hideRecordTypeFilter && hideRecordTypeFilter.length > 0">
+                        <div class="mb-1 fs13px">{{ 'CRM.ACCOUNT.LIST.FILTER_LABEL_RECORDTYPE' | translate }}</div>
+                        <p-multiSelect #recordType class="entity-multiSelect" id="drp-workflow" appendTo="body" panelStyleClass="maxWidthOverride-sm"
+                            [filter]="true" [resetFilterOnHide]="false" [showHeader]="true"
+                            [displaySelectedLabel]='true' [showToggleAll]="true"
+                            [maxSelectedLabels]="_commonHelper.globalMultiselectMaxSelectedLabels"
+                            [options]="recordTypes" [placeholder]="'CRM.ACCOUNT.LIST.FILTER_PLACEHOLDER_RECORDTYPE' | translate"
+                            optionLabel="label" optionValue="value" [(ngModel)]="selectedRecordTypes"
+                            (onChange)="onFilterRecordType($event)" (onFilter)="trimFilterValue($event,recordType)">
+                        </p-multiSelect>
+                    </div>
+                    <div class="custom-account col-xl col-md-4 col-sm-6 col-6 pe-xxl-2 pe-xl-0 mb-xl-0 mb-3 filter-width">
+                        <div class="mb-1 fs13px">{{ 'CRM.ACCOUNT.LIST.FILTER_LABEL_DATERANGE' | translate }}</div>
+                        <ngx-custom-calender [(ngModel)]="rangeDates" [rangeDates]="rangeDates"  [dateFormat]="_commonHelper.globalDatePickerFormate" [numberOfMonths]='2' id="dp-createdOn"
+                            class="date-range-calendar" selectionMode="range" [readonlyInput]="false" inputId="range" appendTo="body"
+                            [placeholder]="_commonHelper.globalDateRangePlaceholder" [ngxMask]="_commonHelper.globalDateRangeMaskWithTime"
+                            [monthNavigator]="true" [yearNavigator]="true"
+                            [minDate]="_commonHelper.globalMinDate" [maxDate]="_commonHelper.globalMaxDate"
+                            [yearRange]="_commonHelper.globalYearRange" [selectOtherMonths]="true"
+                            [showTime]="false" [showRangeButtonBar]="true" [firstDayOfWeek]="1" [dateSelectOptionsButtonBar]="dateSelectOptionsButtonBar" 
+                            (ngModelChange)="onFilterCreated($event)">
+                        </ngx-custom-calender>
+                    </div>
+                    <div class="col-xl-2 col-md-4 col-6 mb-xl-0 mb-3 pe-xxl-2 pe-xl-0 filter-width" *ngIf="ratingOptions && ratingOptions.length > 0">
+                        <div class="mb-1 fs13px">{{ 'CRM.ACCOUNT.LIST.FILTER_LABEL_RATING' | translate }}</div>
+                        <p-dropdown [options]="ratingOptions" [showClear]="true" [placeholder]="'CRM.ACCOUNT.LIST.FILTER_PLACEHOLDER_RATING' | translate"
+                        [(ngModel)]="pagingParams.rating" [filter]="false" [resetFilterOnHide]="false"
+                        (onChange)="onFilterRating($event)"></p-dropdown>
+                    </div>
+                    <div class="col-xl-auto col-sm-auto col-6 mb-xl-0 mb-3">
+                        <div class="custom-control custom-checkbox d-flex align-items-center w-100">
+                            <input class="custom-control-input mt-0 w-20-size" type="checkbox" id="chk-showMyEntities"
+                            [(ngModel)]="IsActive" (change)="onFilterShowActiveRecords()"> 
+                            <label for="chk-showMyEntities" class="custom-control-label pl-2">{{ 'CRM.ACCOUNT.LIST.FILTER_ACTIVE_RECORDS' | translate}}</label>
+                        </div>
+                        <div class="custom-control custom-checkbox d-flex align-items-center mt-2 w-100">
+                            <input class="custom-control-input mt-0 w-20-size" type="checkbox" id="chk-showStarred" [checked]="showStarred"
+                                [(ngModel)]="showStarred" (change)="onFilterShowStarred()">
+                            <label for="chk-showStarred" class="custom-control-label pl-2">{{ 'CRM.ACCOUNT.ALLLISTING.FILTER_STARRED' | translate }}</label>
+                        </div>
+                    </div>
+                    <div class="col-auto mb-xl-0 mb-3 pe-xl-0">
+                        <button id="btn-reset" class="btn btn-outline-secondary" type="button"
+                            (click)="onResetAllFilters()"
+                            [disabled]="(accountSearchFilter.searchText == '' 
+                            && (accountSearchFilter.recordTypeIds == null || accountSearchFilter.recordTypeIds == '') 
+                            && !accountSearchFilter.IsActive
+                            && accountSearchFilter.createdStartDate == null
+                            && accountSearchFilter.rating == null && !accountSearchFilter.showStarred)">
+                            {{'CRM.ACCOUNT.LIST.BUTTON_RESET' | translate}}
+                        </button>
+                    </div>
+                    <div class="col-xxl col-auto height-38px d-flex align-items-center justify-content-xl-end mb-xl-0 mb-3">
+                        <button *ngIf="isExportAccount" type="button" id="btn-export-to-excel"
+                            class="btn btn-exp btn-mg p-0 btn-small" (click)="exportExcel()" placement="top auto" container="body"
+                            ngbTooltip="Export To Excel" triggers="hover" tooltipClass="tooltip-backward-small">
+                            <i class="fas fa-2x fa-file-excel" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Content End -->
+
+    <!-- Table Start -->
+    <div class="container-fluid pb-5 pb-xl-0" [ngClass]="isShowActivityCenter ? 'list-move-scroll-activity' : ''">
+        <div class="row mb-2">
+            <div class="mt-1 col-12">
+                <div class="tbl-account-list tbl-entity p-card">
+                    <p-table #pTable [responsive]="true" responsiveLayout="stack" [rows]="_commonHelper.DefaultPageSize"
+                        [rowsPerPageOptions]='_commonHelper.globalRowsPerPageOptions' [columns]="cols" paginatorDropdownAppendTo="body"
+                        [value]="accounts" sortField="name" class="tbl-account-list" [sortOrder]="1" [lazy]="true"
+                        [totalRecords]="totalRecords" [autoLayout]="true" [scrollable]="true"
+                        [paginator]="totalRecords > 0" [ngClass]="totalRecords == 0 ? 'tbl-height-zero' : ''"
+                        [scrollHeight]="'calc(100vh - 248px)'" (onPage)="paginate($event)">
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th *ngFor="let col of columns" [pSortableColumn]="col.field" id="tblColumnHeader"
+                                    [pSortableColumnDisabled]="!col.sort" class="{{col.field}} {{col.class}}" [hidden]="!col.visible"
+                                    scope="col" (click)="changeOrder(col)" [ngClass]="col.header == '' ? 'hide-when-no-records' : ''">
+                                    {{ col.header | translate }} 
+                                    <p-sortIcon [field]="col.field" *ngIf="col.sort" id="iconSort"></p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                            <tr [ngClass]="[(rowData.isPaused || !rowData.isActive) ? 'lightGreyBg' : '',  selectedRowId == rowData.id ? 'selected-row' : '']"
+                            (click)="onRowClick(rowData, true)">
+                                <td class="bookmark">
+                                    <ngx-bookmark [entityTypeId]="entityTypeId" [entityId]="rowData.id" [isStarred]="rowData?.isStarred"
+                                        [isEditPermission]="isEditAccount && !rowData?.isPaused" [isFromKanbanOrListView]="true">
+                                    </ngx-bookmark>
+                                </td>
+                                <td class="name">
+                                    <span class="p-column-title">
+                                        {{columns[1].header | translate}}
+                                    </span>
+                                    <a id="link-headingRecord" [routerLink]="'/accounts/details/' + rowData.id" (click)="stopPropagation($event)" class="float-left me-2"
+                                        [ngClass]="isViewAccount ? 'dark-blue font-weight-bold no-underline cursor-pointer pre-text' : 'no-link'">{{rowData.name}}</a>
+                                    <span *ngIf="rowData.rating != 0" class="float-left me-2">
+                                        <entity-review-display [entityTypeId]="entityTypeId" [entityId]="rowData.id" [rating]="rowData.rating" id="btn-rating"
+                                            [review]="rowData.totalReviews" [entityReviewID]="rowData.entityReviewID" [isFromKanbanOrListView]="true"
+                                            [isEditPermission]="isEditAccount && !(rowData.isPaused ?? false)">
+                                        </entity-review-display>
+                                    </span>
+                                </td>
+                                <td class="ein">
+                                    <span class="p-column-title">
+                                        {{columns[2].header | translate}}
+                                    </span>
+                                    {{ rowData.ein | mask:_commonHelper.globalInputEinFormate }}
+                                </td>
+                                <td class="phone">
+                                    <span class="p-column-title">
+                                        {{columns[3].header | translate}}
+                                    </span>
+                                    <ng-container *ngIf="rowData.phoneNumber">
+                                        <a class="dark-blue font-weight-bold no-underline cursor-pointer" id="link-phone"
+                                            [href]="rowData.phone | phone:'link'">
+                                            {{rowData.countryCode}} {{ rowData.phoneNumber | mask: rowData['phoneMask'] }}
+                                        </a>
+                                    </ng-container>
+                                </td>
+                                <td class="email">
+                                    <span class="p-column-title">
+                                        {{columns[4].header | translate}}
+                                    </span>
+                                    <a class="dark-blue font-weight-bold no-underline cursor-pointer" id="link-email" (click)="stopPropagation($event)"
+                                        href="mailto:{{rowData.email}}">
+                                        {{rowData.email}}
+                                    </a>
+                                </td>
+                                <td class="typeName">
+                                    <span class="p-column-title">
+                                        {{columns[5].header | translate}}
+                                    </span>
+                                    {{rowData.typeName}}
+
+                                </td>
+                                <td class="created">     
+                                    <span class="p-column-title">
+                                        {{columns[6].header | translate}}
+                                    </span>
+                                    {{(rowData.created | dateFormatPipe: _commonHelper.globalDateFormate)}}
+                                </td>
+                                <!-- <td class="status">
+                                    <span class="p-column-title">
+                                        {{columns[5].header | translate}}
+                                    </span>
+                                    <label class="h-27px m-0">
+                                        <div class="switch switch-label switch-pill switch-primary" (click)="stopPropagation($event)">
+                                            <input [disabled]="!isEditAccount" type="checkbox" id="swt-active-inactive"
+                                                class="switch-input" [(ngModel)]="rowData.isActive"
+                                                (change)="onStatusChange(rowData)">
+                                            <div class="switch-slider switch--status"
+                                                [attr.data-checked]="'CRM.ACCOUNT.LABEL_SWITCH_ACTIVE' | translate"
+                                                [attr.data-unchecked]="'CRM.ACCOUNT.LABEL_SWITCH_INACTIVE' | translate">
+                                            </div>
+                                        </div>
+                                    </label>
+                                </td> -->
+                                <td class="customfields">
+                                    <span class="p-column-title">
+                                        {{columns[7].header | translate}}
+                                    </span>
+                                    <span *ngIf="rowData.hasCustomFields" class="w-100 d-flex justify-content-center">
+                                      <i class="fas fa-ellipsis-h" aria-hidden="true" (click)="getAccountCustomFields(rowData)" (click)="stopPropagation($event)" id="btn-custom-fields" [ngClass]="!this.isViewAccount ? 'cursor-default' : 'cursor-pointer'"></i>
+                                    </span>
+                                  </td>
+                                <td class="id action">
+                                    <div *ngIf="!rowData.isPaused && (isEditAccount || isDeleteAccount)" class="dropdown text-right">
+                                        <button pButton icon="fas fa-wrench" class="p-button-rounded p-button-sm" (mouseenter)="onRowActionButtonMouseEnter()" (mouseleave)="onRowActionButtonMouseLeave()"
+                                            type="button" id="drp-action" data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end"
+                                            aria-labelledby="drp-action">
+                                            <li>
+                                                <a *ngIf="isEditAccount" id="link-change-status" (click)="onStatusChange(rowData);stopPropagation($event);" class="dropdown-item menu--item">
+                                                    <i class="fas fa-toggle-on" aria-hidden="true"></i>
+                                                    {{'CRM.ACCOUNT.ALLLISTING.ACTION_TITLE_CHANGESTATUS' | translate }}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a *ngIf="isDeleteAccount" id="link-Delete" class="dropdown-item" (click)="ondeleteAccountclick(rowData.id);stopPropagation($event);">
+                                                    <i class="far fa-trash-alt me-1" aria-hidden="true"></i>
+                                                    {{ 'URAM.USER.LIST.BUTTON_REMOVE' | translate }}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorleft">
+                            <span id="startToEndOfTotalRecords">{{start}} - {{end}} of {{totalRecords}} records</span>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorright">
+                            <p-button type="button" icon="pi pi-chevron-left" styleClass="p-button-text"
+                                id="paginatorLeftPage" (click)="prev()" [disabled]="end == pagingParams.pageSize">
+                            </p-button>
+                            <input type="number" min="1" [max]="totalPages" [(ngModel)]="pagingParams.pageNo"
+                                id="paginatorInputPage" (change)="changePage()" class="pageNoInput"> /
+                            <span id="paginatorTotalPages" class="ml-1">{{totalPages}}</span>
+                            <p-button type="button" icon="pi pi-chevron-right" styleClass="p-button-text"
+                                id="paginatorRightPage" (click)="next()" [disabled]="end == totalRecords"></p-button>
+                            <p-button type="button" icon="pi pi-undo" styleClass="p-button-text"
+                                id="paginatorResetButton" (click)="resetPaginator()"
+                                [disabled]="end == pagingParams.pageSize"></p-button>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage" let-columns>
+                            <tr>
+                                <td [attr.colspan]="columns.length" id="lbl-NoRecordsFound" class="table-no-record text-center">
+                                    {{ 'CRM.ACCOUNT.LIST.MESSAGE_NO_RECORDS_FOUND' | translate}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Table End -->
+    <!-- Right side activity menu start -->
+    <div class="p-0" [ngClass]="isAdvanceFilterVisible ? 'advanced-filters-panel' : ''">
+        <activity-section 
+            #activitySection 
+            *ngIf="isShowActivityCenter" 
+            class="entity-right-panel" 
+            [entityTypeId]="entityTypeId" 
+            [isEditPermission]="isEditAccount"
+            [isActive]="selectedAccountIsActive"
+            [isPaused]="selectedAccountIsPausedForActivityCenter"
+            [isHideDetailsTab]="false" 
+            [entityId]="selectedAccountIdForActivityCenter" 
+            [entityRecordTypeId]="entityDetails?.entityRecordTypeId" 
+            [isDocumentDownloadPermission]="isDocumentDownloadPermission && selectedAccountIsActive  && !selectedAccountIsPausedForActivityCenter" 
+            [hideExpandButton]="true" 
+            [isTagRequired]="true"  
+            [entityDetailsData]="entityDetails" 
+            [isDocumentRequired]="true" 
+            [currencySymbol]="currencySymbol" 
+            [hoursInDay]="hoursInDay" 
+            [refreshActivity]="refreshActivityCenter" 
+            [keyfieldResponseData]="keyfieldResponseData"  
+            (saveKeyFieldEvent)="onSaveKeyFieldEvent($event)" 
+            (onCloseActivitySection)="onMoreDetailsClick(false)"
+            [addWorkTaskCreateOption]="true" 
+            [isAddWorkTask]="isAddWorkTask" 
+            (onAddWorkTask)="addWorkTask()" 
+            [createdBy]="accountCreatedBy"
+            [privacyLevel]="null"
+            [isAddOpportunity]="isAddOpportunity"
+            (onAddOpportunity)="addOpportunity()"
+            [isAddCase]="isAddCase"
+            (onAddCase)="addCase()">
+        </activity-section>
+    </div>
+    <!-- Right side activity menu end -->
+</div>

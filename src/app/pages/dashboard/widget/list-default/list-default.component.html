@@ -1,0 +1,130 @@
+<div *ngIf="tableData ? (tableData.length > 0) : false" class="table-section">
+    <ng-container [ngSwitch]="dashboardName">
+        <ng-container *ngSwitchDefault>
+            <p-table [id]="'charTable_'+dashboardName" [value]="tableData" [responsive]="true" 
+                sortMode="multiple" [showInitialSortBadge]="false" paginatorDropdownAppendTo="body"
+                [scrollable]="true" [responsiveLayout]="scroll"
+                selectionMode="single">
+                <ng-template *ngIf="showHeader" pTemplate="header">
+                    <tr>
+                        <ng-container *ngFor="let col of cols">
+                            <th scope="col" class="classWidth" *ngIf="col.visibility == 'visible'" [pSortableColumn]="col.sort ? col.sortdata : null" [ngClass]="col.headerAlign == 'right' ? 'text-right' : 'text-left'">
+                                {{col.title}}
+                                <i *ngIf="col.dataType.toLowerCase() == 'duration'" class="fas fa-info-circle dark-grey mr-1 info-tooltip" [ngbTooltip]="('DASHBOARD.WIDGET.TOLLTIP_DURATION' | translate).replace('[[hoursInDay]]','24')" placement="top top-left" container="body" aria-hidden="true"></i>
+                                <i *ngIf="col.dataType.toLowerCase() == 'workingduration'" class="fas fa-info-circle dark-grey mr-1 info-tooltip" [ngbTooltip]="('DASHBOARD.WIDGET.TOLLTIP_DURATION' | translate).replace('[[hoursInDay]]',hoursInDay)" placement="top top-left" container="body" aria-hidden="true"></i>
+                                <p-sortIcon *ngIf="col.sort" [field]="col.sortdata"></p-sortIcon>
+                            </th>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr [pSelectableRow]="rowData">
+                        <ng-container *ngFor="let col of cols">
+                            <ng-container *ngIf="col.visibility == 'visible'">
+                                <td class="classWidth" [class]="col.className" data-toggle="tooltip" data-placement="top" [ngClass]="col.dataAlign == 'right' ? 'text-right' : 'text-left'">
+                                    <ng-container [ngSwitch]="col.dataType.toLowerCase()">
+                                        <!-- Started Link -->
+                                        <span *ngSwitchCase="'link'" class="w-100">
+                                            <a *ngIf="col.link && (col.link.permission | hasPermission) && (col.link.url | linkFormat: rowData : col.link.params) else nolink"
+                                                [routerLink]="[col.link.url | linkFormat: rowData : col.link.params]" target="_blank"
+                                                class="dark-blue font-weight-bold no-underline pre-text cursor-pointer">{{rowData[col.data]}}
+                                            </a>
+                                            <ng-template #nolink class="pre-text">{{rowData[col.data]}}</ng-template>
+                                        </span>
+                                        <!-- Started External Link -->
+                                        <span *ngSwitchCase="'externallink'" class="w-100">
+                                            <a  [href]="[col.link.url | linkFormat: rowData : col.link.params]" target="_blank"
+                                                class="dark-blue font-weight-bold no-underline pre-text cursor-pointer">
+                                                <i class="fas fa-arrow-up-right-from-square"></i>
+                                            </a>
+                                        </span>
+                                        <!-- Started Email -->
+                                        <span *ngSwitchCase="'email'" class="w-100">
+                                            <a class="dark-blue font-weight-bold no-underline cursor-pointer" href="mailto:{{rowData[col.data]}}" id="link-email">
+                                                {{ rowData[col.data] ? rowData[col.data] : '' }}
+                                            </a>
+                                        </span>
+                                        <!-- Started Phone -->
+                                        <span *ngSwitchCase="'phone'" class="w-100">
+                                            <ng-container *ngIf="rowData[col.data]">
+                                                <a class="dark-blue font-weight-bold no-underline cursor-pointer" href="{{ rowData[col.data] | phone:'link'}}" id="link-phone">
+                                                    {{ rowData[col.data] | phone  }}
+                                                </a>
+                                            </ng-container>
+                                        </span>
+                                        <!-- Started Currency -->
+                                        <span *ngSwitchCase="'currency'" class="w-100">
+                                            <div *ngIf="rowData[col.data] !== null else blankprice"> 
+                                                {{(currencySymbol)+(rowData[col.data] | number:'1.2-2') }}
+                                            </div>
+                                            <ng-template #blankprice>
+                                                <div>&nbsp;</div>
+                                            </ng-template>
+                                        </span>
+                                        <!-- Started Percent -->
+                                        <span *ngSwitchCase="'percentage'" class="w-100">
+                                            <div *ngIf="rowData[col.data] !== null   else blankprice"> 
+                                                {{(rowData[col.data] | number:'1.2-2')+'%' }}
+                                            </div>
+                                            <ng-template #blankprice>
+                                                <div>&nbsp;</div>
+                                            </ng-template>
+                                        </span>
+                                        <!-- Started numeric -->
+                                        <span *ngSwitchCase="'numeric'" class="w-100">
+                                            <div *ngIf="rowData[col.data] !== null   else blankprice"> 
+                                                {{ rowData[col.data] | customPipe: col.dataType.toLowerCase() : null : hoursInDay}}
+                                            </div>
+                                            <ng-template #blankprice>
+                                                <div>&nbsp;</div>
+                                            </ng-template>
+                                        </span>
+                                         <!-- Started datetime -->
+                                         <span *ngSwitchCase="'datetime'" class="w-100">
+                                            <div *ngIf="rowData[col.data] !== null   else blankprice"> 
+                                                {{ rowData[col.data] | customPipe: col.dataType.toLowerCase() : null : hoursInDay}}
+                                            </div>
+                                            <ng-template #blankprice>
+                                                <div>&nbsp;</div>
+                                            </ng-template>
+                                        </span>
+                                        <!-- Started Duration -->
+                                        <span *ngSwitchCase="'duration'" class="w-100">
+                                            <div *ngIf="rowData[col.data] !== null else blankprice"> 
+                                                {{ rowData[col.data] | customPipe: col.dataType.toLowerCase() : null : hoursInDay}}
+                                            </div>
+                                            <ng-template #blankprice>
+                                                <div>&nbsp;</div>
+                                            </ng-template>
+                                        </span>
+                                        <!-- Started Working Duration -->
+                                        <span *ngSwitchCase="'workingduration'" class="w-100">
+                                            <div *ngIf="rowData[col.data] !== null else blankprice"> 
+                                                {{ rowData[col.data] | customPipe: col.dataType.toLowerCase() : null : hoursInDay }}
+                                            </div>
+                                            <ng-template #blankprice>
+                                                <div>&nbsp;</div>
+                                            </ng-template>
+                                        </span>
+                                        <!-- Started Default Text -->
+                                        <span *ngSwitchDefault>{{ getCellDisplayText(col,rowData)}}</span>
+                                    </ng-container>
+                                </td>
+                            </ng-container>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </ng-container>
+    </ng-container>
+</div>
+<div id="nodata-{{widgetTitle | idGenerator }}" *ngIf="tableData ? (tableData.length == 0) : false" class="float-start mt-2 pb-3 w-100 text-center">
+    {{'DASHBOARD.WIDGET.MESSAGE_NO_DATA_EXISTS' | translate}}
+</div>
+<div class="mt-3" *ngIf="tableData == null">
+    <div class="row mb-3" *ngFor="let i of [1,2,3,4,5,6]">
+        <div *ngFor="let i of [1,2,3,4,5]" class="col">
+            <p-skeleton></p-skeleton>
+        </div>
+    </div>
+</div>

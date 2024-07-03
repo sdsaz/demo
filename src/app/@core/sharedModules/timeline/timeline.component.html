@@ -1,0 +1,95 @@
+<div *ngIf="isShowAddPanel" class="mb-3 vertical-center justify-content-end dropdown-with-add">
+  <ng-container *ngIf="subTypesButtonList?.length > 0">
+    <ng-container *ngFor="let buttonInfo of subTypesButtonList">
+      <button *ngIf="buttonInfo?.addPermissionID == null || (buttonInfo?.addPermissionHash | hasPermission) && !(entityRelatedToId == null && entityRecordTypeId == null)"
+      type="button" [id]="'btn-add-' + buttonInfo.name" class="btn btn-primary ml-3"
+      (click)="addEvent(buttonInfo)">
+        <i [class]="buttonInfo.iconClass + ' ' + 'mr-1'" aria-hidden="true"></i>
+        {{ 'CRM.TIMELINE.BUTTON_ADD' | translate }} {{buttonInfo.name}}
+      </button>
+    </ng-container>
+  </ng-container>
+</div>
+
+<div [ngClass]="timeLineData &&  timeLineData.length > 0 ? 'timeline' : ''">
+  <ng-container *ngIf="timeLineData &&  timeLineData.length > 0; else emptyBlock">
+    <ng-container *ngTemplateOutlet="recursive; context:{ list: timeLineData }"></ng-container>
+  </ng-container>
+</div>
+
+<ng-template #recursive let-list="list">
+  <div *ngFor="let item of list | sortBy:'desc': 'created';trackBy: identify">
+    <div class="timebox right">
+      <ng-container *ngIf="item.level == 2">
+        <div class="date">{{item.created | date:'medium'}}</div>
+      </ng-container>
+      <div class="content p-3 rounded">
+        <div class="d-flex justify-content-between font-13 mb-3">
+          <div class="d-flex align-items-center flex-wrap me-3 max-w-title w-100">
+            <div class="me-2">
+              <i class="{{item.typeIconClass}} me-1" aria-hidden="true"></i>
+              <a [routerLink]="['/',redirectUrl,'details',item.id]"
+                [ngClass]="(item.viewPermissionHash | hasPermission)  ? 'dark-blue font-weight-bold no-underline cursor-pointer pre-text' : 'no-link'">
+                {{item.taskNumber}}
+              </a>
+            </div>
+            <div class="text-truncate fw-semibold">{{item.name}}</div>
+          </div>
+          <div class="d-flex align-items-center">
+            <span class="d-flex align-items-center cursor-pointer">
+              <div class="rating-box" [ngbTooltip]="tooltip" container="body" triggers="hover" tooltipClass="tooltip-backward-small" (click)="openEntityReviewDialog(item)">
+                <i aria-hidden="true" class="text-yellow-star font-12 pi pi-star-fill"></i>
+                <span class="rating-number">{{item.rating | number:'1.1-1'}}</span>
+              </div>
+            </span>
+            <ng-template #tooltip>
+              <i aria-hidden="true" class="pi pi-star-fill mr-1 text-yellow-star mb-1"></i>
+              <span>{{item.rating | number:'1.1-1'}} ({{ item.totalReviews }} {{item.totalReviews > 1 ? reviewTextPlural
+                : reviewTextSingular }})</span>
+            </ng-template>
+            <ng-container *ngIf="isEntityActive && item.isActive && item.isContextMenuVisible">
+              <div class="d-flex justify-content-end ml-3">
+                <div class="dropdown drop-no-arrow w-auto">
+                  <i class="fas fa-ellipsis-v font-14 dropdown-toggle cursor-pointer" id="drp-action"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                  </i>
+                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="drp-action">
+                    <li (click)="deleteRow(item)" *ngIf="item?.deletePermissionHash | hasPermission">
+                      <a id="link-Delete" class="dropdown-item">
+                        <i class="far fa-trash-alt me-1" aria-hidden="true"></i>
+                        {{ 'CRM.TIMELINE.BUTTON_DELETE' | translate }}
+                      </a>
+                    </li>                    
+                    <ng-container *ngIf="item.contextMenu && item.contextMenu.length > 0">
+                      <li *ngFor="let menu of item.contextMenu">
+                        <a *ngIf="(menu.addPermissionHash | hasPermission)" id="link-{{menu.name}}" class="dropdown-item" (click)="addEvent(menu, item)">
+                          <i class="{{menu.iconClass}} me-1" aria-hidden="true"></i>
+                          {{ 'CRM.TIMELINE.BUTTON_ADD' | translate }} {{menu.name}}
+                        </a>
+                      </li>
+                    </ng-container>
+                  </ul>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <ngx-common-user-profile 
+          [userId]="item.createdBy" 
+          [userTypeId]="userTypeID.CreatedBy"
+          [privacyLevel]="item.privacyLevel" 
+          class="timeline-profile" 
+          [isShowName]="true"
+          userLabel="{{'CRM.TIMELINE.CREATED_BY_LABEL' | translate }}">
+        </ngx-common-user-profile>
+      </div>
+    </div>
+    <div *ngIf="item.children && item.children.length > 0" class="timebox-child">
+      <ng-container *ngTemplateOutlet="recursive; context:{ list: item.children }"></ng-container>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #emptyBlock>
+  <div class="text-center font-13">{{ 'CRM.TIMELINE.MESSAGE_NO_RECORDS_FOUND' | translate }}</div>
+</ng-template>

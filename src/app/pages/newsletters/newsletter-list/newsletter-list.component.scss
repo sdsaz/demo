@@ -1,0 +1,82 @@
+@import "../../../../scss/variables";
+@import '../../../../scss/entity_kanban.scss';
+
+.tbl-account-list{
+    @media (min-width: 641px){
+        .checkbox-col{ width: 50px; max-width: 50px; }
+        td.bookmark {text-align: left;padding-left: 12px !important;}
+        th.name, td.name {width: 220px; min-width: 220px; word-break: break-word; }
+        th.description, td.description { width: 250px; min-width: 250px; max-width: 250px; }
+        th.campaignName, td.campaignName { width: 200px; min-width: 200px; }
+        th.createdByName, td.createdByName{ width: 60px; min-width: 60px; }
+        th.name, td.name{ word-break: break-word; }
+        th.created, td.created, th.status, td.status{ width: 135px; min-width: 135px; max-width: 135px; }
+        th.icon-dropdown, td.icon-dropdown { width:60px; min-width: 60px; max-width: 60px; }
+        th.id.action, td.action {
+            justify-content: flex-end;
+        }
+    }
+}
+
+
+
+.btn-mg{ margin: 0;
+}
+
+.btn-reset-filter.btn-mg{ margin: 0 20px 0 0; 
+}
+
+.form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width), .form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width) + .form-group:not(.filter-width) { margin-top: 21px; padding-top: 0;
+    @media (max-width: 575px) { margin-top: 0px; padding-top: 0; }
+}
+
+.form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width), .form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width) + .form-group:not(.filter-width) { margin-top: 0; 
+    @media (max-width: 991px) { margin-top: 0; padding-top: 0; }
+}
+
+.form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width).col-sm-4, .form-group:not(.filter-width) + .filter-width + .filter-width + .filter-width + .form-group:not(.filter-width) + .form-group:not(.filter-width).col-sm-2 {
+    @media (max-width: 767px) and (min-width: 576px) { flex: 0 0 50%; max-width: 50%; }
+}
+
+.form-group:not(.filter-width) + .filter-width + .filter-width + .form-group:not(.filter-width), .form-group:not(.filter-width) + .filter-width + .filter-width + .form-group:not(.filter-width) + .form-group:not(.filter-width) { margin-top: 0; 
+    @media (max-width: 1024px) and (min-width: 992px) { margin-top: 0; padding-top: 0; }
+    @media (max-width: 575px) { margin-top: 0; padding-top: 0; }
+}
+
+.height-full{
+    @media (max-width: 1279px) and (min-width: 1200px) { height: calc(100vh - 135px); }
+}
+
+td .link--drag{ margin-right: 6px; display: flex; padding: 0; }
+
+.list-card-description{ white-space: normal; }
+
+::ng-deep .p-datatable .p-datatable-thead > tr > th{ white-space: nowrap; }
+
+.custom-control.custom-checkbox { font-size: 18px; }
+
+.avatar {
+    position: relative;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+}
+
+.customInputText{
+    height: 34px;
+}
+
+// prime ng input override - start
+:host ::ng-deep{
+    .dropDownOverride.p-dropdown {
+        width: 100%;
+    }
+    .p-inputswitch .p-inputswitch-slider{
+        background-color: red;
+    }
+    .p-inputswitch-checked .p-inputswitch-slider{
+        background-color: #2196F3;
+    }
+}
+
+

@@ -1,0 +1,299 @@
+<div class="entity-page entity-main filters-two">
+    <!-- Header Start -->
+    <div class="page-header">
+        <div class="container-fluid lineheight35 heading-page mb-2">
+            <div class="row">
+                <div class="col-sm-4 lh-sm">
+                    <h4 class="m-0">
+                        <span id="headingEntity" class="header-text">{{ EntityTitle | translate |
+                            configuredEntityName }}</span>
+                    </h4>
+                </div>
+                <div class="col">
+                    <div class="btn-view">
+                        <a *ngIf="isImportProduct" id="btn-import-entity" class="btn btn-link p-0 text-nowrap"
+                            (click)="openImportModel()">
+                            <i class="far fa-file-excel mr-1" aria-hidden="true"></i>
+                            {{ 'PRODUCTS.LIST.BUTTON_IMPORT' | translate | configuredEntityName }}
+                        </a>
+                        <button *ngIf="isAddProduct" type="button" id="btn-add-entity" class="btn btn-primary ml-3"
+                            (click)="addProduct()">
+                            <i class="fa fa-plus-circle me-1" aria-hidden="true"></i>
+                            {{'PRODUCTS.LIST.BUTTON_ADD' | translate | configuredEntityName }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Header End -->
+
+    <!-- Page Content Start -->
+    <div class="page-content one-row-filters">
+        <div class="entity-search-area pt-2 mb-2">
+            <div class="container-fluid">
+                <div class="row align-items-end common-listing-filters">
+                    <div class="col-xl-2 col-md-4 col-6 mb-xl-0 mb-3 pe-xxl-2 pe-xl-0 filter-width">
+                        <div class="mb-1 fs13px">{{ 'PRODUCTS.LIST.SEARCH' | translate }}</div>
+                        <div class="p-input-icon-right w-100">
+                            <i class="pi pi-search" aria-hidden="true"></i>
+                            <input #searchTextInput pInputText type="text" id="txt-search-text"
+                                class="w-100 customInputText form-control" size="50"
+                                [(ngModel)]="pagingParams.searchString" />
+                        </div>
+                    </div>
+                    <!-- <div class="col-xl-2 col-md-4 col-sm-5 col-6 mb-lg-0 mb-3 filter-width">
+                        <div class="mb-1 fs13px">{{ 'PRODUCTS.LIST.SEARCH_STATUS' | translate }}</div>
+                        <p-dropdown id="drp-status" [options]="statusOptions" [filter]="false" [resetFilterOnHide]="false"
+                            class="form-control" name="assignedUserId" [(ngModel)]="pagingParams.status"
+                            [showClear]="true" [placeholder]="'PRODUCTS.LIST.PLACEHOLDER_STATUS' | translate"
+                            (onChange)="onFilterStatus($event)">
+                        </p-dropdown>
+                    </div> -->
+                    <div class="col-xl-2 col-md-4 col-6 mb-xl-0 mb-3 pe-xxl-2 pe-xl-0 filter-width" *ngIf="hideRecordTypeFilter && hideRecordTypeFilter.length > 0">
+                        <div class="mb-1 fs13px">{{ 'PRODUCTS.LIST.FILTER_LABEL_RECORDTYPE' | translate }}</div>
+                        <p-multiSelect #recordType class="entity-multiSelect" id="drp-workflow" appendTo="body" panelStyleClass="maxWidthOverride-sm"
+                            [filter]="true" [resetFilterOnHide]="false" [showHeader]="true"
+                            [displaySelectedLabel]='true' [showToggleAll]="true"
+                            [maxSelectedLabels]="_commonHelper.globalMultiselectMaxSelectedLabels"
+                            [options]="recordTypes" [placeholder]="'PRODUCTS.LIST.FILTER_PLACEHOLDER_RECORDTYPE' | translate"
+                            optionLabel="label" optionValue="value" [(ngModel)]="selectedRecordTypes"
+                            (onChange)="onFilterRecordType($event)" (onFilter)="trimFilterValue($event,recordType)">
+                        </p-multiSelect>
+                    </div>
+                    <div class="col-xl-2 col-md-4 col-sm-6 col-6 mb-xl-0 mb-3 filter-width">
+                        <div class="mb-1 fs13px">{{ 'PRODUCTS.LIST.SEARCH_UOM' | translate }}<i class="fas fa-info-circle dark-grey ml-1 info-tooltip" ngbTooltip="Unit Of Measurement" placement="top top-left" container="body" aria-hidden="true"></i></div>
+                        <p-dropdown #uomDrodown id="drp-uom" name="uomId" [options]="groupedUOMTypes"
+                        optionLabel="label" optionValue="value" [group]="true" class="form-control" [(ngModel)]="pagingParams.uomId"
+                        placeholder="{{'PRODUCTS.LIST.PLACEHOLDER_UOM' | translate}}" [filter]="true" filterBy="label,groupLabel" (onChange)="onFilterUOM($event)" 
+                        [resetFilterOnHide]="false" [showClear]="true">
+                        <ng-template let-group pTemplate="group">
+                            {{group.label}}
+                        </ng-template>
+                        <ng-template let-item pTemplate="item">
+                            <span>{{item.label}}</span>
+                        </ng-template>
+                    </p-dropdown>
+                    </div>
+                    <div class="col-xl-2 col-md-4 col-6 mb-xl-0 mb-3 pe-xxl-2 pe-xl-0 filter-width" *ngIf="ratingOptions && ratingOptions.length > 0">
+                        <div class="mb-1 fs13px">{{ 'PRODUCTS.LIST.FILTER_LABEL_RATING' | translate }}</div>
+                        <p-dropdown [options]="ratingOptions" [showClear]="true" [placeholder]="'PRODUCTS.LIST.FILTER_PLACEHOLDER_RATING' | translate"
+                        [(ngModel)]="pagingParams.rating" [filter]="false" [resetFilterOnHide]="false"
+                        (onChange)="onFilterRating($event)"></p-dropdown>
+                    </div>
+                    <div class="col-xl-auto col-sm-auto col-6 mb-xl-0 mb-3">
+                        <div class="custom-control custom-checkbox d-flex align-items-center w-100">
+                            <input class="custom-control-input mt-0 w-20-size" type="checkbox" id="chk-showMyEntities"
+                            [(ngModel)]="IsActive" (change)="onFilterShowActiveRecords()"> 
+                            <label for="chk-showMyEntities" class="custom-control-label pl-2">{{ 'PRODUCTS.LIST.FILTER_ACTIVE_RECORDS' | translate}}</label>
+                        </div>
+                        <div class="custom-control custom-checkbox d-flex align-items-center mt-2 w-100">
+                            <input class="custom-control-input mt-0 w-20-size" type="checkbox" id="chk-showStarred" [checked]="showStarred"
+                                [(ngModel)]="showStarred" (change)="onFilterShowStarred()">
+                            <label for="chk-showStarred" class="custom-control-label pl-2">{{ 'PRODUCTS.ALLLISTING.FILTER_STARRED' | translate }}</label>
+                        </div>
+                    </div>
+                    <div class="col-auto mb-xl-0 mb-3">
+                        <button id="btn-reset" class="btn btn-outline-secondary" type="button"
+                            (click)="onResetAllFilters()"
+                            [disabled]="(productSearchFilter.searchText == '' 
+                            && (productSearchFilter.recordTypeIds == null || productSearchFilter.recordTypeIds == '') 
+                            && !productSearchFilter.IsActive 
+                            && (productSearchFilter.uomId == null || productSearchFilter.uomId == '')
+                            && (productSearchFilter.rating == null) && !productSearchFilter.showStarred)">
+                            {{'PRODUCTS.LIST.BUTTON_RESET' | translate}}
+                        </button>
+                    </div>
+                    <div class="col-xl justify-content-xl-end col-auto height-38px d-flex align-items-center pl-md-2 mb-xl-0 mb-3">
+                        <button *ngIf="isExportProduct" type="button" id="btn-export-to-excel"
+                            class="btn btn-exp btn-mg p-0 btn-small" (click)="exportExcel()" placement="top auto" container="body"
+                            ngbTooltip="Export To Excel" triggers="hover" tooltipClass="tooltip-backward-small">
+                            <i class="fas fa-2x fa-file-excel" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Content End -->
+
+    <!-- Table Start -->
+    <div class="container-fluid pb-5 pb-xl-0" [ngClass]="isShowActivityCenter ? 'list-move-scroll-activity' : ''">
+        <div class="row mb-2">
+            <div class="mt-1 col-12">
+                <div class="tbl-product-list tbl-entity p-card">
+                    <p-table #pTable [responsive]="true" responsiveLayout="stack" [rows]="_commonHelper.DefaultPageSize"
+                        [rowsPerPageOptions]='_commonHelper.globalRowsPerPageOptions' [columns]="cols"
+                        [value]="products" sortField="name" class="tbl-product-list" [sortOrder]="1" [lazy]="true"
+                        [totalRecords]="totalRecords" [autoLayout]="true" [scrollable]="true" paginatorDropdownAppendTo="body"
+                        [paginator]="totalRecords > 0" [ngClass]="totalRecords == 0 ? 'tbl-height-zero' : ''"
+                        [scrollHeight]="'calc(100vh - 248px)'" (onPage)="paginate($event)">
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th id="tblColumnHeader" *ngFor="let col of columns" [pSortableColumn]="col.field" [ngClass]="col.header == '' ? 'hide-when-no-records' : ''"
+                                    [pSortableColumnDisabled]="!col.sort" class="{{col.field}} {{col.class}}" [hidden]="!col.visible"
+                                    scope="col" (click)="changeOrder(col)">
+                                    {{ col.header | translate }}
+                                    <i *ngIf="col.field == 'uomName'" class="fas fa-info-circle dark-grey ml-1 info-tooltip" ngbTooltip="Unit Of Measurement" placement="top top-left" container="body" aria-hidden="true"></i>
+                                    <p-sortIcon [field]="col.field" *ngIf="col.sort"></p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                            <tr [ngClass]="[(rowData.isPaused || !rowData.isActive) ? 'lightGreyBg' : '',  selectedRowId == rowData.id ? 'selected-row' : '']"
+                            (click)="onRowClick(rowData, true)">
+                            <td class="bookmark">
+                                <ngx-bookmark [entityTypeId]="entityTypeId" [entityId]="rowData.id" [isStarred]="rowData?.isStarred"
+                                    [isEditPermission]="isEditProduct && !rowData?.isPaused" [isFromKanbanOrListView]="true">
+                                </ngx-bookmark>
+                            </td>
+                                <td class="name">
+                                    <span class="p-column-title">
+                                        {{columns[1].header}}
+                                    </span>
+                                    <a [routerLink]="'/products/details/' + rowData.id" id="link-headingRecord" (click)="stopPropagation($event)" class="float-left me-2"
+                                        [ngClass]="isViewProduct ? 'dark-blue font-weight-bold no-underline cursor-pointer pre-text' : 'no-link'">{{rowData.name}}</a>
+                                    <span *ngIf="rowData.rating != 0" class="float-left me-2">
+                                        <entity-review-display [entityTypeId]="entityTypeId" [entityId]="rowData.id" [rating]="rowData.rating" id="btn-rating"
+                                            [review]="rowData.totalReviews" [entityReviewID]="rowData.entityReviewID" [isFromKanbanOrListView]="true"
+                                            [isEditPermission]="isEditProduct && !(rowData.isPaused ?? false)">
+                                        </entity-review-display>
+                                    </span>
+                                </td>
+                                <td class="code">
+                                    <span class="p-column-title">
+                                        {{columns[2].header}}
+                                    </span>
+                                    <span class="pre-text">{{rowData.code}}</span>
+                                </td>
+                                <td class="stockQty">
+                                    <span class="p-column-title">
+                                        {{columns[3].header}}
+                                    </span>
+                                    <span>{{(rowData.stockQty | number:'1.3-3') }}</span>
+                                </td>
+                                <td class="uomName">
+                                    <span class="p-column-title">
+                                        {{columns[4].header}}
+                                        <i class="fas fa-info-circle dark-grey ml-1 info-tooltip" ngbTooltip="Unit Of Measurement" placement="top top-left" container="body" aria-hidden="true"></i>
+                                    </span>
+                                    <span class="pre-text">{{rowData.uomName}}</span>
+                                </td>
+                                <td class="price justify-content-end pr-5">
+                                    <span class="p-column-title">
+                                        {{columns[5].header}}
+                                    </span>
+                                    <span *ngIf="rowData.price != null ">{{(currencySymbol)+(rowData.price | number:'1.2-2') }}</span>
+                                </td>
+                                <td class="description">
+                                    <span class="p-column-title">
+                                        {{columns[6].header}}
+                                    </span>
+                                    <span class="description-box" ngbTooltip="{{rowData.description}}" placement="top right" container="body">{{rowData.description}}</span>
+                                </td>
+                                <td class="description" *ngIf="!isDisabled">
+                                    <span class="p-column-title">
+                                        {{columns[7].header}}
+                                    </span>
+                                    <span class="description-box" ngbTooltip="{{rowData.entityRecordTypeName}}" placement="top right" container="body">{{rowData.entityRecordTypeName}}</span>
+                                </td>
+                                <!-- <td class="status">
+                                    <span class="p-column-title">
+                                        {{columns[7].header}}
+                                    </span>
+                                    <label class="h-27px m-0">
+                                        <div class="switch switch-label switch-pill switch-primary">
+                                            <input [disabled]="!isEditProduct" type="checkbox" id="swt-active-inactive" class="switch-input" [(ngModel)]="rowData.isActive" (change)="onChangeStatus(rowData.id,rowData.isActive)">
+                                            <div class="switch-slider switch--status" [attr.data-checked]="'PRODUCTS.LIST.LABEL_SWITCH_ACTIVE' | translate" [attr.data-unchecked]="'PRODUCTS.LIST.LABEL_SWITCH_INACTIVE' | translate"></div>
+                                        </div>
+                                    </label>
+                                </td> -->
+                                <td class="id action">
+                                    <div class="dropdown text-right" *ngIf="!rowData.isPaused && (isEditProduct || isDeleteProduct)">
+                                        <button pButton icon="fas fa-wrench" class="p-button-rounded p-button-sm" (mouseenter)="onRowActionButtonMouseEnter()" (mouseleave)="onRowActionButtonMouseLeave()"
+                                            type="button" id="drp-action" data-bs-toggle="dropdown" 
+                                            aria-expanded="false">
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end"
+                                            aria-labelledby="drp-action">
+                                            <li>
+                                                <a *ngIf="isEditProduct" id="link-change-status" (click)="onStatusChange(rowData);stopPropagation($event);" class="dropdown-item menu--item">
+                                                    <i class="fas fa-toggle-on" aria-hidden="true"></i>
+                                                    {{'PRODUCTS.ALLLISTING.ACTION_TITLE_CHANGESTATUS' | translate }}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a *ngIf="isDeleteProduct" id="link-Delete" class="dropdown-item"
+                                                    (click)="onDeleteProductClick(rowData.id);stopPropagation($event);">
+                                                    <i class="far fa-trash-alt me-1" aria-hidden="true"></i>
+                                                    {{ 'URAM.USER.LIST.BUTTON_REMOVE' | translate }}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorleft">
+                            <span id="startToEndOfTotalRecords">{{start}} - {{end}} of {{totalRecords}} records</span>
+                        </ng-template>
+                        <ng-template pTemplate="paginatorright">
+                            <p-button type="button" icon="pi pi-chevron-left" styleClass="p-button-text"
+                                id="paginatorLeftPage" (click)="prev()" [disabled]="end == pagingParams.pageSize">
+                            </p-button>
+                            <input type="number" min="1" [max]="totalPages" [(ngModel)]="pagingParams.pageNo"
+                                id="paginatorInputPage" (change)="changePage()" class="pageNoInput"> /
+                            <span id="paginatorTotalPages" class="ml-1">{{totalPages}}</span>
+                            <p-button type="button" icon="pi pi-chevron-right" styleClass="p-button-text"
+                                id="paginatorRightPage" (click)="next()" [disabled]="end == totalRecords"></p-button>
+                            <p-button type="button" icon="pi pi-undo" styleClass="p-button-text"
+                                id="paginatorResetButton" (click)="resetPaginator()"
+                                [disabled]="end == pagingParams.pageSize"></p-button>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage" let-columns>
+                            <tr>
+                                <td [attr.colspan]="columns.length" id="lbl-NoRecordsFound" class="table-no-record text-center">
+                                    {{ 'PRODUCTS.LIST.MESSAGE_NO_RECORDS_FOUND' | translate}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Table End -->
+    <!-- Right side activity menu start -->
+    <div class="p-0" [ngClass]="isAdvanceFilterVisible ? 'advanced-filters-panel' : ''">
+        <activity-section 
+            #activitySection 
+            *ngIf="isShowActivityCenter" 
+            [entityTypeId]="entityTypeId" 
+            [entityDetailsData]="entityDetails"
+            [isEditPermission]="isEditProduct"
+            [isActive]="selectedProductIsActive"
+            [isPaused]="selectedProductIsPausedForActivityCenter"
+            [entityId]="selectedProductIdForActivityCenter" 
+            [entityRecordTypeId]="entityDetails?.entityRecordTypeId" 
+            [isHideDetailsTab]="false"
+            [isDocumentDownloadPermission]="isDocumentDownloadPermission && selectedProductIsActive  && !selectedProductIsPausedForActivityCenter" 
+            [currencySymbol]="currencySymbol" 
+            [hoursInDay]="hoursInDay"
+            [hideExpandButton]="true" 
+            [isTagRequired]="true"
+            [isDocumentRequired]="true" 
+            [refreshActivity]="refreshActivityCenter" 
+            class="entity-right-panel" 
+            (saveKeyFieldEvent)="onSaveKeyFieldEvent($event)" 
+            (onCloseActivitySection)="onMoreDetailsClick(false)"
+            [keyfieldResponseData]="keyfieldResponseData" 
+            [addWorkTaskCreateOption]="true" 
+            [isAddWorkTask]="isAddWorkTask" 
+            (onAddWorkTask)="addWorkTask()"
+            [createdBy]="productCreatedBy"
+            [privacyLevel]="null"
+            [isAddCase]="isAddCase"
+            (onAddCase)="addCase()">
+        </activity-section>
+    </div>
+    <!-- Right side activity menu end -->
+</div>

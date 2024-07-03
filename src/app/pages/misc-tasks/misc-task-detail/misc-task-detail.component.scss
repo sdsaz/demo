@@ -1,0 +1,7 @@
+@import '../../../../scss/entity_view.scss';
+
+::ng-deep .detail-misctasks {
+    .col-header-label{
+        @media (max-width: 575px){ max-width: 122px; }
+    }
+}

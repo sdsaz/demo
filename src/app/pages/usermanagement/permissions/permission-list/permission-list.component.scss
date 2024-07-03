@@ -1,0 +1,54 @@
+.tbl-permissions-list {
+    .card-columns {
+        column-count: 4;
+    }
+
+    @media (max-width: 1200px) {
+        .card-columns {
+            column-count: 3;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .card-columns {
+            column-count: 2;
+        }
+    }
+
+    @media (max-width: 575px) {
+        .card-columns {
+            column-count: 1;
+        }
+    }
+}
+:host ::ng-deep{
+    .customCard.p-card
+    {
+        display: inline-block;
+        width: 100%;
+        .p-card-body{
+            padding: 0.25rem;
+        }
+        .p-card-content{
+            padding: 0.5rem 0;
+        }
+    }
+
+    .card-columns .customCard.p-card
+    {
+        .p-card-body{
+            padding: 0;
+        }
+        .p-card-content{
+            padding: 0.5rem 0 0;
+        }
+    }
+}
+
+.mnh260{
+    min-height: 260px;
+}
+
+.lineHeight21{ line-height: 21px; }
+
+::ng-deep .p-datatable-wrapper .action .dropdown { float: right; }

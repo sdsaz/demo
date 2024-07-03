@@ -1,0 +1,35 @@
+<!-- Model Header Start -->
+<div class="modal-header border-bottom-0 padding-32 pb-0">
+    <h4 class="modal-title font-weight-bold">{{'ACTIVITY.REASON_DIALOG.TITLE' | translate}}</h4>
+    <button type="button" id="btn-close" class="close" aria-label="Close" (click)="onCloseForm()">
+        <span class="font-24 fonts-close" aria-hidden="true"><i class="fas fa-times" aria-hidden="true"></i></span>
+    </button>
+</div>
+<!-- Model Header End -->
+
+<!-- Model Body Start -->
+<div *ngIf="note" class="modal-body padding-32 pt-3 pb-3">
+    <form [formGroup]="noteForm">    
+        <div *ngIf="(stagereasons!=undefined && stagereasons.length>0)" class="form-group">
+            <p-dropdown id="drp-stage-reasons" optionLabel="label"
+            class="form-control" [options]="stagereasons" placeholder="{{'ACTIVITY.REASON_DIALOG.SELECT_PLACEHOLDER' | translate}}"
+            [filter]="true" [resetFilterOnHide]="false" formControlName="stagereason" (onChange)="showHideDescription(noteForm.value)"
+            [showClear]="true" [ngClass]="{ 'is-invalid': submitted && f.stagereason.errors }"></p-dropdown>
+            <div *ngIf='submitted && f.stagereason.errors' class='invalid-feedback' id="errorNoteIsRequired">
+                    {{'ACTIVITY.REASON_DIALOG.MESSAGE_SELECT_REASON' | translate}}
+                </div>
+        </div>
+        <div class="form-group" *ngIf="isDescriptionShow" >
+            <textarea #stageReason id="txt-description" class="form-control" placeholder="{{'ACTIVITY.REASON_DIALOG.PLACEHOLDER' | translate}}" formControlName="description" rows="6"
+            minlength="5" maxlength="1000" [ngClass]="{ 'is-invalid': submitted && f.description.errors }" trim></textarea>
+            <div *ngIf='submitted && f.description.errors' class='invalid-feedback' id="errorNoteIsRequired">
+                    {{'ACTIVITY.REASON_DIALOG.MESSAGE_ENTER_NOTE' | translate}}
+                </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer border-top-0 padding-32 pt-0">
+    <button type="button" id="btn-cancel" class='btn btn-outline-secondary me-2' (click)="onCloseForm()">{{'ACTIVITY.REASON_DIALOG.BUTTON_CANCEL' | translate}}</button>
+    <button type="button" id="btn-save" class='btn btn-primary' (click)="saveNotes(noteForm.value)">{{'ACTIVITY.REASON_DIALOG.BUTTON_ADD' | translate}}</button>
+</div>
+<!-- Model Body End -->

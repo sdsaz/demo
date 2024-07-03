@@ -1,0 +1,433 @@
+<!-- if user dont have enough permission then display message -->
+<div class="flexlayout" *ngIf="!isListCases">
+    <div class="form_wrapper">
+        <div id="no-access-form">
+            <div class="top">
+                <div class="subtitle m-0">{{'CASES.LIST.MESSAGE_CASE_NOT_ACCESS' | translate}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- If id is not exists then display message -->
+<div class="flexlayout" *ngIf="!isInitialLoading && isListCases">
+    <div class="form_wrapper">
+        <div id="no-access-form">
+            <div class="top">
+                <img src="assets/images/default/NoAccessImage.png" class="mb-3" alt="">
+                <div class="subtitle mt-0">{{'CASES.DETAIL.MESSAGE_CASE_NOT_EXISTS' | translate}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="isListCases" class="entity-page entity-main filters-five desktop-overflow-hidden workflow-page">
+    <!-- Header Start-->
+    <div class="page-header" *ngIf="isInitialLoading">
+        <div class="container-fluid lineheight35 heading-page mb-md-0 mb-3">
+            <div class="row">
+                <div class="col-md-6 lh-sm">
+                    <label class="fw-bold font-12" id="headingEntity">{{pageTitle | translate | configuredEntityName}}</label>
+                    <div class="font-18 mb-2"><strong id="headingWorkflowName">{{workflowName}}</strong></div>
+                </div>
+                <div class="col">
+                    <div class="btn-view">
+                        <button *ngIf="dataSearch.isPageTabularView && isBulkAssignCases" type="button"
+                            id="btn-assign-entity" triggers="hover" tooltipClass="tooltip-backward-small" ngbTooltip="Assign To" container="body" placement="top auto"
+                            class="btn btn-link bg-transparent p-0 border-0 mr-3"
+                            (click)="assignSelectedCasesToUser()">
+                            <i class="fas fa-user-plus fs-3" aria-hidden="true"></i></button>
+                        <div class="inner-addon right-addon text-search-entity mr-3">
+                            <span class="pi pi-search dark-grey"></span>
+                            <input type="text" id="txt-search-text" pInputText #searchTextInput placeholder="Search" class="form-control"
+                                [(ngModel)]="dataSearch.params.searchString" />
+                        </div>
+                        <a id="btn-show-filters" class="btn btn-link p-0 text-nowrap mr-3 position-relative" ngbTooltip="Filter" placement="top auto" container="body" (click)="showhideFilter()">
+                            <i class="fa-solid fa-filter fs-3" aria-hidden="true" id="i-show-filters"></i>
+                            <span class="count-filters" id="span-show-filters" *ngIf="filterCount>0">{{filterCount}}</span>
+                        </a>    
+                        <div class="dropdown mr-3" *ngIf="showBothKanbanAndListView">
+                            <button class="btn btn-link p-0 bg-transparent border-0 btn-workflow dropdown-toggle btn-dropdownChangeView" type="button"
+                                id="dropdownChangeView" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-lg min-w-18px fs-3" ngbTooltip="Change View" placement="top auto" container="body"
+                                    [ngClass]="dataSearch.isPageTabularView ? 'fa-list' : 'fa-list fa-rotate-90'"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownChangeView">
+                                <li class="font-weight-bold p-2">
+                                    {{'CASES.LIST.BUTTON_CHANGE_VIEW_TITLE' | translate }}
+                                </li>
+                                <li id="btn-table-layout">
+                                    <a class="dropdown-item d-flex align-items-center justify-content-between py-2"
+                                        [ngClass]="dataSearch.isPageTabularView ? 'opacity-50': ''"
+                                        (click)="!dataSearch.isPageTabularView ? onTogglePageLayout('TABLE') : false">
+                                        {{'CASES.LIST.BUTTON_CHANGE_VIEW_LIST' | translate }}
+                                        <i aria-hidden="true" class="fas fa-list fa-lg align-middle ml-2"></i>
+                                    </a>
+                                </li>
+                                <li id="btn-card-layout">
+                                    <a class="dropdown-item d-flex align-items-center justify-content-between py-2"
+                                        [ngClass]="!dataSearch.isPageTabularView ? 'opacity-50' : ''"
+                                        (click)="dataSearch.isPageTabularView ? onTogglePageLayout('CARD') : false">
+                                        {{'CASES.LIST.BUTTON_CHANGE_VIEW_KANBAN' | translate }}
+                                        <i aria-hidden="true" class="fas fa-list fa-rotate-90 fa-lg align-middle ml-2"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <a *ngIf="isExportCases" type="button" id="btn-export-to-excel"
+                            class="btn btn-link p-0 text-nowrap mr-3" (click)="exportExcel()"
+                            placement="top auto" container="body" ngbTooltip="Export" triggers="hover" tooltipClass="tooltip-backward-small">
+                            <i class="fa-solid fa-file-arrow-up fs-3" aria-hidden="true"></i>
+                        </a>
+                        <a *ngIf="isImportCases" id="btn-import-entity" class="btn btn-link p-0 text-nowrap position-relative mr-3" ngbTooltip="Import" placement="top auto" container="body"
+                            (click)="openCaseImport()">
+                            <i class="fa-regular fa-file fs-3" aria-hidden="true"></i>
+                            <i class="fa-solid fa-arrow-down import-icon"></i>
+                        </a>
+                        <button *ngIf="isAddCase" type="button" id="btn-add-entity" class="btn btn-primary vertical-center" ngbTooltip="{{'CASES.LIST.BUTTON_ADD' | translate | configuredEntityName}}" placement="top bottom-right" container="body"
+                            (click)="addCase()">
+                            <i class="fa fa-plus-circle fs-4" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Header End-->
+
+    <!-- Search Card Panel Start-->
+    <div class="page-content pb-5 pb-xl-0 row-more-filters less-card-icons position-relative">
+        <div class="entity-search-area">
+            <div class="container-fluid" *ngIf="isFilterVisible">
+                <div class='row cases-filters filters-custom'>
+                    <div class="col-xl d-sm-flex filters-panel" [ngClass]="dataSearch.isPageTabularView ? 'filters-assign-entity' : ''">
+                        <ngx-dynamic-common-filter class="w-100" *ngIf="isfilterLoaded"
+                            [filterConfigList]="customFilterConfig" (getFilterValues)="getFilterValues($event)"
+                            (multiSelectFilterEvent)="multiSelectFilterEvent($event)"
+                            (isFilterVisibleChange)="isFilterVisibleChange($event)">
+                        </ngx-dynamic-common-filter>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Containers Start-->
+        <ng-container *ngIf="!dataSearch.isPageTabularView else tabularview">
+            <!-- Kanban View Start-->
+            <app-stages 
+                #kanbanStage 
+                [stages]="stages" 
+                [isViewPermission]="isViewCase" 
+                [isEditPermission]="isEditCase"
+                [hasOwner1]="true" 
+                [owner1List]="owner1List" 
+                class="kanban-stages" 
+                [entityTypeId]="entityTypeId"
+                [priorityDetails]="priorityDetails" 
+                [severityDetails]="severityDetails" 
+                (onCardClick)="onCardClick($event, true)"
+                (onCardOwner1Click)="onAssignedToClick($event)"
+                (onCardPauseChange)="onCaseStagePauseChangedFromCard($event)" 
+                (onCardDrop)="onDropSuccess($event)"
+                (onLoadMore)="loadMore($event)" 
+                (onCardPriorityClick)="onCardPriorityClick($event)"
+                (onCardSeverityClick)="onCardSeverityClick($event)"
+                [ngClass]="isShowActivityCenter ? 'move-scroll-open-activity' : 'scroll-close-activity'" 
+                [hasOwner2]="true" 
+                [owner2List]="verifiedByList"
+                (onCardOwner2Click)="onVerifiedByClick($event)" 
+                [hasOwner3]="true"
+                [privacyLevel]="entityDetails?.privacyLevel"
+                [entityHiddenFieldSettings]="entityHiddenFieldSettings"
+                [entityWorkflowId]="entityWorkflowId">
+            </app-stages>
+            <!-- Kanban View END-->
+        </ng-container>
+        <!-- else container -->
+        <ng-template #tabularview>
+            <!-- Table view Start -->
+            <div class="container-fluid" [ngClass]="isShowActivityCenter ? 'move-scroll-open-activity' : ''">
+                <div class="row mb-3">
+                    <div class="col-12 pr-24px">
+                        <div class="tbl-onboarding-list tbl-case-list tbl-entity p-card tbl-case-mobile"
+                            *ngIf="dataSearch.isPageTabularView">
+                            <p-table #dt [responsive]="true" responsiveLayout="stack"
+                                [rows]="_commonHelper.DefaultPageSize" paginatorDropdownAppendTo="body"
+                                [rowsPerPageOptions]='_commonHelper.globalRowsPerPageOptions' [columns]="cols"
+                                [value]="caseList" sortField="created" [sortOrder]="-1" [totalRecords]="caseList.length"
+                                [paginator]="totalRecords > 0" [autoLayout]="true" [scrollable]="true" [lazy]="true"
+                                [paginator]="caseList.length > 0" [showCurrentPageReport]="true"
+                                (onPage)="paginate($event)" [ngClass]="totalRecords == 0 ? 'tbl-height-zero' : ''"
+                                [scrollHeight]="'calc(100vh - 270px)'">
+
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <!-- Assign selected cases to user -->
+                                        <th id="tblColumnHeaderCheckbox" *ngIf="isBulkAssignCases" scope="col"
+                                            class="checkbox-col">
+                                            <div class="custom-control custom-checkbox">
+                                                <input class="custom-control-input" type="checkbox"
+                                                    [(ngModel)]="isAllCheckBoxSelected" id="chkBulkAssignEntity"
+                                                    (change)="checkUncheckAll()">
+                                                <label class="custom-control-label"> </label>
+                                            </div>
+                                        </th>
+                                        <th id="tblColumnHeader" *ngFor="let col of columns" [ngClass]="col.header == '' ? 'hide-when-no-records' : ''"
+                                            [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.sort"
+                                            scope="col" class="{{col.field}} {{col.class}}" [hidden]="!col.visible"
+                                            (click)="ChangeOrder(col)">
+                                            {{ col.header | translate | configuredEntityName}}
+                                            <p-sortIcon [field]="col.field" *ngIf="col.sort"></p-sortIcon>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                    <tr [ngClass]="[rowData.isPaused ? 'lightGreyBg' : '', rowData.isHandRaised ? 'raised-outline' : '', (rowData.cardColorClass != null &&  rowData.cardColorClass != '') ? rowData.cardColorClass : '',  selectedRowId == rowData.id ? 'selected-row' : '']"
+                                        (click)="onRowClick(rowData, true)">
+                                        <!-- provide check box for each raw -->
+                                        <td *ngIf="isBulkAssignCases" class="checkbox-col"
+                                            [ngClass]="!rowData.isPaused && !rowData.isCompletedStage && !rowData.isClosedStage ? '' : 'td-responsive-none'">
+                                            <div class="custom-control custom-checkbox">
+                                                <input
+                                                    *ngIf="!rowData.isPaused && !rowData.isCompletedStage && !rowData.isClosedStage"
+                                                    class="custom-control-input" type="checkbox"
+                                                    [(ngModel)]="rowData.isSelected" id="chkAssignEntity"
+                                                    (change)="isAllSelected()" (click)="stopPropagation($event)">
+                                                <label class="custom-control-label"> </label>
+                                            </div>
+                                        </td>
+                                        <td class="bookmark">
+                                            <ngx-bookmark [entityTypeId]="entityTypeId" [entityId]="rowData.id" [isStarred]="rowData?.isStarred"
+                                                [isEditPermission]="isEditCase && (!rowData?.isPaused)" [isFromKanbanOrListView]="true"></ngx-bookmark>
+                                        </td>
+                                        <td class="caseNumber">
+                                            <span class="p-column-title">
+                                                {{columns[1].header | translate  | configuredEntityName}}
+                                            </span>
+                                            <span class="w-100 vertical-center">
+                                                <a [routerLink]="'/cases/details/'+ ( entityWorkflowId ? entityWorkflowId + '/' : '') + rowData.id"
+                                                    id="link-headingRecord" (click)="stopPropagation($event)" class="float-left me-2"
+                                                    [ngClass]="isViewCase ? 'dark-blue font-weight-bold no-underline cursor-pointer pre-text' : 'no-link'">{{rowData.caseNumber}}</a>
+                                                <span *ngIf="rowData.priority != 0" class="float-left me-2">
+                                                    <button pButton tooltipClass="tooltip-backward-small"
+                                                        ngbTooltip="{{'CASES.LIST.TOOLTIP_PRIORITY' | translate }}: {{rowData.priorityName!= null && rowData.priorityName != '' ? rowData.priorityName : 'NA'}}"
+                                                        container="body" class="p-button-rounded p-button-sm"
+                                                        [ngClass]="[(!this.isEditCase || rowData.isPaused || rowData.isCompletedStage || rowData.isClosedStage) ? 'cursor-default' : 'cursor-pointer',(priorityDetails | displayValueFinder: { intValue1: rowData.priority}).length > 0 ? ((priorityDetails | displayValueFinder: { intValue1: rowData.priority})[0]?.strValue1?.colorClass ?? '') : '' ]"
+                                                        type="button" id="btn-priority" (click)="onCardPriorityClick($event,rowData);stopPropagation($event)"
+                                                        triggers="hover" tooltipClass="tooltip-backward-small">
+                                                        {{
+                                                        (priorityDetails | displayValueFinder: { intValue1: rowData.priority}).length > 0
+                                                        ? ((priorityDetails | displayValueFinder: { intValue1: rowData.priority})[0]?.strValue1?.initials ?? '')
+                                                        : null
+                                                        }}
+                                                    </button>
+                                                </span>
+                                                <span *ngIf="rowData.severity != 0" class="float-left me-2">
+                                                    <button pButton tooltipClass="tooltip-backward-small"
+                                                        ngbTooltip="{{'CASES.LIST.TOOLTIP_SEVERITY' | translate }}: {{rowData.severityName!= null && rowData.severityName != '' ? rowData.severityName : 'NA'}}"
+                                                        container="body" class="p-button-rounded p-button-sm"
+                                                        [ngClass]="[(!this.isEditCase || rowData.isPaused || rowData.isCompletedStage || rowData.isClosedStage) ? 'cursor-default' : 'cursor-pointer', (severityDetails | displayValueFinder: { intValue1: rowData.severity}).length > 0 ? ((severityDetails | displayValueFinder: { intValue1: rowData.severity})[0]?.strValue1?.colorClass ?? '') : '']"
+                                                        type="button" id="btn-severity" (click)="onCardSeverityClick($event,rowData);stopPropagation($event)"
+                                                        triggers="hover">
+                                                        {{
+                                                        (severityDetails | displayValueFinder: { intValue1: rowData.severity}).length > 0
+                                                        ? ((severityDetails | displayValueFinder: { intValue1: rowData.severity})[0]?.strValue1?.initials ?? '')
+                                                        : null
+                                                        }}
+                                                    </button>
+                                                </span>
+                                                <span *ngIf="rowData.rating != 0" class="float-left me-2">
+                                                    <entity-review-display [entityTypeId]="entityTypeId" [entityId]="rowData.id" [rating]="rowData.rating" id="btn-rating"
+                                                        [review]="rowData.totalReviews" [entityReviewID]="rowData.entityReviewID" [isFromKanbanOrListView]="true"
+                                                        [isEditPermission]="isEditCase && !(rowData?.isPaused ?? false)">
+                                                    </entity-review-display>
+                                                </span>
+                                            </span>
+
+                                        </td>
+                                        <td class="name">
+                                            <span class="p-column-title">
+                                                {{columns[2].header | translate}}
+                                            </span>
+                                            <div class="w-100 vertical-center w-max-truncate">
+                                                <div class="w-100 pre-text">{{rowData.name}}</div>
+                                            </div>
+                                        </td>
+                                        <td *ngIf="isShowRelatedTo" class="entityName">
+                                            <span class="p-column-title">
+                                                {{columns[3].header | translate}}
+                                            </span>
+                                            <span class="w-100 d-block">
+                                                <a [routerLink]="'/' + _commonHelper.getRouteNameByEntityTypeId(rowData?.entityTypeID).toLowerCase() + '/details/' + (rowData?.entityID ?? '')"
+                                                    id="link-relatedTo" (click)="stopPropagation($event)"
+                                                    [ngClass]="_commonHelper.isUserHaveViewPermissionOfRelatedEntity(rowData?.entityTypeID) ? 'dark-blue font-weight-bold no-underline cursor-pointer pre-text' : 'no-link'">{{rowData.entityName}}</a>
+                                            </span>
+                                        </td>
+                                        <td class="stageName">
+                                            <span class="p-column-title">
+                                                {{columns[4].header | translate}}
+                                            </span>
+                                            <span *ngIf="!rowData.isPaused" class="w-100 d-block">
+                                                <a (click)="onEntityStageClick(rowData);stopPropagation($event)" id="link-stage"
+                                                    [ngClass]="(isEditCase || isViewCase) ? 'dark-blue font-weight-bold no-underline cursor-pointer' : 'no-link'">{{rowData.stageName}}</a>
+                                            </span>
+                                            <span *ngIf="rowData.isPaused">
+                                                {{rowData.stageName}}
+                                            </span>
+                                        </td>
+                                        <td class="assignedToName" *ngIf="!isAssignedToFieldKanbanListColumn">
+                                            <span class="p-column-title">
+                                                {{columns[5].header | translate}}
+                                            </span>
+                                            <span class="w-100 d-flex">
+                                                <ngx-common-user-profile 
+                                                    [userId]="rowData?.assignedTo"
+                                                    [userTypeId]="userTypeID.AssignedTo"
+                                                    [privacyLevel]="rowData?.privacyLevel"
+                                                    [isShowName]="false"
+                                                    [isItemDisable]="rowData?.isPaused || !rowData?.isActive || !isAssignCase"
+                                                    (clickEvent)="onAssignedToClick($event, rowData)"
+                                                    userLabel="{{'COMMON.COMMON_USER_PROFILE.LABEL_ASSIGNEDTO' | translate | configuredEntityName}}">
+                                                </ngx-common-user-profile>
+                                            </span>
+                                        </td>
+                                        <td class="verifiedByName" *ngIf="!isVerifiedByFieldKanbanListColumn">
+                                            <span class="p-column-title">
+                                                {{columns[6].header | translate}}
+                                            </span>
+                                            <span class="w-100 d-flex">
+                                                <ngx-common-user-profile
+                                                    [userId]="rowData?.verifiedBy"
+                                                    [userTypeId]="userTypeID.VerifiedBy"
+                                                    [privacyLevel]="rowData?.privacyLevel"
+                                                    [isShowName]="false"
+                                                    [isItemDisable]="rowData?.isPaused || !rowData?.isActive || !isAssignCase"
+                                                    (clickEvent)="onVerifiedByClick($event, rowData)"
+                                                    userLabel="{{'COMMON.COMMON_USER_PROFILE.LABEL_VERIFIEDBY' | translate | configuredEntityName}}">
+                                                </ngx-common-user-profile>
+                                            </span>
+                                        </td>
+                                        <td class="createdByName">
+                                            <span class="p-column-title">
+                                              {{columns[7].header | translate}}
+                                            </span>
+                                            <ngx-common-user-profile 
+                                              [userId]="rowData?.createdBy"
+                                              [userTypeId]="userTypeID.CreatedBy"
+                                              [privacyLevel]="rowData?.privacyLevel" 
+                                              [isShowName]="false" 
+                                              [isItemDisable]="true"
+                                              userLabel="{{'COMMON.COMMON_USER_PROFILE.LABEL_CREATEDBY' | translate | configuredEntityName}}">
+                                            </ngx-common-user-profile>
+                                        </td>
+                                        <td class="created">
+                                            <span class="p-column-title">
+                                                {{columns[8].header | translate}}
+                                            </span>
+                                            <div class="w-100">
+                                                <div class="w-100 mb-2px pre-text">{{ rowData.created | timeAgoPipe :
+                                                    rowData.utcCreated }}</div>
+                                            </div>
+                                        </td>
+                                        <td class="id action">
+                                            <div class="d-flex justify-content-end">
+                                                <div *ngIf="((isDeleteCase && !rowData.isCompletedStage && !rowData.isClosedStage) || (isAllowToReopen && (rowData.isCompletedStage || rowData.isClosedStage))) && !rowData.isPaused" class="dropdown">
+                                                    <button pButton icon="fas fa-wrench" (mouseenter)="onRowActionButtonMouseEnter()"
+                                                        (mouseleave)="onRowActionButtonMouseLeave()" class="p-button-rounded p-button-sm" type="button" id="drp-action"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                    </button>
+                                                    <ul class="dropdown-menu" aria-labelledby="drp-action">
+                                                        <li>
+                                                            <a *ngIf="isDeleteCase && !rowData.isCompletedStage && !rowData.isClosedStage" id="link-Delete"
+                                                                class="dropdown-item" (click)="deleteCase(rowData.id);stopPropagation($event);">
+                                                                <i class="far fa-trash-alt me-1" aria-hidden="true"></i>
+                                                                {{ 'CASES.LIST.BUTTON_REMOVE' | translate }}
+                                                            </a>
+                                                        </li>                                                
+                                                        <li *ngIf="isAllowToReopen && (rowData.isCompletedStage || rowData.isClosedStage)">
+                                                            <a id="link-stage-reopen" (click)="onReopenStage(rowData);stopPropagation($event);" class="dropdown-item">
+                                                                <i class="fa-regular fa-folder-open me-1"></i>
+                                                                {{ 'CASES.LIST.ACTION_TITLE_STAGE_REOPEN' | translate }}
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <!-- Paginator Start -->
+                                <ng-template pTemplate="paginatorleft">
+                                    <span id="startToEndOfTotalRecords">{{start}} - {{end}} of {{totalRecords}}
+                                        records</span>
+                                </ng-template>
+                                <ng-template pTemplate="paginatorright">
+                                    <p-button type="button" icon="pi pi-chevron-left" styleClass="p-button-text"
+                                        (click)="prev()" id="paginatorLeftPage"
+                                        [disabled]="end == dataSearch.params.pageSize"></p-button>
+                                    <input type="number" min="1" [max]="totalPages"
+                                        [(ngModel)]="dataSearch.params.pageNo" (change)="changePage()"
+                                        id="paginatorInputPage" class="pageNoInput"> /
+                                    <span id="paginatorTotalPages" class="ml-1">{{totalPages}}</span>
+                                    <p-button type="button" icon="pi pi-chevron-right" styleClass="p-button-text"
+                                        (click)="next()" id="paginatorRightPage"
+                                        [disabled]="end == totalRecords"></p-button>
+                                    <p-button type="button" icon="pi pi-undo" styleClass="p-button-text"
+                                        (click)="resetPaginator()" id="paginatorResetButton"
+                                        [disabled]="end == dataSearch.params.pageSize"></p-button>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage" let-columns>
+                                    <tr>
+                                        <td [attr.colspan]="columns.length" id="lbl-NoRecordsFound"
+                                            class="table-no-record text-center">
+                                            {{ 'CASES.LIST.MESSAGE_NO_RECORDS_FOUND' | translate}}
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <!-- Paginator End -->
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Table view End -->
+        </ng-template>
+        <!-- Containers End-->
+    </div>
+    <!-- Right side activity menu start -->
+    <div class="p-0">
+        <activity-section 
+            #activitySection 
+            *ngIf="isShowActivityCenter" 
+            [entityTypeId]="entityTypeId"
+            [entityId]="selectedCaseIdForActivityCenter" 
+            [entityRecordTypeId]="entityDetails?.entityRecordTypeId"
+            [isEditPermission]="isEditCase" 
+            [isPaused]="selectedCaseIsPausedForActivityCenter"
+            [isClosedStage]="selectedCaseIsClosedForActivityCenter"
+            [isCompletedStage]="selectedCaseIsCompletedForActivityCenter"
+            [hideExpandButton]="true"
+            [isTagRequired]="true" 
+            [isDocumentRequired]="true" 
+            [refreshActivity]="refreshActivityCenter"
+            [entityDetailsData]="entityDetails" 
+            [isHideDetailsTab]="false" 
+            (onEntityStageTasksSelect)="onEntityStageTasksSelect($event)"
+            [isDocumentDownloadPermission]="isDocumentDownloadPermission && !selectedCaseIsPausedForActivityCenter && !selectedCaseIsClosedForActivityCenter && !selectedCaseIsCompletedForActivityCenter"
+            [currencySymbol]="currencySymbol" [hoursInDay]="hoursInDay"
+            class="entity-right-panel" 
+            (saveKeyFieldEvent)="onSaveKeyFieldEvent($event)" 
+            (onCloseActivitySection)="onMoreDetailsClick(false)"
+            [keyfieldResponseData]="keyfieldResponseData" 
+            [addWorkTaskCreateOption]="true" 
+            [isAddWorkTask]="isAddWorkTask" 
+            (onAddWorkTask)="addWorkTask()"
+            [createdBy]="caseCreatedBy"
+            [privacyLevel]="casePrivacyLevel"
+            (raiseHandChange)="onCaseRaiseHandChanged($event.event,$event.isHandRaised)"
+            (pauseOrResumeChanges)="onCaseStagePauseChanged($event.event,$event.isPaused)">
+        </activity-section>
+    </div>
+    <!-- Right side activity menu end -->
+</div>
