@@ -1,116 +1,24 @@
 <!doctype html>
-<html lang="en">
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Conduit</title>
+    <base href="/" />
 
-<head>
-  <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-TR8698PJ');</script>
-  <!-- End Google Tag Manager -->
-
-  <meta charset="utf-8">
-  <title>SDS CRM</title>
-
-  <base href="/">
-
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="HandheldFriendly" content="true" />
-  <meta name="MobileOptimized" content="320" />
-  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, shrink-to-fit=no">
-  <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link id="app-theme" rel="stylesheet" type="text/css" href="default.css">
-</head>
-
-<body>
-  <!-- Google Tag Manager (noscript) -->
-  <noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TR8698PJ" height="0" width="0" style="display:none;visibility:hidden">
-    </iframe>
-  </noscript>
-  <!-- End Google Tag Manager (noscript) -->
-  <ngx-app></ngx-app>
-
-  <style>
-    .spinner-wrapper {
-      display: block;
-      position: fixed;
-      width: 100%;
-      height: auto;
-      margin: auto;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.5) !important;
-      z-index: 10000;
-    }
-    .spinner-wrapper .spinner {
-      position: absolute;
-      overflow: hidden;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      width: 60px;
-      height: 60px;
-      color: #5ba7da;
-    }
-    .spinner-wrapper .bounce-spinner {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      width: 60px;
-      text-align: center;
-      display: flex;
-      justify-content: space-between;
-    }
-    .spinner-wrapper .bounce-spinner > div {
-      width: 15px;
-      height: 15px;
-      background-color: #9ed5ff !important;
-      border-radius: 100%;
-      display: inline-block;
-      -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
-      animation: sk-bouncedelay 1.4s infinite ease-in-out both;
-    }
-    .spinner-wrapper .bounce-spinner .bounce1 {
-      -webkit-animation-delay: -0.32s;
-      animation-delay: -0.32s;
-    }
-    .spinner-wrapper .bounce-spinner .bounce2 {
-      -webkit-animation-delay: -0.16s;
-      animation-delay: -0.16s;
-    }
-    @-webkit-keyframes sk-bouncedelay {
-      0%,
-      80%,
-      100% {
-        -webkit-transform: scale(0);
-      }
-      40% {
-        -webkit-transform: scale(1);
-      }
-    }
-    @keyframes sk-bouncedelay {
-      0%,
-      80%,
-      100% {
-        -webkit-transform: scale(0);
-        transform: scale(0);
-      }
-      40% {
-        -webkit-transform: scale(1);
-        transform: scale(1);
-      }
-    }
-  </style>
-</body>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="//fonts.googleapis.com/css?family=Titillium+Web:700|Source+Serif+Pro:400,700|Merriweather+Sans:400,700|Source+Sans+Pro:400,300,600,700,300italic,400italic,600italic,700italic"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="//demo.productionready.io/main.css" />
+  </head>
+  <body>
+    <app-root></app-root>
+  </body>
 </html>

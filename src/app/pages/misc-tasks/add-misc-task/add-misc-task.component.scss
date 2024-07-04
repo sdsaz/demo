@@ -1,6 +1,0 @@
-@import '../../../../scss/variables';
-
-.w-small { width: 56px; }
-.bg-readonly.form-control{ background-color: var(--surface-200);
-    &:focus { border-color: $brdr-grey; }
-}

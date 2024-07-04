@@ -1,49 +1,45 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
-/packages
+
+# compiled output
+/dist
+/tmp
+/out-tsc
+
+# dependencies
+/node_modules
+
+# IDEs and editors
+.vscode/
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
 # IDE - VSCode
-.vs/
-.vscode/
+.vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# compiled output
-dist/
-tmp/
-out-tsc/
-
-# dependencies
-node_modules/
-
-# IDEs and editors
-.idea/
-.project/
-.classpath/
-.c9/
-*.launch
-.settings/
-.sublime-workspace
-
 # misc
 /.angular/cache
-.sass-cache/
-connect.lock/
-coverage/
-*.log
-typings/
-src/assets/images/avatars/*
-src/assets/files/*
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+testem.log
+/typings
+yarn-error.log
+
+# e2e
+/e2e/*.js
+/e2e/*.map
 
 # System Files
 .DS_Store
 Thumbs.db
-/package-lock.json
-/CHANGELOG.md
-/CONTRIBUTING.md
-/ISSUE_TEMPLATE.md
-/src/assets/Files/t/
-
-# sonarqube directory
-.scannerwork/
