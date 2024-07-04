@@ -15,13 +15,11 @@ steps:
   inputs:
     versionSpec: 14.x
 
-steps:
 - task: Npm@1
   displayName: 'npm install'
   inputs:
     verbose: false
 
-steps:
 - task: Npm@1
   displayName: 'npm build'
   inputs:
@@ -29,7 +27,6 @@ steps:
     verbose: false
     customCommand: 'run build:prod'
 
-steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: app'
   inputs:
