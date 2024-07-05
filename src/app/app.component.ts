@@ -1,12 +1,13 @@
-import { Component } from "@angular/core";
-import { HeaderComponent } from "./core/layout/header.component";
-import { RouterOutlet } from "@angular/router";
-import { FooterComponent } from "./core/layout/footer.component";
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: "app-root",
-  templateUrl: "./app.component.html",
+  selector: 'app-root',
   standalone: true,
-  imports: [HeaderComponent, RouterOutlet, FooterComponent],
+  imports: [RouterOutlet],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css'
 })
-export class AppComponent {}
+export class AppComponent {
+  title = 'angular';
+}
